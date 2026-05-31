@@ -17,3 +17,11 @@ public:
 	FractionNumber sqrt(const FractionNumber& rootDegree);
 	FractionNumber degree(const FractionNumber& exponent);
 };
+
+enum class DataErrors {
+	NO_DATA_ERROR, // ошибок нет
+	NO_FRACTION, // несоответствие символов нужному шаблону согласно условиям
+	WRONG_INPUT, // нужные символы не являются дробным числом
+	WRONG_OPERATION, // неподдерживаемая операция
+	INCORRECT_RANGE // неверный диапазон 
+};
