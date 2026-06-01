@@ -12,6 +12,8 @@ private:
 public:
 	FractionNumber(const string& str);
 
+	string toString() const;
+
 	FractionNumber add(const FractionNumber& other);
 	FractionNumber sub(const FractionNumber& other);
 	FractionNumber mul(const FractionNumber& other);

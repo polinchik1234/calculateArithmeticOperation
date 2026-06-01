@@ -1,7 +1,6 @@
 ﻿#include "Arithmetic.h"
 #include <iostream>
 
-// Реализация конструктора через FractionNumber::
 FractionNumber::FractionNumber(const string& str)
 {
     isNegative = false;
@@ -39,6 +38,30 @@ FractionNumber::FractionNumber(const string& str)
             fractionPart.push_back(s[i] - '0');
         }
     }
+}
+
+string FractionNumber::toString() const
+{
+    string result;
+
+    if (isNegative)
+    {
+        result = result + "-";
+    }
+
+    for (int i = 0; i < integerPart.size(); i++)
+    {
+        result = result + to_string(integerPart[i]);
+    }
+
+    result = result + ".";
+
+    for (int i = 0; i < fractionPart.size(); i++)
+    {
+        result = result + to_string(fractionPart[i]);
+    }
+
+    return result;
 }
 
 int main()
