@@ -1,7 +1,47 @@
-﻿#include <iostream>
+﻿#include "Arithmetic.h"
+#include <iostream>
+
+// Реализация конструктора через FractionNumber::
+FractionNumber::FractionNumber(const string& str)
+{
+    isNegative = false;
+    string s = str;
+
+    //Определение знака
+    if (str[0] == '-')
+    {
+        isNegative = true;
+        s = str.substr(1);
+    }
+
+    int dot = s.find('.');
+
+    //Если нет дробной части
+    if (dot == -1)
+    {
+        for (int i = 0; i < s.length(); i++)
+        {
+            integerPart.push_back(s[i] - '0');
+        }
+        fractionPart.push_back(0);
+    }
+
+    //Если есть дробная часть
+    else
+    {
+        for (int i = 0; i < dot; i++)
+        {
+            integerPart.push_back(s[i] - '0');
+        }
+
+        for (int i = dot + 1; i < s.length(); i++)
+        {
+            fractionPart.push_back(s[i] - '0');
+        }
+    }
+}
 
 int main()
 {
-    std::cout << "Hello World!\n";
 }
 

@@ -10,6 +10,8 @@ private:
 	bool isNegative;
 
 public:
+	FractionNumber(const string& str);
+
 	FractionNumber add(const FractionNumber& other);
 	FractionNumber sub(const FractionNumber& other);
 	FractionNumber mul(const FractionNumber& other);
