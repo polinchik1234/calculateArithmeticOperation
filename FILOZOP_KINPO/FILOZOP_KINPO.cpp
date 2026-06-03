@@ -197,6 +197,11 @@ FractionNumber FractionNumber::mul(const FractionNumber& other) {
     return FractionNumber("0");
 }
 
+FractionNumber FractionNumber::div(const FractionNumber& other) {
+
+    return FractionNumber("0");
+}
+
 int main()
 {
 }
