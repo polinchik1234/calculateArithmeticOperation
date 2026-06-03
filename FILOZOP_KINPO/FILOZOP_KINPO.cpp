@@ -187,6 +187,11 @@ FractionNumber FractionNumber::add(const FractionNumber& other)
     }
 }
 
+FractionNumber FractionNumber::sub(const FractionNumber& other) {
+
+    return FractionNumber("0");
+}
+
 int main()
 {
 }
