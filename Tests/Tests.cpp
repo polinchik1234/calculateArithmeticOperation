@@ -607,4 +607,348 @@ namespace Tests
                 L"0 - 0 should equal 0");
         }
     };
+
+
+    TEST_CLASS(Tests_mul)
+    {
+    public:
+
+        TEST_METHOD(FirstMultiplierZero)
+        {
+            FractionNumber a("0");
+            FractionNumber b("2.3");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("0");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"0 * 2.3 should equal 0");
+        }
+
+        TEST_METHOD(SecondMultiplierZero)
+        {
+            FractionNumber a("1.123");
+            FractionNumber b("0");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("0");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"1.123 * 0 should equal 0");
+        }
+
+        TEST_METHOD(BothMultipliersZero)
+        {
+            FractionNumber a("0");
+            FractionNumber b("0");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("0");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"0 * 0 should equal 0");
+        }
+
+        TEST_METHOD(BothPositive)
+        {
+            FractionNumber a("1.123");
+            FractionNumber b("2.32");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("2.60536");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"1.123 * 2.32 should equal 2.60536");
+        }
+
+        TEST_METHOD(BothNegative)
+        {
+            FractionNumber a("-1.123");
+            FractionNumber b("-2.32");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("2.60536");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"-1.123 * -2.32 should equal 2.60536");
+        }
+
+        TEST_METHOD(DifferentSigns)
+        {
+            FractionNumber a("1.123");
+            FractionNumber b("-2.32");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("-2.60536");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"1.123 * -2.32 should equal -2.60536");
+        }
+
+        TEST_METHOD(TrailingZerosRemoval)
+        {
+            FractionNumber a("2.5");
+            FractionNumber b("0.4");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("1");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"2.5 * 0.4 should equal 1");
+        }
+
+        TEST_METHOD(MultiplyByOne)
+        {
+            FractionNumber a("1.123");
+            FractionNumber b("1");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("1.123");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"1.123 * 1 should equal 1.123");
+        }
+
+        TEST_METHOD(MultiplyByMinusOne)
+        {
+            FractionNumber a("1.123");
+            FractionNumber b("-1");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("-1.123");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"1.123 * -1 should equal -1.123");
+        }
+
+        TEST_METHOD(EqualFractionLength)
+        {
+            FractionNumber a("1.1234");
+            FractionNumber b("2.3214");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("2.60786076");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"1.1234 * 2.3214 should equal 2.60786076");
+        }
+
+        TEST_METHOD(NoIntegerPartOneNumber)
+        {
+            FractionNumber a("0.123");
+            FractionNumber b("2.32");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("0.28536");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"0.123 * 2.32 should equal 0.28536");
+        }
+
+        TEST_METHOD(NoIntegerPartBothNumbers)
+        {
+            FractionNumber a("0.123");
+            FractionNumber b("0.32");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("0.03936");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"0.123 * 0.32 should equal 0.03936");
+        }
+
+        TEST_METHOD(ManyDigitsIntegerPartOneNumber)
+        {
+            FractionNumber a("123.123");
+            FractionNumber b("2.32");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("285.64536");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"123.123 * 2.32 should equal 285.64536");
+        }
+
+        TEST_METHOD(ManyDigitsIntegerPartBothNumbers)
+        {
+            FractionNumber a("123.123");
+            FractionNumber b("211.32");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("26081.35236");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"123.123 * 211.32 should equal 26081.35236");
+        }
+
+        TEST_METHOD(NoFractionalPartOneNumber)
+        {
+            FractionNumber a("1.123");
+            FractionNumber b("2");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("2.246");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"1.123 * 2 should equal 2.246");
+        }
+
+        TEST_METHOD(NoFractionalPartBothNumbers)
+        {
+            FractionNumber a("1");
+            FractionNumber b("2");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("2");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"1 * 2 should equal 2");
+        }
+
+        TEST_METHOD(SingleDigitFractionOneNumber)
+        {
+            FractionNumber a("1.1");
+            FractionNumber b("2.32");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("2.552");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"1.1 * 2.32 should equal 2.552");
+        }
+
+        TEST_METHOD(SingleDigitFractionBothNumbers)
+        {
+            FractionNumber a("1.1");
+            FractionNumber b("2.3");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("2.53");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"1.1 * 2.3 should equal 2.53");
+        }
+
+        TEST_METHOD(TwoDigitsFractionBothNumbers)
+        {
+            FractionNumber a("1.12");
+            FractionNumber b("2.32");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("2.5984");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"1.12 * 2.32 should equal 2.5984");
+        }
+
+        TEST_METHOD(ThreeDigitsFractionBothNumbers)
+        {
+            FractionNumber a("1.123");
+            FractionNumber b("2.321");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("2.606483");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"1.123 * 2.321 should equal 2.606483");
+        }
+
+        TEST_METHOD(SecondNumberHasMoreFractionDigits)
+        {
+            FractionNumber a("1.123");
+            FractionNumber b("2.3211");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("2.6065953");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"1.123 * 2.3211 should equal 2.6065953");
+        }
+
+        TEST_METHOD(CarryFromFractionalToInteger)
+        {
+            FractionNumber a("0.5");
+            FractionNumber b("2.0");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("1");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"0.5 * 2.0 should equal 1");
+        }
+
+        TEST_METHOD(SingleCarryInsideFractional)
+        {
+            FractionNumber a("0.25");
+            FractionNumber b("0.4");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("0.1");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"0.25 * 0.4 should equal 0.1");
+        }
+
+        TEST_METHOD(DoubleCarryInsideFractional)
+        {
+            FractionNumber a("0.99");
+            FractionNumber b("0.99");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("0.9801");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"0.99 * 0.99 should equal 0.9801");
+        }
+
+        TEST_METHOD(SingleCarryInIntegerPart)
+        {
+            FractionNumber a("50.5");
+            FractionNumber b("2.0");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("101");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"50.5 * 2.0 should equal 101");
+        }
+
+        TEST_METHOD(DoubleCarryInIntegerPart)
+        {
+            FractionNumber a("199.0");
+            FractionNumber b("2.0");
+
+            FractionNumber result = a.mul(b);
+
+            FractionNumber expected("398");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"199.0 * 2.0 should equal 398");
+        }
+    };
 }
