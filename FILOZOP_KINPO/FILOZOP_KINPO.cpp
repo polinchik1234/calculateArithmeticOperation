@@ -207,6 +207,11 @@ FractionNumber FractionNumber::degree(const FractionNumber& other) {
     return FractionNumber("0");
 }
 
+FractionNumber FractionNumber::sqrt(const FractionNumber& other) {
+
+    return FractionNumber("0");
+}
+
 int main()
 {
 }
