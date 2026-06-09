@@ -1,5 +1,6 @@
 ﻿#include "Arithmetic.h"
 #include <iostream>
+#include <algorithm>
 
 FractionNumber::FractionNumber(const string& str)
 {
@@ -123,7 +124,115 @@ void FractionNumber::removeTrailingZeros(std::vector<uint8_t>& vec) const {
 
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
-    return FractionNumber("0");
+    FractionNumber result;
+
+    // Дополняем более короткую дробную часть нулями справа до максимальной длины
+    size_t maxFracLen = std::max(this->fractionPart.size(), other.fractionPart.size());
+    std::vector<uint8_t> frac1 = this->fractionPart;
+    std::vector<uint8_t> frac2 = other.fractionPart;
+    appendZerosRight(frac1, maxFracLen);
+    appendZerosRight(frac2, maxFracLen);
+
+    // Если знаки одинаковые
+    if (this->isNegative == other.isNegative) {
+        result.isNegative = this->isNegative;
+        int carry = 0;
+
+        // Складываем дробную часть
+        result.fractionPart.resize(maxFracLen);
+        for (int i = (int)maxFracLen - 1; i >= 0; i--) {
+            int sum = frac1[i] + frac2[i] + carry;
+            result.fractionPart[i] = sum % 10;
+            carry = sum / 10;
+        }
+
+        // Складываем целую часть
+        int i = (int)this->integerPart.size() - 1;
+        int j = (int)other.integerPart.size() - 1;
+        std::vector<uint8_t> tempInt;
+
+        while (i >= 0 || j >= 0 || carry > 0) {
+            int sum = carry;
+            if (i >= 0) { sum += this->integerPart[i]; i--; }
+            if (j >= 0) { sum += other.integerPart[j]; j--; }
+
+            tempInt.push_back(sum % 10);
+            carry = sum / 10;
+        }
+
+        std::reverse(tempInt.begin(), tempInt.end());
+        result.integerPart = tempInt;
+    }
+    // Если знаки разные
+    else {
+        // Сравниваем числа по модулю
+        if (this->integerPart == other.integerPart && frac1 == frac2) {
+            result.integerPart = { 0 };
+            result.fractionPart = {};
+            result.isNegative = false;
+            return result;
+        }
+
+        // Находим, какое из чисел больше
+        bool firstIsBigger = compareByModule(other, frac1, frac2);
+
+        // Определяем, какое из чисел уменьшаемое
+        const FractionNumber& A = firstIsBigger ? *this : other;
+        // Определяем, какое из чисел вычитаемое
+        const FractionNumber& B = firstIsBigger ? other : *this;
+        std::vector<uint8_t> fA = firstIsBigger ? frac1 : frac2;
+        std::vector<uint8_t> fB = firstIsBigger ? frac2 : frac1;
+
+        // Определяем знак по числу у которого модуль больше
+        result.isNegative = A.isNegative;
+        int borrow = 0;
+
+        // Вычитаем дробную часть
+        result.fractionPart.resize(maxFracLen);
+        for (int k = (int)maxFracLen - 1; k >= 0; k--) {
+            int diff = fA[k] - fB[k] - borrow;
+            if (diff < 0) {
+                diff += 10;
+                borrow = 1;
+            }
+            else {
+                borrow = 0;
+            }
+            result.fractionPart[k] = diff;
+        }
+
+        // Выравниваем целые части нулями слева
+        std::vector<uint8_t> intA = A.integerPart;
+        std::vector<uint8_t> intB = B.integerPart;
+        size_t maxIntLen = std::max(intA.size(), intB.size());
+        prependZerosLeft(intA, maxIntLen);
+        prependZerosLeft(intB, maxIntLen);
+
+        // Вычитаем целые части
+        std::vector<uint8_t> tempInt;
+        for (int i = (int)maxIntLen - 1; i >= 0; i--) {
+            int diff = intA[i] - intB[i] - borrow;
+            if (diff < 0) {
+                diff += 10;
+                borrow = 1;
+            }
+            else {
+                borrow = 0;
+            }
+            tempInt.push_back(diff);
+        }
+
+        std::reverse(tempInt.begin(), tempInt.end());
+        result.integerPart = tempInt;
+
+        // Убираем ведущие нули
+        removeLeadingZeros(result.integerPart);
+    }
+
+    // Убираем хвостовые нули
+    removeTrailingZeros(result.fractionPart);
+
+    return result;
 }
 
 FractionNumber FractionNumber::sub(const FractionNumber& other) {
