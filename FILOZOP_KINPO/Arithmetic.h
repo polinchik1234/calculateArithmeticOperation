@@ -8,6 +8,7 @@ private:
 	vector<uint8_t> integerPart;
 	vector<uint8_t> fractionPart;
 	bool isNegative;
+	void appendZerosRight(std::vector<uint8_t>& vec, size_t targetLen) const;
 
 public:
 	FractionNumber() {
