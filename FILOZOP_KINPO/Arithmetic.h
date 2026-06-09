@@ -13,6 +13,7 @@ private:
 	bool compareByModule(const FractionNumber& other,
 		const std::vector<uint8_t>& f1,
 		const std::vector<uint8_t>& f2) const;
+	void removeLeadingZeros(std::vector<uint8_t>& vec) const;
 
 public:
 	FractionNumber() {
