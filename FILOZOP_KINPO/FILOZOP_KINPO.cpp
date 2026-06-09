@@ -56,9 +56,16 @@ string FractionNumber::toString() const
 
     result = result + ".";
 
-    for (int i = 0; i < fractionPart.size(); i++)
+    if (fractionPart.empty())
     {
-        result = result + to_string(fractionPart[i]);
+        result = result + "0";
+    }
+    else
+    {
+        for (int i = 0; i < fractionPart.size(); i++)
+        {
+            result = result + to_string(fractionPart[i]);
+        }
     }
 
     return result;
@@ -66,7 +73,7 @@ string FractionNumber::toString() const
 
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
-        return FractionNumber("0");
+    return FractionNumber("0");
 }
 
 FractionNumber FractionNumber::sub(const FractionNumber& other) {
