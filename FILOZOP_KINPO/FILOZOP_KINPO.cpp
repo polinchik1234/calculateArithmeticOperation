@@ -237,7 +237,15 @@ FractionNumber FractionNumber::add(const FractionNumber& other)
 
 FractionNumber FractionNumber::sub(const FractionNumber& other) {
 
-    return FractionNumber("0");
+    FractionNumber modifiedOther = other;
+
+    // Меняем знак на противоположный
+    modifiedOther.isNegative = !other.isNegative;
+
+    // Складываем текущее число с изменённым числом через метод add
+    FractionNumber result = this->add(modifiedOther);
+
+    return result;
 }
 
 FractionNumber FractionNumber::mul(const FractionNumber& other) {
