@@ -77,6 +77,12 @@ void FractionNumber::appendZerosRight(std::vector<uint8_t>& vec, size_t targetLe
     }
 }
 
+void FractionNumber::prependZerosLeft(std::vector<uint8_t>& vec, size_t targetLen) const {
+    while (vec.size() < targetLen) {
+        vec.insert(vec.begin(), 0);
+    }
+}
+
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
     return FractionNumber("0");
