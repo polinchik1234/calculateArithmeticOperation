@@ -115,6 +115,12 @@ void FractionNumber::removeLeadingZeros(std::vector<uint8_t>& vec) const {
     }
 }
 
+void FractionNumber::removeTrailingZeros(std::vector<uint8_t>& vec) const {
+    while (vec.size() > 0 && vec.back() == 0) {
+        vec.pop_back();
+    }
+}
+
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
     return FractionNumber("0");
