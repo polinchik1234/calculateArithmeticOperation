@@ -289,10 +289,10 @@ namespace Tests
 
             FractionNumber result = a.sub(b);
 
-            FractionNumber expected("2.246");
+            FractionNumber expected("-2.246");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"-1.123 - 1.123 should equal 2.246");
+                L"-1.123 - 1.123 should equal -2.246");
         }
 
         TEST_METHOD(DifferentFractionLengths)
@@ -302,10 +302,10 @@ namespace Tests
 
             FractionNumber result = a.sub(b);
 
-            FractionNumber expected("-1.107");
+            FractionNumber expected("-1.197");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"1.123 - 2.32 should equal -1.107");
+                L"1.123 - 2.32 should equal -1.197");
         }
 
         TEST_METHOD(BothNegative)
@@ -315,10 +315,10 @@ namespace Tests
 
             FractionNumber result = a.sub(b);
 
-            FractionNumber expected("1.107");
+            FractionNumber expected("1.197");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"-1.123 - (-2.32) should equal 1.107");
+                L"-1.123 - (-2.32) should equal 1.197");
         }
 
         TEST_METHOD(NoIntegerPart_OneNumber)
