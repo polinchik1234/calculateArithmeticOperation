@@ -10,6 +10,9 @@ private:
 	bool isNegative;
 
 public:
+	FractionNumber() {
+		isNegative = false;
+	}
 	FractionNumber(const string& str);
 
 	string toString() const;
