@@ -71,6 +71,12 @@ string FractionNumber::toString() const
     return result;
 }
 
+void FractionNumber::appendZerosRight(std::vector<uint8_t>& vec, size_t targetLen) const {
+    while (vec.size() < targetLen) {
+        vec.push_back(0);
+    }
+}
+
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
     return FractionNumber("0");
