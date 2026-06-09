@@ -109,6 +109,12 @@ bool FractionNumber::compareByModule(const FractionNumber& other,
     return true;
 }
 
+void FractionNumber::removeLeadingZeros(std::vector<uint8_t>& vec) const {
+    while (vec.size() > 1 && vec[0] == 0) {
+        vec.erase(vec.begin());
+    }
+}
+
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
     return FractionNumber("0");
