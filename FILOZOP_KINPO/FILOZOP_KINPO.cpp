@@ -83,6 +83,32 @@ void FractionNumber::prependZerosLeft(std::vector<uint8_t>& vec, size_t targetLe
     }
 }
 
+bool FractionNumber::compareByModule(const FractionNumber& other,
+    const std::vector<uint8_t>& f1,
+    const std::vector<uint8_t>& f2) const
+{
+    //Сравниваем целые части по длине
+    if (this->integerPart.size() != other.integerPart.size()) {
+        return this->integerPart.size() > other.integerPart.size();
+    }
+
+    //Сравниваем целые части по каждой цифре
+    for (size_t i = 0; i < this->integerPart.size(); i++) {
+        if (this->integerPart[i] != other.integerPart[i]) {
+            return this->integerPart[i] > other.integerPart[i];
+        }
+    }
+
+    //Сравниваем выровненные дробные части
+    for (size_t i = 0; i < f1.size(); i++) {
+        if (f1[i] != f2[i]) {
+            return f1[i] > f2[i];
+        }
+    }
+
+    return true;
+}
+
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
     return FractionNumber("0");
