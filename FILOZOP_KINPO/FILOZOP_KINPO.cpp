@@ -250,7 +250,100 @@ FractionNumber FractionNumber::sub(const FractionNumber& other) {
 
 FractionNumber FractionNumber::mul(const FractionNumber& other) {
 
-    return FractionNumber("0");
+    FractionNumber result;
+
+    // Проверяем, равно ли одно из чисел нулю
+    bool thisIsZero = (this->integerPart.size() == 1 && this->integerPart[0] == 0 && this->fractionPart.empty());
+    bool otherIsZero = (other.integerPart.size() == 1 && other.integerPart[0] == 0 && other.fractionPart.empty());
+
+    // Если один из операндов равен 0
+    if (thisIsZero || otherIsZero) {
+        // Записываем 0 в результат
+        result.integerPart = { 0 };
+        result.fractionPart = {};
+        result.isNegative = false;
+        return result;
+    }
+
+    // Определяем знак результата
+    result.isNegative = (this->isNegative != other.isNegative);
+
+    // Складываем количество цифр в дробных частях
+    size_t totalFracLen = this->fractionPart.size() + other.fractionPart.size();
+
+    // Объединяем целую и дробную часть у первого числа
+    std::vector<uint8_t> num1 = this->integerPart;
+    num1.insert(num1.end(), this->fractionPart.begin(), this->fractionPart.end());
+
+    // Объединяем целую и дробную часть у второго числа
+    std::vector<uint8_t> num2 = other.integerPart;
+    num2.insert(num2.end(), other.fractionPart.begin(), other.fractionPart.end());
+
+    // Создаем массив для результата размером, равным сумме количества цифр 
+    // первого и второго целых чисел. Заполняем все ячейки нулями
+    size_t resSize = num1.size() + num2.size();
+    std::vector<uint8_t> resDigits(resSize, 0);
+
+    // Берем цифры второго числа, двигаясь справа налево
+    for (int j = (int)num2.size() - 1; j >= 0; j--) {
+        // Обнуляем перенос
+        int carry = 0;
+
+        // Берем цифры первого числа, двигаясь справа налево
+        for (int i = (int)num1.size() - 1; i >= 0; i--) {
+            // Индекс текущей ячейки в массиве результата
+            int currentPos = i + j + 1;
+
+            // Перемножаем текущие цифры
+            int prod = num1[i] * num2[j];
+
+            // Прибавляем значение, которое уже лежит в ячейке массива результата, и накопленный перенос
+            int sum = prod + carry + resDigits[currentPos];
+
+            // Записываем последнюю цифру
+            resDigits[currentPos] = sum % 10;
+
+            // Обновляем перенос
+            carry = sum / 10;
+
+            // Если все цифры первого числа закончились
+            if (i == 0) {
+                // Записываем оставшийся перенос в ячейку слева
+                resDigits[currentPos - 1] += carry;
+            }
+        }
+    }
+
+    // Проверяем, есть ли дробная часть
+    if (totalFracLen > 0) {
+        // Проверяем, можно ли разделить результат на целую и дробную часть
+        if (resDigits.size() > totalFracLen) {
+            // Определяем целую и дробную часть
+            result.fractionPart.assign(resDigits.end() - totalFracLen, resDigits.end());
+            result.integerPart.assign(resDigits.begin(), resDigits.end() - totalFracLen);
+        }
+        // Все цифры находятся в дробной части, целая часть равна 0
+        else {
+            result.fractionPart.assign(resDigits.begin(), resDigits.end());
+
+            // Дополняем дробную часть ведущими нулями, если массив цифр оказался короче, чем нужно
+            while (result.fractionPart.size() < totalFracLen) {
+                result.fractionPart.insert(result.fractionPart.begin(), 0);
+            }
+            result.integerPart = { 0 };
+        }
+    }
+    else {
+        // Если дробной части нет
+        result.integerPart = resDigits;
+        result.fractionPart = {};
+    }
+
+    // Убираем ведущие и хвостовые нули
+    removeLeadingZeros(result.integerPart);
+    removeTrailingZeros(result.fractionPart);
+
+    return result;
 }
 
 FractionNumber FractionNumber::div(const FractionNumber& other) {
