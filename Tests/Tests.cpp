@@ -789,10 +789,10 @@ namespace Tests
 
             FractionNumber result = a.mul(b);
 
-            FractionNumber expected("26081.35236");
+            FractionNumber expected("26018.35236");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"123.123 * 211.32 should equal 26081.35236");
+                L"123.123 * 211.32 should equal 26018.35236");
         }
 
         TEST_METHOD(NoFractionalPartOneNumber)
