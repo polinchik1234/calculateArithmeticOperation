@@ -122,6 +122,12 @@ void FractionNumber::removeTrailingZeros(std::vector<uint8_t>& vec) const {
     }
 }
 
+bool FractionNumber::isZero() const {
+    for (uint8_t d : this->integerPart) if (d != 0) return false;
+    for (uint8_t d : this->fractionPart) if (d != 0) return false;
+    return true;
+}
+
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
     FractionNumber result;
