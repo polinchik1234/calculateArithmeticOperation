@@ -19,6 +19,7 @@ private:
 	bool isZero() const;
 	double convertToDouble(const FractionNumber& fn);
 	FractionNumber convertFromDouble(double val, int precision);
+	FractionNumber powInt(FractionNumber base, unsigned long long exp);
 
 public:
 	FractionNumber() {
