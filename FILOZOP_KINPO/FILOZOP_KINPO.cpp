@@ -128,6 +128,23 @@ bool FractionNumber::isZero() const {
     return true;
 }
 
+// Преобразует число FractionNumber в число типа double
+double FractionNumber::convertToDouble(const FractionNumber& fn) {
+    double result = 0.0;
+    for (size_t i = 0; i < fn.integerPart.size(); ++i)
+        result = result * 10.0 + fn.integerPart[i];
+    double frac = 0.0;
+    double place = 0.1;
+    for (size_t i = 0; i < fn.fractionPart.size(); ++i) {
+        frac += fn.fractionPart[i] * place;
+        place *= 0.1;
+    }
+    result += frac;
+    if (fn.isNegative) result = -result;
+    return result;
+}
+
+
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
     // Если первое число равно 0, вернуть второе
