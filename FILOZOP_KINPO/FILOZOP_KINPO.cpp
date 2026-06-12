@@ -189,6 +189,18 @@ FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
     return FractionNumber(resultStr);
 }
 
+FractionNumber FractionNumber::powInt(FractionNumber base, unsigned long long exp) {
+    FractionNumber result;
+    result.integerPart = { 1 }; result.fractionPart = {}; result.isNegative = false;
+    while (exp > 0) {
+        if (exp % 2 == 1) result = result.mul(base);
+        base = base.mul(base);
+        exp /= 2;
+    }
+    return result;
+}
+
+
 
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
