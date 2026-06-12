@@ -1463,7 +1463,7 @@ namespace Tests
         }
     };
 
-    TEST_CLASS(Tests_degree)
+     TEST_CLASS(Tests_degree)
     {
     public:
 

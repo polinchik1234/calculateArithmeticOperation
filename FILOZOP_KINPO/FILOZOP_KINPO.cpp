@@ -200,6 +200,30 @@ FractionNumber FractionNumber::powInt(FractionNumber base, unsigned long long ex
     return result;
 }
 
+double FractionNumber::calcLn(double x) {
+    if (x <= 0.0) return 0.0;
+
+    double result = 0.0;
+    const double LN_1_1 = 0.09531017980432493;
+
+    while (x > 1.3) { x /= 1.1; result += LN_1_1; }
+    while (x < 0.7) { x *= 1.1; result -= LN_1_1; }
+
+    double t = (x - 1.0) / (x + 1.0);
+    double t2 = t * t;
+    double power = t;
+    double sum = 0.0;
+
+    for (int k = 0; k < 200; ++k) {
+        double term = power / (2 * k + 1);
+        sum += term;
+        power *= t2;
+        if (term < 1e-19 && term > -1e-19) break;
+    }
+    return result + 2.0 * sum;
+}
+
+
 
 
 FractionNumber FractionNumber::add(const FractionNumber& other)
