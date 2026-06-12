@@ -740,7 +740,35 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent) {
 
 FractionNumber FractionNumber::sqrt(const FractionNumber& other) {
 
-    return FractionNumber("0");
+    // Если подкоренное выражжение равно 0, вернуть 0
+    if (this->isZero()) {
+        FractionNumber zero;
+        zero.integerPart = { 0 };
+        zero.fractionPart = {};
+        zero.isNegative = false;
+        return zero;
+    }
+
+    // Вычисляем обратное число для степени корня
+    FractionNumber one("1");
+    FractionNumber invExp = one.div(other);
+
+    FractionNumber tempBase = *this;
+
+    // Берем модуль числа
+    bool wasNegative = tempBase.isNegative;
+    tempBase.isNegative = false;
+
+    // Возводим в степень
+    FractionNumber result = tempBase.degree(invExp);
+
+    // Если исходное число под корнем было отрицательным, возвращаем минус
+    if (wasNegative) {
+
+        result.isNegative = true;
+    }
+
+    return result;
 }
 
 int main()
