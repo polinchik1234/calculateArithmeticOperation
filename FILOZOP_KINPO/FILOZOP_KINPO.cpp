@@ -145,7 +145,6 @@ double FractionNumber::convertToDouble(const FractionNumber& fn) {
     return result;
 }
 
-// 2. Конвертация double -> FractionNumber (Строгое отсечение погрешностей double)
 FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
     bool neg = val < 0;
     if (neg) val = -val;
@@ -530,11 +529,6 @@ FractionNumber FractionNumber::div(const FractionNumber& other) {
 
         // Определяем, перешли ли мы уже к вычислению дробной части
         bool is_fraction_now = (current_digit_idx >= real_dividend_size);
-
-        // Если мы в дробной части и уже достигли лимита точности в 16 знаков - прерываем цикл
-        if (is_fraction_now && result.fractionPart.size() >= 16) {
-            break;
-        }
 
         // Если цифры в делимом ещё есть - берём текущую, если закончились — сносим ноль
         uint8_t next_digit = 0;
