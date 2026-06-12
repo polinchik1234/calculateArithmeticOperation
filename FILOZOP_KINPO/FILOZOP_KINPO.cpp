@@ -263,13 +263,8 @@ FractionNumber FractionNumber::mul(const FractionNumber& other) {
 
     FractionNumber result;
 
-    // Проверяем, равно ли одно из чисел нулю
-    bool thisIsZero = (this->integerPart.size() == 1 && this->integerPart[0] == 0 && this->fractionPart.empty());
-    bool otherIsZero = (other.integerPart.size() == 1 && other.integerPart[0] == 0 && other.fractionPart.empty());
-
-    // Если один из операндов равен 0
-    if (thisIsZero || otherIsZero) {
-        // Записываем 0 в результат
+    // Если одно из чисел равно 0, вернуть 0
+    if (this->isZero() || other.isZero()) {
         result.integerPart = { 0 };
         result.fractionPart = {};
         result.isNegative = false;
