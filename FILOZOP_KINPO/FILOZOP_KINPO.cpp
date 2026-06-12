@@ -223,6 +223,16 @@ double FractionNumber::calcLn(double x) {
     return result + 2.0 * sum;
 }
 
+double FractionNumber::calcExp(double x) {
+    double result = 1.0;
+    double term = 1.0;
+    for (int k = 1; k < 250; ++k) {
+        term *= x / k;
+        result += term;
+        if (term < 1e-19 && term > -1e-19) break;
+    }
+    return result;
+}
 
 
 
