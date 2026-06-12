@@ -17,6 +17,7 @@ private:
 	void removeLeadingZeros(std::vector<uint8_t>& vec) const;
 	void removeTrailingZeros(std::vector<uint8_t>& vec) const;
 	bool isZero() const;
+	double convertToDouble(const FractionNumber& fn);
 
 public:
 	FractionNumber() {
