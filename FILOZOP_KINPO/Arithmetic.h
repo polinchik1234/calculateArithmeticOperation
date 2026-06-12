@@ -21,6 +21,7 @@ private:
 	FractionNumber convertFromDouble(double val, int precision);
 	FractionNumber powInt(FractionNumber base, unsigned long long exp);
 	double calcLn(double x);
+	double calcExp(double x)
 
 public:
 	FractionNumber() {
