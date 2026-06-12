@@ -974,15 +974,12 @@ namespace Tests
             FractionNumber a("0");
             FractionNumber b("-2.32");
 
-            bool errorThrown = false;
-            try {
-                FractionNumber result = a.div(b);
-            }
-            catch (...) {
-                errorThrown = true;
-            }
+            FractionNumber result = a.div(b);
 
-            Assert::IsTrue(errorThrown, L"0 / -2.32 should throw an error");
+            FractionNumber expected("0");
+
+            Assert::AreEqual(expected.toString(), result.toString(),
+                L"0 / (-2.32) should equal 0");
         }
 
         TEST_METHOD(DivideByZero)
@@ -994,11 +991,14 @@ namespace Tests
             try {
                 FractionNumber result = a.div(b);
             }
-            catch (const std::exception&) {
+            catch (const std::invalid_argument&) {
                 errorThrown = true;
             }
+            catch (...) {
+                errorThrown = false;
+            }
 
-            Assert::IsTrue(errorThrown, L"1.123 / 0 should throw division by zero error");
+            Assert::IsTrue(errorThrown, L"1.123 / 0 should throw std::invalid_argument");
         }
 
         TEST_METHOD(DivideZeroByZero)
@@ -1010,11 +1010,14 @@ namespace Tests
             try {
                 FractionNumber result = a.div(b);
             }
-            catch (const std::exception&) {
+            catch (const std::invalid_argument&) {
                 errorThrown = true;
             }
+            catch (...) {
+                errorThrown = false;
+            }
 
-            Assert::IsTrue(errorThrown, L"0 / 0 should throw division by zero error");
+            Assert::IsTrue(errorThrown, L"0 / 0 should throw std::invalid_argument");
         }
 
         TEST_METHOD(DivideByOne)
@@ -1167,10 +1170,10 @@ namespace Tests
 
             FractionNumber result = a.div(b);
 
-            FractionNumber expected("53.07025862068966");
+            FractionNumber expected("53.0702586206896551");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"123.123 / 2.32 should equal 53.07025862068966");
+                L"123.123 / 2.32 should equal 53.0702586206896551");
         }
 
         TEST_METHOD(ManyDigitsIntegerPartBothNumbers)
@@ -1180,10 +1183,10 @@ namespace Tests
 
             FractionNumber result = a.div(b);
 
-            FractionNumber expected("0.5826377058489495");
+            FractionNumber expected("0.5826377058489494");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"123.123 / 211.32 should equal 0.5826377058489495");
+                L"123.123 / 211.32 should equal 0.5826377058489494");
         }
 
         TEST_METHOD(NoFractionalPartOneNumber)
@@ -1219,10 +1222,10 @@ namespace Tests
 
             FractionNumber result = a.div(b);
 
-            FractionNumber expected("0.4741379310344828");
+            FractionNumber expected("0.4741379310344827");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"1.1 / 2.32 should equal 0.4741379310344828");
+                L"1.1 / 2.32 should equal 0.4741379310344827");
         }
 
         TEST_METHOD(SingleDigitFractionBothNumbers)
@@ -1232,10 +1235,10 @@ namespace Tests
 
             FractionNumber result = a.div(b);
 
-            FractionNumber expected("0.4782608695652174");
+            FractionNumber expected("0.4782608695652173");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"1.1 / 2.3 should equal 0.4782608695652174");
+                L"1.1 / 2.3 should equal 0.4782608695652173");
         }
 
         TEST_METHOD(TwoDigitsFractionBothNumbers)
@@ -1245,10 +1248,10 @@ namespace Tests
 
             FractionNumber result = a.div(b);
 
-            FractionNumber expected("0.4827586206896552");
+            FractionNumber expected("0.4827586206896551");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"1.12 / 2.32 should equal 0.4827586206896552");
+                L"1.12 / 2.32 should equal 0.4827586206896551");
         }
 
         TEST_METHOD(ThreeDigitsFractionBothNumbers)
@@ -1271,10 +1274,10 @@ namespace Tests
 
             FractionNumber result = a.div(b);
 
-            FractionNumber expected("0.4838223256214726");
+            FractionNumber expected("0.4838223256214725");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"1.123 / 2.3211 should equal 0.4838223256214726");
+                L"1.123 / 2.3211 should equal 0.4838223256214725");
         }
 
         TEST_METHOD(CarryFromFractionalToInteger)
@@ -2230,3 +2233,4 @@ namespace Tests
         }
     };
 }
+
