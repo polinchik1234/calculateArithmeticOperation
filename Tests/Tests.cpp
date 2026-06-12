@@ -1796,10 +1796,10 @@ namespace Tests
 
             FractionNumber result = a.sqrt(b);
 
-            FractionNumber expected("1.05127276199");
+            FractionNumber expected("1.0512727619878442");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"Root 2.32 of 1.123 should equal 1.05127276199");
+                L"Root 2.32 of 1.123 should equal 1.0512727619878442");
         }
 
         TEST_METHOD(NegativeRootDegree)
@@ -1809,10 +1809,10 @@ namespace Tests
 
             FractionNumber result = a.sqrt(b);
 
-            FractionNumber expected("0.951227917395");
+            FractionNumber expected("0.951227917395203");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"Root -2.32 of 1.123 should equal 0.951227917395");
+                L"Root -2.32 of 1.123 should equal 0.951227917395203");
         }
 
         TEST_METHOD(TrailingZerosRemoval)
@@ -1864,10 +1864,10 @@ namespace Tests
 
             FractionNumber result = a.sqrt(b);
 
-            FractionNumber expected("1.05140234414");
+            FractionNumber expected("1.0514023441379918");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"Root 2.3214 of 1.1234 should equal 1.05140234414");
+                L"Root 2.3214 of 1.1234 should equal 1.0514023441379918");
         }
 
         TEST_METHOD(NoIntegerPartOneNumber)
@@ -1877,10 +1877,10 @@ namespace Tests
 
             FractionNumber result = a.sqrt(b);
 
-            FractionNumber expected("0.405245051613");
+            FractionNumber expected("0.4052450516133315");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"Root 2.32 of 0.123 should equal 0.405245051613");
+                L"Root 2.32 of 0.123 should equal 0.4052450516133315");
         }
 
         TEST_METHOD(NoIntegerPartBothNumbers)
@@ -1890,10 +1890,10 @@ namespace Tests
 
             FractionNumber result = a.sqrt(b);
 
-            FractionNumber expected("0.00143203447462");
+            FractionNumber expected("0.001432034474621");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"Root 0.32 of 0.123 should equal 0.00143203447462");
+                L"Root 0.32 of 0.123 should equal 0.001432034474621");
         }
 
         TEST_METHOD(ManyDigitsIntegerPartOneNumber)
@@ -1903,10 +1903,10 @@ namespace Tests
 
             FractionNumber result = a.sqrt(b);
 
-            FractionNumber expected("3.06142633646");
+            FractionNumber expected("2.9313881046894776");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"Root 2.32 of 12.123 should equal 3.06142633646");
+                L"Root 2.32 of 12.123 should equal 2.9313881046894776");
         }
 
         TEST_METHOD(NoFractionalPartOneNumber)
@@ -1916,10 +1916,10 @@ namespace Tests
 
             FractionNumber result = a.sqrt(b);
 
-            FractionNumber expected("1.05971694334");
+            FractionNumber expected("1.0597169433391162");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"Root 2 of 1.123 should equal 1.05971694334");
+                L"Root 2 of 1.123 should equal 1.0597169433391162");
         }
 
         TEST_METHOD(NoFractionalPartBothNumbers)
@@ -1942,10 +1942,10 @@ namespace Tests
 
             FractionNumber result = a.sqrt(b);
 
-            FractionNumber expected("1.04230979646");
+            FractionNumber expected("1.0419375138863966");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"Root 2.32 of 1.1 should equal 1.04230979646");
+                L"Root 2.32 of 1.1 should equal 1.0419375138863966");
         }
 
         TEST_METHOD(SingleDigitFractionBothNumbers)
@@ -1955,10 +1955,10 @@ namespace Tests
 
             FractionNumber result = a.sqrt(b);
 
-            FractionNumber expected("1.04230979646");
+            FractionNumber expected("1.0423097964647208");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"Root 2.3 of 1.1 should equal 1.04230979646");
+                L"Root 2.3 of 1.1 should equal 1.0423097964647208");
         }
 
         TEST_METHOD(TwoDigitsFractionBothNumbers)
@@ -1968,10 +1968,10 @@ namespace Tests
 
             FractionNumber result = a.sqrt(b);
 
-            FractionNumber expected("1.05006132923");
+            FractionNumber expected("1.0500613292287792");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"Root 2.32 of 1.12 should equal 1.05006132923");
+                L"Root 2.32 of 1.12 should equal 1.0500613292287792");
         }
 
         TEST_METHOD(ThreeDigitsFractionBothNumbers)
@@ -1981,10 +1981,10 @@ namespace Tests
 
             FractionNumber result = a.sqrt(b);
 
-            FractionNumber expected("1.05125011454");
+            FractionNumber expected("1.0512501145352348");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"Root 2.321 of 1.123 should equal 1.05125011454");
+                L"Root 2.321 of 1.123 should equal 1.0512501145352348");
         }
 
         TEST_METHOD(SecondNumberHasMoreFractionDigits)
@@ -1994,10 +1994,10 @@ namespace Tests
 
             FractionNumber result = a.sqrt(b);
 
-            FractionNumber expected("1.05124785089");
+            FractionNumber expected("1.051247850890087");
 
             Assert::AreEqual(expected.toString(), result.toString(),
-                L"Root 2.3211 of 1.123 should equal 1.05124785089");
+                L"Root 2.3211 of 1.123 should equal 1.051247850890087");
         }
 
         TEST_METHOD(CarryFromFractionalToInteger)
@@ -2118,4 +2118,3 @@ namespace Tests
         }
     };
 }
-
