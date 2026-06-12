@@ -256,6 +256,10 @@ FractionNumber FractionNumber::sub(const FractionNumber& other) {
     // Складываем текущее число с изменённым числом через метод add
     FractionNumber result = this->add(modifiedOther);
 
+    if (result.isZero()) {
+        result.isNegative = false;
+    }
+
     return result;
 }
 
