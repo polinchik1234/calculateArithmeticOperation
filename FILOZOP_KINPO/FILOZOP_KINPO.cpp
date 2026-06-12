@@ -144,6 +144,51 @@ double FractionNumber::convertToDouble(const FractionNumber& fn) {
     return result;
 }
 
+// 2. Конвертация double -> FractionNumber (Строгое отсечение погрешностей double)
+FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
+    bool neg = val < 0;
+    if (neg) val = -val;
+
+    // Переводим в long double и округляем до 15 знаков
+    long double scale = 1.0;
+    for (int i = 0; i < precision; ++i) scale *= 10.0L;
+
+    // Округляем
+    unsigned long long rounded = (unsigned long long)(val * scale + 0.5L);
+
+    std::string s = std::to_string(rounded);
+    while ((int)s.size() <= precision) s = "0" + s;
+
+    std::string resultStr = s.substr(0, s.size() - precision) + "." + s.substr(s.size() - precision);
+
+    // Если на конце получилась череда девяток или нулей с мусором, зачищаем хвост
+    size_t dot = resultStr.find('.');
+    if (dot != std::string::npos) {
+        size_t zero_sequence = resultStr.find("00000000", dot);
+        if (zero_sequence != std::string::npos && zero_sequence > dot) {
+            resultStr = resultStr.substr(0, zero_sequence);
+        }
+        size_t nine_sequence = resultStr.find("99999999", dot);
+        if (nine_sequence != std::string::npos && nine_sequence > dot) {
+            resultStr = resultStr.substr(0, nine_sequence);
+            // Прибавляем 1 к последнему разряду для корректного округления вверх
+            for (int i = (int)resultStr.size() - 1; i >= 0; --i) {
+                if (resultStr[i] == '.') continue;
+                if (resultStr[i] < '9') {
+                    resultStr[i]++;
+                    break;
+                }
+                else {
+                    resultStr[i] = '0';
+                }
+            }
+        }
+    }
+
+    if (neg) resultStr = "-" + resultStr;
+    return FractionNumber(resultStr);
+}
+
 
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
