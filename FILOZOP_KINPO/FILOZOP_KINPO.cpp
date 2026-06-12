@@ -234,6 +234,14 @@ double FractionNumber::calcExp(double x) {
     return result;
 }
 
+unsigned long long vectorToInt(const std::vector<uint8_t>& vec) {
+    unsigned long long result = 0;
+    for (uint8_t d : vec) {
+        result = result * 10 + d;
+    }
+    return result;
+}
+
 
 
 FractionNumber FractionNumber::add(const FractionNumber& other)
