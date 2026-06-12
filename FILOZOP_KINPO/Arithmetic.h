@@ -8,6 +8,7 @@ private:
 	vector<uint8_t> integerPart;
 	vector<uint8_t> fractionPart;
 	bool isNegative;
+
 	void appendZerosRight(std::vector<uint8_t>& vec, size_t targetLen) const;
 	void prependZerosLeft(std::vector<uint8_t>& vec, size_t targetLen) const;
 	bool compareByModule(const FractionNumber& other,
@@ -15,6 +16,7 @@ private:
 		const std::vector<uint8_t>& f2) const;
 	void removeLeadingZeros(std::vector<uint8_t>& vec) const;
 	void removeTrailingZeros(std::vector<uint8_t>& vec) const;
+	bool isZero() const;
 
 public:
 	FractionNumber() {
