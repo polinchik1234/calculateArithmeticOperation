@@ -358,7 +358,168 @@ FractionNumber FractionNumber::mul(const FractionNumber& other) {
 
 FractionNumber FractionNumber::div(const FractionNumber& other) {
 
-    return FractionNumber("0");
+    // Если делитель равен 0, вернуть ошибку
+    if (other.isZero()) {
+        throw std::invalid_argument("Division by zero.");
+    }
+
+    // Если делимое равно 0, вернуть 0
+    if (this->isZero()) {
+        return FractionNumber("0");
+    }
+
+    // Определяем знак результата
+    bool targetNegative = (this->isNegative != other.isNegative);
+
+    std::vector<uint8_t> frac_A = this->fractionPart;
+    std::vector<uint8_t> frac_B = other.fractionPart;
+
+    size_t max_frac_len = std::max(frac_A.size(), frac_B.size());
+
+    // Выравниваем дробные части нулями
+    appendZerosRight(frac_A, max_frac_len);
+    appendZerosRight(frac_B, max_frac_len);
+
+    // Объединяем целую и дробную часть у первого числа
+    std::vector<uint8_t> dividend_vector = this->integerPart;
+    dividend_vector.insert(dividend_vector.end(), frac_A.begin(), frac_A.end());
+
+    // Объединяем целую и дробную часть у второго числа
+    std::vector<uint8_t> divisor_vector = other.integerPart;
+    divisor_vector.insert(divisor_vector.end(), frac_B.begin(), frac_B.end());
+
+    // Удаляем ведущие нули у обоих чисел
+    removeLeadingZeros(divisor_vector);
+    removeLeadingZeros(dividend_vector);
+
+    // Запоминаем исходный размер делимого, чтобы знать, где заканчивается целая часть
+    size_t real_dividend_size = dividend_vector.size();
+
+    FractionNumber result;
+    result.isNegative = targetNegative;
+
+    std::vector<uint8_t> remainder;
+    size_t current_digit_idx = 0;
+
+    FractionNumber rem_fn;
+    FractionNumber div_fn;
+    div_fn.integerPart = divisor_vector;
+    div_fn.fractionPart = {};
+    div_fn.isNegative = false;
+
+    // Цикл деления столбиком
+    // Выполняется, пока не закончатся цифры в делимом или пока не наберём 16 знаков в дробной части
+    while (current_digit_idx < dividend_vector.size() || result.fractionPart.size() < 16) {
+
+        // Определяем, перешли ли мы уже к вычислению дробной части
+        bool is_fraction_now = (current_digit_idx >= real_dividend_size);
+
+        // Если мы в дробной части и уже достигли лимита точности в 16 знаков - прерываем цикл
+        if (is_fraction_now && result.fractionPart.size() >= 16) {
+            break;
+        }
+
+        // Если цифры в делимом ещё есть - берём текущую, если закончились — сносим ноль
+        uint8_t next_digit = 0;
+        if (current_digit_idx < dividend_vector.size()) {
+            next_digit = dividend_vector[current_digit_idx];
+        }
+        // Сдвигаем указатель разряда вперед
+        current_digit_idx++;
+
+        // Добавляем снесённую цифру в конец текущего остатка и убираем лишние ведущие нули
+        remainder.push_back(next_digit);
+        removeLeadingZeros(remainder);
+
+        // Считаем, сколько раз делитель поместится в текущий остаток
+        int fit_count = 0;
+        while (true) {
+            bool remainder_is_less = false;
+
+            // Если количество разрядов разное, то меньше то число, у которого вектор короче
+            if (remainder.size() != divisor_vector.size()) {
+                remainder_is_less = remainder.size() < divisor_vector.size();
+            }
+            // Если длины векторов одинаковы, сравниваем их поэлементно
+            else {
+                remainder_is_less = remainder < divisor_vector;
+            }
+            // Если остаток стал меньше делителя, подбор цифры завершён
+            if (remainder_is_less) {
+                break;
+            }
+
+            // Настраиваем объект остатка под текущий вектор remainder
+            rem_fn.integerPart = remainder;
+            rem_fn.fractionPart = {};
+            rem_fn.isNegative = false;
+
+            // Вычитаем делитель из остатка
+            FractionNumber sub_res = rem_fn.sub(div_fn);
+
+            // Обновляем остаток полученной разностью и зачищаем ведущие нули
+            remainder = sub_res.integerPart;
+            removeLeadingZeros(remainder);
+
+            // Увеличиваем счётчик успешных вычитаний
+            fit_count++;
+        }
+
+        // Добавляем цифру в целую или дробную часть
+        if (!is_fraction_now) {
+            result.integerPart.push_back(fit_count);
+        }
+        else {
+            result.fractionPart.push_back(fit_count);
+        }
+
+        // Выходим из цикла, если число разделилось нацело
+        if (current_digit_idx >= dividend_vector.size() &&
+            remainder.size() == 1 && remainder[0] == 0) {
+            break;
+        }
+    }
+
+    // Если целая часть пустая, записываем 0
+    if (result.integerPart.empty()) result.integerPart.push_back(0);
+    removeLeadingZeros(result.integerPart);
+
+    // Обрабатываем случаи с периодическими дробями
+    std::string s = result.toString();
+    size_t dot = s.find('.');
+
+    if (dot != std::string::npos && s.length() > dot + 2) {
+        char last_char = s.back();
+
+        if (last_char != '0') {
+            size_t zero_count = 0;
+            for (int i = (int)s.length() - 2; i > (int)dot; i--) {
+                if (s[i] == '0') zero_count++;
+                else break;
+            }
+
+            if (zero_count >= 3) {
+                for (size_t i = s.length() - 1 - zero_count; i < s.length() - 1; i++) {
+                    s[i] = last_char;
+                }
+
+                result.fractionPart.clear();
+                for (size_t i = dot + 1; i < s.length(); i++) {
+                    result.fractionPart.push_back(s[i] - '0');
+                }
+            }
+        }
+    }
+
+    // Оставляем точность до 16 знаков после запятой
+    if (result.fractionPart.size() > 16) {
+        result.fractionPart.resize(16);
+    }
+
+    // Убираем хвостовые нули
+    removeTrailingZeros(result.fractionPart);
+
+    return result;
 }
 
 FractionNumber FractionNumber::degree(const FractionNumber& other) {
