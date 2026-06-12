@@ -130,6 +130,11 @@ bool FractionNumber::isZero() const {
 
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
+    // Если первое число равно 0, вернуть второе
+    if (this->isZero()) return other;
+    // Если второе число равно 0, вернуть первое
+    if (other.isZero()) return *this;
+
     FractionNumber result;
 
     // Дополняем более короткую дробную часть нулями справа до максимальной длины
