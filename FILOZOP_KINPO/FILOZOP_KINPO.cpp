@@ -1,6 +1,7 @@
 ﻿#include "Arithmetic.h"
 #include <iostream>
 #include <algorithm>
+#include <map>
 
 FractionNumber::FractionNumber(const string& str)
 {
@@ -234,7 +235,7 @@ double FractionNumber::calcExp(double x) {
     return result;
 }
 
-unsigned long long vectorToInt(const std::vector<uint8_t>& vec) {
+unsigned long long FractionNumber::vectorToInt(const std::vector<uint8_t>& vec) {
     unsigned long long result = 0;
     for (uint8_t d : vec) {
         result = result * 10 + d;
@@ -638,9 +639,103 @@ FractionNumber FractionNumber::div(const FractionNumber& other) {
     return result;
 }
 
-FractionNumber FractionNumber::degree(const FractionNumber& other) {
+FractionNumber FractionNumber::degree(const FractionNumber& exponent) {
 
-    return FractionNumber("0");
+    // Если показатель степени равен 0, вернуть 1
+    if (exponent.isZero()) {
+        FractionNumber res;
+        res.integerPart = { 1 };
+        res.fractionPart = {};
+        res.isNegative = false;
+        return res;
+    }
+
+    // Если основание степени равно 0
+    if (this->isZero()) {
+        // Если степень положительная, вернуть 0
+        if (!exponent.isNegative) {
+            FractionNumber res;
+            res.integerPart = { 0 };
+            res.fractionPart = {};
+            res.isNegative = false;
+            return res;
+        }
+        // Выводим ошибку
+        throw std::invalid_argument("Zero raised to a negative power.");
+    }
+
+    // Проверяем, равен ли показатель степени единице
+    bool otherIsOne = false;
+    if (exponent.integerPart.size() == 1 && exponent.integerPart[0] == 1 && !exponent.isNegative) {
+        bool onlyZeros = true;
+        for (auto d : exponent.fractionPart) if (d != 0) onlyZeros = false;
+        if (onlyZeros) otherIsOne = true;
+    }
+    // Если степень равна 1, возвращаем основание
+    if (otherIsOne) return *this;
+
+    // Проверяем, является ли степень целым числом
+    bool expIsInteger = true;
+    for (auto d : exponent.fractionPart) if (d != 0) { expIsInteger = false; break; }
+
+    
+    if (expIsInteger) {
+
+        unsigned long long loopLimit = vectorToInt(exponent.integerPart);
+
+        // Создаем модуль основания
+        FractionNumber baseAbs = *this; baseAbs.isNegative = false;
+        // Вызываем возведение в степень для модуля числа
+        FractionNumber result = powInt(baseAbs, loopLimit);
+
+        // Если степень была отрицательной, получаем обратное число для результата
+        if (exponent.isNegative) {
+            FractionNumber one; one.integerPart = { 1 };
+            result = one.div(result);
+        }
+
+        // Определяем знак итогового числа
+        // минус сохраняется, если исходное число было отрицательным и степень нечётная
+        result.isNegative = this->isNegative && (loopLimit % 2 == 1);
+        // Убираем возможные лишние нули на конце дробной части и возвращаем результат
+        removeTrailingZeros(result.fractionPart);
+        return result;
+    }
+
+    // Переводим основание и степень из объектов класса в тип double
+    double base = convertToDouble(*this);
+    double exp = convertToDouble(exponent);
+
+    // Нельзя возводить отрицательное число в дробную степень
+    if (base < 0 && exp != (long long)exp) {
+        throw std::invalid_argument("Negative base with non-integer exponent.");
+    }
+
+    // Запоминаем, было ли основание отрицательным, и работаем с модулем
+    bool baseNeg = base < 0;
+    if (baseNeg) base = -base;
+
+    // Вычисляем степень по формуле: x^y = e^(y * ln(x))
+    double lnBase = calcLn(base);
+    double val = calcExp(exp * lnBase);
+
+    // Конвертируем полученный результат обратно в FractionNumber
+    FractionNumber result = convertFromDouble(val, 16); // Заменено на convertFromDouble
+
+    // Восстановление знака
+    if (baseNeg) {
+        // Преобразуем целую часть степени в число, чтобы проверить её чётность
+        unsigned long long intExp = vectorToInt(exponent.integerPart);
+        // Минус остаётся только если целая часть степени была нечётной
+        result.isNegative = (intExp % 2 == 1);
+    }
+    // Если основание было положительным, результат всегда положительный
+    else {
+        result.isNegative = false;
+    }
+
+    removeTrailingZeros(result.fractionPart);
+    return result;
 }
 
 FractionNumber FractionNumber::sqrt(const FractionNumber& other) {
