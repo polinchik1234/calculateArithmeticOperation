@@ -17,12 +17,12 @@ private:
 	void removeLeadingZeros(std::vector<uint8_t>& vec) const;
 	void removeTrailingZeros(std::vector<uint8_t>& vec) const;
 	bool isZero() const;
-	double convertToDouble(const FractionNumber& fn);
 	FractionNumber convertFromDouble(double val, int precision);
 	FractionNumber powInt(FractionNumber base, unsigned long long exp);
 	double calcLn(double x);
 	double calcExp(double x);
 	unsigned long long vectorToInt(const std::vector<uint8_t>& vec);
+	friend void writeResultToFile(ofstream& output_file, const FractionNumber& result);
 
 public:
 	FractionNumber() {
@@ -38,6 +38,7 @@ public:
 	FractionNumber div(const FractionNumber& other);
 	FractionNumber sqrt(const FractionNumber& rootDegree);
 	FractionNumber degree(const FractionNumber& exponent);
+	double convertToDouble(const FractionNumber& fn);
 };
 
 enum class DataErrors {

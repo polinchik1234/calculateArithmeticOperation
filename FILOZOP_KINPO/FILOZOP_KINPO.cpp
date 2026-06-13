@@ -278,6 +278,41 @@ bool readFile(ifstream& input_file, vector<string>& file_content)
     return false;
 }
 
+vector<string> splitString(const string& input_data) 
+{
+    vector<string> splited_string;
+    size_t i = 0;
+    size_t n = input_data.length();
+
+    // Для каждого символа строки
+    while (i < n) {
+
+        // Если символ пробел или табуляция, пропустить
+        if (input_data[i] == ' ' || input_data[i] == '\t') {
+            i++;
+            continue;
+        }
+
+        // Если символ не пробел
+        // Запоминаем индекс начала подстроки
+        size_t start = i;
+
+        // Дойти до конца строки или до следующего пробела
+        while (i < n && input_data[i] != ' ' && input_data[i] != '\t') {
+            i++;
+        }
+
+        // Взять получившуюся подстроку
+        string sub = input_data.substr(start, i - start);
+
+        // Добавить её в контейнер
+        splited_string.push_back(sub);
+    }
+
+    return splited_string;
+}
+
+
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
     // Если первое число равно 0, вернуть второе
