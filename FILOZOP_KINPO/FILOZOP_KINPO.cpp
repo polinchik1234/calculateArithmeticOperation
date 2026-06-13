@@ -2,6 +2,8 @@
 #include <iostream>
 #include <algorithm>
 #include <map>
+#include <fstream>
+#include <string>
 
 FractionNumber::FractionNumber(const string& str)
 {
@@ -146,22 +148,29 @@ double FractionNumber::convertToDouble(const FractionNumber& fn) {
 }
 
 FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
+    // Работаем с модулем
     bool neg = val < 0;
     if (neg) val = -val;
 
-    // Переводим в long double и округляем до 15 знаков
+    unsigned long long intPart = (unsigned long long)val;
+    std::string intPartStr = std::to_string(intPart);
+    val -= intPart;
+
+    // Вычисляем множитель для сдвига дробной части
     long double scale = 1.0;
     for (int i = 0; i < precision; ++i) scale *= 10.0L;
 
-    // Округляем
     unsigned long long rounded = (unsigned long long)(val * scale + 0.5L);
 
+    // Превращаем полученную округленную дробь в строку цифр
     std::string s = std::to_string(rounded);
-    while ((int)s.size() <= precision) s = "0" + s;
 
-    std::string resultStr = s.substr(0, s.size() - precision) + "." + s.substr(s.size() - precision);
+    // Если дробь начиналась с нулей, возвращаем эти нули на место
+    while ((int)s.size() < precision) s = "0" + s;
 
-    // Если на конце получилась череда девяток или нулей с мусором, зачищаем хвост
+    // Склеиваем целую часть и готовую дробную часть через точку
+    std::string resultStr = intPartStr + "." + s;
+
     size_t dot = resultStr.find('.');
     if (dot != std::string::npos) {
         size_t zero_sequence = resultStr.find("00000000", dot);
@@ -171,7 +180,6 @@ FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
         size_t nine_sequence = resultStr.find("99999999", dot);
         if (nine_sequence != std::string::npos && nine_sequence > dot) {
             resultStr = resultStr.substr(0, nine_sequence);
-            // Прибавляем 1 к последнему разряду для корректного округления вверх
             for (int i = (int)resultStr.size() - 1; i >= 0; --i) {
                 if (resultStr[i] == '.') continue;
                 if (resultStr[i] < '9') {
@@ -185,6 +193,11 @@ FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
         }
     }
 
+    if (!resultStr.empty() && resultStr.back() == '.') {
+        resultStr.pop_back();
+    }
+
+    // Возвращаем знак минус, если исходное число было отрицательным
     if (neg) resultStr = "-" + resultStr;
     return FractionNumber(resultStr);
 }
@@ -241,8 +254,6 @@ unsigned long long FractionNumber::vectorToInt(const std::vector<uint8_t>& vec) 
     }
     return result;
 }
-
-
 
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
@@ -734,7 +745,7 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent) {
 
 FractionNumber FractionNumber::sqrt(const FractionNumber& other) {
 
-    // Если подкоренное выражжение равно 0, вернуть 0
+    // Если подкоренное выражение равно 0, вернуть 0
     if (this->isZero()) {
         FractionNumber zero;
         zero.integerPart = { 0 };
@@ -765,7 +776,7 @@ FractionNumber FractionNumber::sqrt(const FractionNumber& other) {
     return result;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
 }
 
