@@ -255,6 +255,29 @@ unsigned long long FractionNumber::vectorToInt(const std::vector<uint8_t>& vec) 
     return result;
 }
 
+bool readFile(ifstream& input_file, vector<string>& file_content)
+{
+    string input_line;
+
+    // Считываем построчно данные из файла до конца файла
+    while (getline(input_file, input_line))
+    {
+        file_content.push_back(input_line);
+    }
+
+    // После считывания закрываем файл
+    input_file.close();
+
+    // Проверка, удалось ли загрузить данные из файла
+    if (!file_content.empty())
+    {
+        return true;
+    }
+
+    // Если не получилось считать данные, возвращаем ошибку о записи файла
+    return false;
+}
+
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
     // Если первое число равно 0, вернуть второе
