@@ -383,6 +383,43 @@ DataErrors parseInputData(const string& input_data, string& operation, FractionN
     return DataErrors::NO_DATA_ERROR;
 }
 
+void writeResultToFile(ofstream& output_file, const FractionNumber& result)
+{
+    // Если число отрицательное и это не ноль
+    if (result.isNegative && !result.isZero())
+    {
+        output_file << "-";
+    }
+
+    // Вывод целой части
+    if (result.integerPart.empty())
+    {
+        output_file << "0";
+    }
+    else
+    {
+        for (uint8_t digit : result.integerPart)
+        {
+            output_file << (int)digit;
+        }
+    }
+
+    // Если есть дробная часть, пишем точку и саму дробную часть
+    if (!result.fractionPart.empty())
+    {
+        output_file << ".";
+
+        for (uint8_t digit : result.fractionPart)
+        {
+            output_file << (int)digit;
+        }
+    }
+
+    output_file.close();
+}
+
+
+
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
     // Если первое число равно 0, вернуть второе
