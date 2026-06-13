@@ -312,6 +312,76 @@ vector<string> splitString(const string& input_data)
     return splited_string;
 }
 
+DataErrors parseInputData(const string& input_data, string& operation, FractionNumber& first, FractionNumber& second)
+{
+    //Разбиваем строку на токены
+    vector<string> tokens = splitString(input_data);
+
+    // Если число токенов не равно 3
+    if (tokens.size() != 3) {
+        return DataErrors::WRONG_INPUT;
+    }
+
+    string op = tokens[0];
+    string token2 = tokens[1];
+    string token3 = tokens[2];
+
+    // Если первый токен - это не sqrt или +, -, *, /, ^:
+    if (op != "sqrt" && op != "+" && op != "-" && op != "*" && op != "/" && op != "^") {
+        return DataErrors::WRONG_OPERATION;
+    }
+
+    // Если второй и третий токен не дробное число
+    try {
+        FractionNumber tempFirst(token2);
+        FractionNumber tempSecond(token3);
+    }
+    catch (...) {
+        return DataErrors::NO_FRACTION;
+    }
+
+    FractionNumber num1(token2);
+    FractionNumber num2(token3);
+
+    // Для удобства проверки диапазонов переводим в double
+    double val1 = num1.convertToDouble(num1);
+    double val2 = num2.convertToDouble(num2);
+
+
+    // Проверка диапазонов для операции возведения в степень
+    if (op == "^") {
+        if ((val1 == 0.0 && val2 < 0.0) || (val1 < -100.0 || val1 > 100.0 || val2 < -5.0 || val2 > 5.0)) {
+            return DataErrors::INCORRECT_RANGE;
+        }
+    }
+
+    // Если первый токен – sqrt и второй не в диапазону [0, 100000] 
+    // или третий не в диапазоне [-10, 0) U (0, 10]
+    if (op == "sqrt") {
+        if (val1 < 0.0 || val1 > 100000.0 || val2 < -10.0 || val2 > 10.0 || val2 == 0.0) {
+            return DataErrors::INCORRECT_RANGE;
+        }
+    }
+
+    // Если первый токен +,-,/,* и второй или третий токен больше 1000 по модулю
+    if (op == "+" || op == "-" || op == "*" || op == "/") {
+        if (abs(val1) > 1000.0 || abs(val2) > 1000.0) {
+            return DataErrors::INCORRECT_RANGE;
+        }
+    }
+
+    // Сохраняем в operation значение первого токена
+    operation = op;
+
+    // Преобразовываем второй токен в объект FractionNumber и сохраняем в first
+    first = num1;
+
+    // Преобразовываем третий токен в объект FractionNumber и сохранем в second
+    second = num2;
+
+    // Ошибок нет
+    return DataErrors::NO_DATA_ERROR;
+}
 
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
