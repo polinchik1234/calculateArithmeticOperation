@@ -1499,8 +1499,8 @@ namespace Tests
             FractionNumber a("1.123");
             FractionNumber b("2.32");
             FractionNumber result = a.degree(b);
-            FractionNumber expected("1.3088233503628822");
-            Assert::AreEqual(expected.toString(), result.toString(), L"1.123^2.32 should equal 1.3088233503628822");
+            FractionNumber expected("1.3088233503628821");
+            Assert::AreEqual(expected.toString(), result.toString(), L"1.123^2.32 should equal 1.3088233503628821");
         }
 
         TEST_METHOD(ZeroPositiveExponent)
@@ -1568,8 +1568,8 @@ namespace Tests
             FractionNumber a("1.1234");
             FractionNumber b("2.3214");
             FractionNumber result = a.degree(b);
-            FractionNumber expected("1.310118567043859");
-            Assert::AreEqual(expected.toString(), result.toString(), L"1.1234^2.3214 should equal 1.310118567043859");
+            FractionNumber expected("1.3101185670438591");
+            Assert::AreEqual(expected.toString(), result.toString(), L"1.1234^2.3214 should equal 1.3101185670438591");
         }
 
         TEST_METHOD(NoIntegerPartOneNumber)
@@ -1595,8 +1595,8 @@ namespace Tests
             FractionNumber a("12.123");
             FractionNumber b("2.32");
             FractionNumber result = a.degree(b);
-            FractionNumber expected("326.569366656253696");
-            Assert::AreEqual(expected.toString(), result.toString(), L"12.123^2.32 should equal 326.569366656253696");
+            FractionNumber expected("326.569366656253692");
+            Assert::AreEqual(expected.toString(), result.toString(), L"12.123^2.32 should equal 326.569366656253692");
         }
 
         TEST_METHOD(NoFractionalPartOneNumber)
@@ -1631,8 +1631,8 @@ namespace Tests
             FractionNumber a("1.1");
             FractionNumber b("2.3");
             FractionNumber result = a.degree(b);
-            FractionNumber expected("1.2450969688995252");
-            Assert::AreEqual(expected.toString(), result.toString(), L"1.1^2.3 should equal 1.2450969688995252");
+            FractionNumber expected("1.2450969688995253");
+            Assert::AreEqual(expected.toString(), result.toString(), L"1.1^2.3 should equal 1.2450969688995253");
         }
 
         TEST_METHOD(TwoDigitsFractionBothNumbers)
@@ -1640,8 +1640,8 @@ namespace Tests
             FractionNumber a("1.12");
             FractionNumber b("2.32");
             FractionNumber result = a.degree(b);
-            FractionNumber expected("1.3007259737096052");
-            Assert::AreEqual(expected.toString(), result.toString(), L"1.12^2.32 should equal 1.3007259737096052");
+            FractionNumber expected("1.3007259737096053");
+            Assert::AreEqual(expected.toString(), result.toString(), L"1.12^2.32 should equal 1.3007259737096053");
         }
 
         TEST_METHOD(ThreeDigitsFractionBothNumbers)
@@ -1658,8 +1658,8 @@ namespace Tests
             FractionNumber a("1.123");
             FractionNumber b("2.3211");
             FractionNumber result = a.degree(b);
-            FractionNumber expected("1.3089903721704978");
-            Assert::AreEqual(expected.toString(), result.toString(), L"1.123^2.3211 should equal 1.3089903721704978");
+            FractionNumber expected("1.3089903721704979");
+            Assert::AreEqual(expected.toString(), result.toString(), L"1.123^2.3211 should equal 1.3089903721704979");
         }
 
         TEST_METHOD(CarryFromFractionalToInteger)
