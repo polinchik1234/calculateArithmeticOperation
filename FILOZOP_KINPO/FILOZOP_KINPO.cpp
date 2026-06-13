@@ -418,8 +418,6 @@ void writeResultToFile(ofstream& output_file, const FractionNumber& result)
     output_file.close();
 }
 
-
-
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
     // Если первое число равно 0, вернуть второе
@@ -943,5 +941,93 @@ FractionNumber FractionNumber::sqrt(const FractionNumber& other) {
 
 int main(int argc, char* argv[])
 {
+    // Если количество аргументов не равно 3
+    if (argc != 3)
+    {
+        // Вывести ошибку о неправильном указании параметров запуска
+        cerr << "Error: Invalid program launch parameters!" << endl;
+        cerr << "Usage: " << argv[0] << " <path_to_input_file> <path_to_output_directory>" << endl;
+        return 1;
+    }
+
+    // Считать входной файл
+    ifstream input_file(argv[1]);
+
+    // Если файл не удалось открыть
+    if (!input_file.is_open())
+    {
+        // Выводим ошибку о некорректном входном файле
+        cerr << "Error: Incorrect input file. Failed to open: " << argv[1] << endl;
+        return 1;
+    }
+
+    vector<string> file_content;
+
+    // Если не удалось считать данные из входного файла
+    if (!readFile(input_file, file_content))
+    {
+        // Выводим ошибку о невозможности считать данные из файла
+        cerr << "Error: Unable to read data from the file or the file is empty." << endl;
+        return 1;
+    }
+
+    // Если входные данные не соответствуют требованиям
+    if (file_content.size() != 1)
+    {
+        // Выводим ошибку о неверном количестве строк в файле
+        cerr << "Error: Invalid number of lines in the file. Exactly 1 line is expected." << endl;
+        return 1;
+    }
+
+    string target_line = file_content[0];
+
+    string operation;
+    FractionNumber first;
+    FractionNumber second;
+
+    // Проверяем строку из файла на корректность данных и соответствие диапазону
+    DataErrors parse_result = parseInputData(target_line, operation, first, second);
+
+    if (parse_result != DataErrors::NO_DATA_ERROR)
+    {
+        if (parse_result == DataErrors::WRONG_INPUT) {
+            cerr << "Error: Input characters do not match the required data template." << endl;
+        }
+        else if (parse_result == DataErrors::WRONG_OPERATION) {
+            cerr << "Error: Unsupported arithmetic operation." << endl;
+        }
+        else if (parse_result == DataErrors::NO_FRACTION) {
+            cerr << "Error: Provided characters do not form a valid fractional number." << endl;
+        }
+        else if (parse_result == DataErrors::INCORRECT_RANGE) {
+            cerr << "Error: Passed arguments are out of the allowed range." << endl;
+        }
+        return 1;
+    }
+
+    // Вычисляем результат арифметической операции
+    FractionNumber result;
+
+    if (operation == "+") result = first.add(second);
+    else if (operation == "-") result = first.sub(second);
+    else if (operation == "*") result = first.mul(second);
+    else if (operation == "/") result = first.div(second);
+    else if (operation == "^") result = first.degree(second);
+    else if (operation == "sqrt") result = first.sqrt(second);
+
+    // Записываем результат в выходной файл
+    string output_path = string(argv[2]) + "/result.txt";
+    ofstream output_file(output_path);
+
+    if (!output_file.is_open())
+    {
+        cerr << "Error: Failed to create or open the output file at: " << output_path << endl;
+        return 1;
+    }
+
+    writeResultToFile(output_file, result);
+
+    cout << "The program completed successfully. The result has been saved." << endl;
+    return 0;
 }
 
