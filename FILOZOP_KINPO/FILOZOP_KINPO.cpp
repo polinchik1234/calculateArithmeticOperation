@@ -170,16 +170,25 @@ bool FractionNumber::isZero() const
 double FractionNumber::convertToDouble(const FractionNumber& fn) 
 {
     double result = 0.0;
+
+    // Переводим вектор цифр целой части в обычное число
     for (size_t i = 0; i < fn.integerPart.size(); ++i)
         result = result * 10.0 + fn.integerPart[i];
     double frac = 0.0;
     double place = 0.1;
+
+    // Переводим вектор цифр дробной части в число
     for (size_t i = 0; i < fn.fractionPart.size(); ++i) 
     {
         frac += fn.fractionPart[i] * place;
+        // Сдвигаем разряд вправо
         place *= 0.1;
     }
+
+    // Складываем целую и дробную части
     result += frac;
+
+    // Если число было отрицательным, добавляем минус
     if (fn.isNegative) result = -result;
     return result;
 }
