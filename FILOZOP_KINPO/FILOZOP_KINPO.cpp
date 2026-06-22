@@ -88,8 +88,10 @@ string FractionNumber::toString() const
 
 void FractionNumber::appendZerosRight(std::vector<uint8_t>& vec, size_t targetLen) const 
 {
+    // Пока размер вектора меньше нужной длины
     while (vec.size() < targetLen) 
     {
+        // Добавляем ноль в конец
         vec.push_back(0);
     }
 }
