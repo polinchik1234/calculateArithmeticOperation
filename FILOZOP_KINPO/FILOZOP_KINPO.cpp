@@ -198,6 +198,7 @@ FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
     bool neg = val < 0;
     if (neg) val = -val;
 
+    // Отделяем целую часть и переводим её в строку
     unsigned long long intPart = (unsigned long long)val;
     std::string intPartStr = std::to_string(intPart);
     val -= intPart;
@@ -206,6 +207,7 @@ FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
     long double scale = 1.0;
     for (int i = 0; i < precision; ++i) scale *= 10.0L;
 
+    // Округляем дробную часть до нужного количества знаков
     unsigned long long rounded = (unsigned long long)(val * scale + 0.5L);
 
     // Превращаем полученную округленную дробь в строку цифр
@@ -220,15 +222,19 @@ FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
     size_t dot = resultStr.find('.');
     if (dot != std::string::npos) 
     {
+        // Если после точки идет куча нулей подряд — убираем их
         size_t zeroSequence = resultStr.find("00000000", dot);
         if (zeroSequence != std::string::npos && zeroSequence > dot) 
         {
             resultStr = resultStr.substr(0, zeroSequence);
         }
+        // Если после точки идет куча девяток подряд - убираем их
         size_t nineSequence = resultStr.find("99999999", dot);
         if (nineSequence != std::string::npos && nineSequence > dot) 
         {
             resultStr = resultStr.substr(0, nineSequence);
+
+            // Математически округляем число вверх
             for (int i = (int)resultStr.size() - 1; i >= 0; --i) 
             {
                 if (resultStr[i] == '.') continue;
@@ -245,6 +251,7 @@ FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
         }
     }
 
+    // Если на конце осталась точка — удаляем её
     if (!resultStr.empty() && resultStr.back() == '.') 
     {
         resultStr.pop_back();
