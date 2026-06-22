@@ -53,24 +53,30 @@ string FractionNumber::toString() const
 {
     string result;
 
+    // Добавляем знак минус, если число отрицательное
     if (isNegative)
     {
         result += "-";
     }
 
+    // Поразрядно собираем целую часть числа
     for (int i = 0; i < integerPart.size(); i++)
     {
         result = result + to_string(integerPart[i]);
     }
 
+    // Добавляем точку между целой и дробной частью
     result = result + ".";
 
+    // Формируем дробную часть числа
     if (fractionPart.empty())
     {
+        // Если дробная часть отсутствует, записываем ноль
         result = result + "0";
     }
     else
     {
+        // Если дробная часть есть, последовательно переносим все цифры
         for (int i = 0; i < fractionPart.size(); i++)
         {
             result = result + to_string(fractionPart[i]);
