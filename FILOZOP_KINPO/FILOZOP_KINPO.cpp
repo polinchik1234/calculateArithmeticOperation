@@ -281,24 +281,32 @@ FractionNumber FractionNumber::powInt(FractionNumber base, unsigned long long ex
 
 double FractionNumber::calcLn(double x) 
 {
+    // Логарифм отрицательных чисел и нуля не существует
     if (x <= 0.0) return 0.0;
 
     double result = 0.0;
     const double LN_1_1 = 0.09531017980432493;
 
+    // Сжимаем x в рамки от 0.7 до 1.3, чтобы расчеты были точными
+    // Если число большое — делим на 1.1 и добавляем шаг к результату
     while (x > 1.3) { x /= 1.1; result += LN_1_1; }
+    // Если число маленькое — умножаем на 1.1 и вычитаем шаг
     while (x < 0.7) { x *= 1.1; result -= LN_1_1; }
 
+    // Вычисляем логарифм для x с помощью быстросходящегося ряда
     double t = (x - 1.0) / (x + 1.0);
     double t2 = t * t;
     double power = t;
     double sum = 0.0;
 
+    // Разложение в ряд
     for (int k = 0; k < 200; ++k) 
     {
         double term = power / (2 * k + 1);
         sum += term;
+        // Меняем степень для следующего шага
         power *= t2;
+        // Если слагаемое стало маленьким, выходим из цикла
         if (term < 1e-19 && term > -1e-19) break;
     }
     return result + 2.0 * sum;
