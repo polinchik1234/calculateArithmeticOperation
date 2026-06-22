@@ -195,15 +195,15 @@ FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
     size_t dot = resultStr.find('.');
     if (dot != std::string::npos) 
     {
-        size_t zero_sequence = resultStr.find("00000000", dot);
-        if (zero_sequence != std::string::npos && zero_sequence > dot) 
+        size_t zeroSequence = resultStr.find("00000000", dot);
+        if (zeroSequence != std::string::npos && zeroSequence > dot) 
         {
-            resultStr = resultStr.substr(0, zero_sequence);
+            resultStr = resultStr.substr(0, zeroSequence);
         }
-        size_t nine_sequence = resultStr.find("99999999", dot);
-        if (nine_sequence != std::string::npos && nine_sequence > dot) 
+        size_t nineSequence = resultStr.find("99999999", dot);
+        if (nineSequence != std::string::npos && nineSequence > dot) 
         {
-            resultStr = resultStr.substr(0, nine_sequence);
+            resultStr = resultStr.substr(0, nineSequence);
             for (int i = (int)resultStr.size() - 1; i >= 0; --i) 
             {
                 if (resultStr[i] == '.') continue;
@@ -291,21 +291,21 @@ unsigned long long FractionNumber::vectorToInt(const std::vector<uint8_t>& vec)
     return result;
 }
 
-bool readFile(ifstream& input_file, vector<string>& file_content)
+bool readFile(ifstream& inputFile, vector<string>& fileContent)
 {
-    string input_line;
+    string inputLine;
 
     // Считываем построчно данные из файла до конца файла
-    while (getline(input_file, input_line))
+    while (getline(inputFile, inputLine))
     {
-        file_content.push_back(input_line);
+        fileContent.push_back(inputLine);
     }
 
     // После считывания закрываем файл
-    input_file.close();
+    inputFile.close();
 
     // Проверка, удалось ли загрузить данные из файла
-    if (!file_content.empty())
+    if (!fileContent.empty())
     {
         return true;
     }
@@ -314,18 +314,18 @@ bool readFile(ifstream& input_file, vector<string>& file_content)
     return false;
 }
 
-vector<string> splitString(const string& input_data) 
+vector<string> splitString(const string& inputData) 
 {
-    vector<string> splited_string;
+    vector<string> splitString;
     size_t i = 0;
-    size_t n = input_data.length();
+    size_t n = inputData.length();
 
     // Для каждого символа строки
     while (i < n) 
     {
 
         // Если символ пробел или табуляция, пропустить
-        if (input_data[i] == ' ' || input_data[i] == '\t')
+        if (inputData[i] == ' ' || inputData[i] == '\t')
         {
             i++;
             continue;
@@ -336,25 +336,25 @@ vector<string> splitString(const string& input_data)
         size_t start = i;
 
         // Дойти до конца строки или до следующего пробела
-        while (i < n && input_data[i] != ' ' && input_data[i] != '\t') 
+        while (i < n && inputData[i] != ' ' && inputData[i] != '\t') 
         {
             i++;
         }
 
         // Взять получившуюся подстроку
-        string sub = input_data.substr(start, i - start);
+        string sub = inputData.substr(start, i - start);
 
         // Добавить её в контейнер
-        splited_string.push_back(sub);
+        splitString.push_back(sub);
     }
 
-    return splited_string;
+    return splitString;
 }
 
-DataErrors parseInputData(const string& input_data, string& operation, FractionNumber& first, FractionNumber& second)
+DataErrors parseInputData(const string& inputData, string& operation, FractionNumber& first, FractionNumber& second)
 {
     //Разбиваем строку на токены
-    vector<string> tokens = splitString(input_data);
+    vector<string> tokens = splitString(inputData);
 
     // Если число токенов не равно 3
     if (tokens.size() != 3) 
@@ -432,39 +432,39 @@ DataErrors parseInputData(const string& input_data, string& operation, FractionN
     return DataErrors::NO_DATA_ERROR;
 }
 
-void writeResultToFile(ofstream& output_file, const FractionNumber& result)
+void writeResultToFile(ofstream& outputFile, const FractionNumber& result)
 {
     // Если число отрицательное и это не ноль
     if (result.isNegative && !result.isZero())
     {
-        output_file << "-";
+        outputFile << "-";
     }
 
     // Вывод целой части
     if (result.integerPart.empty())
     {
-        output_file << "0";
+        outputFile << "0";
     }
     else
     {
         for (uint8_t digit : result.integerPart)
         {
-            output_file << (int)digit;
+            outputFile << (int)digit;
         }
     }
 
     // Если есть дробная часть, пишем точку и саму дробную часть
     if (!result.fractionPart.empty())
     {
-        output_file << ".";
+        outputFile << ".";
 
         for (uint8_t digit : result.fractionPart)
         {
-            output_file << (int)digit;
+            outputFile << (int)digit;
         }
     }
 
-    output_file.close();
+    outputFile.close();
 }
 
 FractionNumber FractionNumber::add(const FractionNumber& other)
@@ -736,113 +736,113 @@ FractionNumber FractionNumber::div(const FractionNumber& other)
     // Определяем знак результата
     bool targetNegative = (this->isNegative != other.isNegative);
 
-    std::vector<uint8_t> frac_A = this->fractionPart;
-    std::vector<uint8_t> frac_B = other.fractionPart;
+    std::vector<uint8_t> fracA = this->fractionPart;
+    std::vector<uint8_t> fracB = other.fractionPart;
 
-    size_t max_frac_len = std::max(frac_A.size(), frac_B.size());
+    size_t maxFracLen = std::max(fracA.size(), fracB.size());
 
     // Выравниваем дробные части нулями
-    appendZerosRight(frac_A, max_frac_len);
-    appendZerosRight(frac_B, max_frac_len);
+    appendZerosRight(fracA, maxFracLen);
+    appendZerosRight(fracB, maxFracLen);
 
     // Объединяем целую и дробную часть у первого числа
-    std::vector<uint8_t> dividend_vector = this->integerPart;
-    dividend_vector.insert(dividend_vector.end(), frac_A.begin(), frac_A.end());
+    std::vector<uint8_t> dividendVector = this->integerPart;
+    dividendVector.insert(dividendVector.end(), fracA.begin(), fracA.end());
 
     // Объединяем целую и дробную часть у второго числа
-    std::vector<uint8_t> divisor_vector = other.integerPart;
-    divisor_vector.insert(divisor_vector.end(), frac_B.begin(), frac_B.end());
+    std::vector<uint8_t> divisorVector = other.integerPart;
+    divisorVector.insert(divisorVector.end(), fracB.begin(), fracB.end());
 
     // Удаляем ведущие нули у обоих чисел
-    removeLeadingZeros(divisor_vector);
-    removeLeadingZeros(dividend_vector);
+    removeLeadingZeros(divisorVector);
+    removeLeadingZeros(dividendVector);
 
     // Запоминаем исходный размер делимого, чтобы знать, где заканчивается целая часть
-    size_t real_dividend_size = dividend_vector.size();
+    size_t realDividendSize = dividendVector.size();
 
     FractionNumber result;
     result.isNegative = targetNegative;
 
     std::vector<uint8_t> remainder;
-    size_t current_digit_idx = 0;
+    size_t currentDigitIdx = 0;
 
-    FractionNumber rem_fn;
-    FractionNumber div_fn;
-    div_fn.integerPart = divisor_vector;
-    div_fn.fractionPart = {};
-    div_fn.isNegative = false;
+    FractionNumber remFn;
+    FractionNumber divFn;
+    divFn.integerPart = divisorVector;
+    divFn.fractionPart = {};
+    divFn.isNegative = false;
 
     // Цикл деления столбиком
     // Выполняется, пока не закончатся цифры в делимом или пока не наберём 16 знаков в дробной части
-    while (current_digit_idx < dividend_vector.size() || result.fractionPart.size() < 16) 
+    while (currentDigitIdx < dividendVector.size() || result.fractionPart.size() < 16) 
     {
 
         // Определяем, перешли ли мы уже к вычислению дробной части
-        bool is_fraction_now = (current_digit_idx >= real_dividend_size);
+        bool isFractionNow = (currentDigitIdx >= realDividendSize);
 
         // Если цифры в делимом ещё есть - берём текущую, если закончились — сносим ноль
-        uint8_t next_digit = 0;
-        if (current_digit_idx < dividend_vector.size()) 
+        uint8_t nextDigit = 0;
+        if (currentDigitIdx < dividendVector.size()) 
         {
-            next_digit = dividend_vector[current_digit_idx];
+            nextDigit = dividendVector[currentDigitIdx];
         }
         // Сдвигаем указатель разряда вперед
-        current_digit_idx++;
+        currentDigitIdx++;
 
         // Добавляем снесённую цифру в конец текущего остатка и убираем лишние ведущие нули
-        remainder.push_back(next_digit);
+        remainder.push_back(nextDigit);
         removeLeadingZeros(remainder);
 
         // Считаем, сколько раз делитель поместится в текущий остаток
-        int fit_count = 0;
+        int fitCount = 0;
         while (true) 
         {
-            bool remainder_is_less = false;
+            bool remainderIsLess = false;
 
             // Если количество разрядов разное, то меньше то число, у которого вектор короче
-            if (remainder.size() != divisor_vector.size()) 
+            if (remainder.size() != divisorVector.size()) 
             {
-                remainder_is_less = remainder.size() < divisor_vector.size();
+                remainderIsLess = remainder.size() < divisorVector.size();
             }
             // Если длины векторов одинаковы, сравниваем их поэлементно
             else 
             {
-                remainder_is_less = remainder < divisor_vector;
+                remainderIsLess = remainder < divisorVector;
             }
             // Если остаток стал меньше делителя, подбор цифры завершён
-            if (remainder_is_less) 
+            if (remainderIsLess) 
             {
                 break;
             }
 
             // Настраиваем объект остатка под текущий вектор remainder
-            rem_fn.integerPart = remainder;
-            rem_fn.fractionPart = {};
-            rem_fn.isNegative = false;
+            remFn.integerPart = remainder;
+            remFn.fractionPart = {};
+            remFn.isNegative = false;
 
             // Вычитаем делитель из остатка
-            FractionNumber sub_res = rem_fn.sub(div_fn);
+            FractionNumber subRes = remFn.sub(divFn);
 
             // Обновляем остаток полученной разностью и зачищаем ведущие нули
-            remainder = sub_res.integerPart;
+            remainder = subRes.integerPart;
             removeLeadingZeros(remainder);
 
             // Увеличиваем счётчик успешных вычитаний
-            fit_count++;
+            fitCount++;
         }
 
         // Добавляем цифру в целую или дробную часть
-        if (!is_fraction_now) 
+        if (!isFractionNow) 
         {
-            result.integerPart.push_back(fit_count);
+            result.integerPart.push_back(fitCount);
         }
         else 
         {
-            result.fractionPart.push_back(fit_count);
+            result.fractionPart.push_back(fitCount);
         }
 
         // Выходим из цикла, если число разделилось нацело
-        if (current_digit_idx >= dividend_vector.size() &&
+        if (currentDigitIdx >= dividendVector.size() &&
             remainder.size() == 1 && remainder[0] == 0) 
         {
             break;
@@ -859,22 +859,22 @@ FractionNumber FractionNumber::div(const FractionNumber& other)
 
     if (dot != std::string::npos && s.length() > dot + 2) 
     {
-        char last_char = s.back();
+        char lastChar = s.back();
 
-        if (last_char != '0') 
+        if (lastChar != '0') 
         {
-            size_t zero_count = 0;
+            size_t zeroCount = 0;
             for (int i = (int)s.length() - 2; i > (int)dot; i--) 
             {
-                if (s[i] == '0') zero_count++;
+                if (s[i] == '0') zeroCount++;
                 else break;
             }
 
-            if (zero_count >= 3) 
+            if (zeroCount >= 3) 
             {
-                for (size_t i = s.length() - 1 - zero_count; i < s.length() - 1; i++) 
+                for (size_t i = s.length() - 1 - zeroCount; i < s.length() - 1; i++) 
                 {
-                    s[i] = last_char;
+                    s[i] = lastChar;
                 }
 
                 result.fractionPart.clear();
@@ -1055,20 +1055,20 @@ int main(int argc, char* argv[])
     }
 
     // Считать входной файл
-    ifstream input_file(argv[1]);
+    ifstream inputFile(argv[1]);
 
     // Если файл не удалось открыть
-    if (!input_file.is_open())
+    if (!inputFile.is_open())
     {
         // Выводим ошибку о некорректном входном файле
         cerr << "Error: Incorrect input file. Failed to open: " << argv[1] << endl;
         return 1;
     }
 
-    vector<string> file_content;
+    vector<string> fileContent;
 
     // Если не удалось считать данные из входного файла
-    if (!readFile(input_file, file_content))
+    if (!readFile(inputFile, fileContent))
     {
         // Выводим ошибку о невозможности считать данные из файла
         cerr << "Error: Unable to read data from the file or the file is empty." << endl;
@@ -1076,37 +1076,37 @@ int main(int argc, char* argv[])
     }
 
     // Если входные данные не соответствуют требованиям
-    if (file_content.size() != 1)
+    if (fileContent.size() != 1)
     {
         // Выводим ошибку о неверном количестве строк в файле
         cerr << "Error: Invalid number of lines in the file. Exactly 1 line is expected." << endl;
         return 1;
     }
 
-    string target_line = file_content[0];
+    string targetLine = fileContent[0];
 
     string operation;
     FractionNumber first;
     FractionNumber second;
 
     // Проверяем строку из файла на корректность данных и соответствие диапазону
-    DataErrors parse_result = parseInputData(target_line, operation, first, second);
+    DataErrors parseResult = parseInputData(targetLine, operation, first, second);
 
-    if (parse_result != DataErrors::NO_DATA_ERROR)
+    if (parseResult != DataErrors::NO_DATA_ERROR)
     {
-        if (parse_result == DataErrors::WRONG_INPUT) 
+        if (parseResult == DataErrors::WRONG_INPUT) 
         {
             cerr << "Error: Input characters do not match the required data template." << endl;
         }
-        else if (parse_result == DataErrors::WRONG_OPERATION) 
+        else if (parseResult == DataErrors::WRONG_OPERATION) 
         {
             cerr << "Error: Unsupported arithmetic operation." << endl;
         }
-        else if (parse_result == DataErrors::NO_FRACTION) 
+        else if (parseResult == DataErrors::NO_FRACTION) 
         {
             cerr << "Error: Provided characters do not form a valid fractional number." << endl;
         }
-        else if (parse_result == DataErrors::INCORRECT_RANGE) 
+        else if (parseResult == DataErrors::INCORRECT_RANGE) 
         {
             cerr << "Error: Passed arguments are out of the allowed range." << endl;
         }
@@ -1124,16 +1124,16 @@ int main(int argc, char* argv[])
     else if (operation == "sqrt") result = first.sqrt(second);
 
     // Записываем результат в выходной файл
-    string output_path = string(argv[2]) + "/result.txt";
-    ofstream output_file(output_path);
+    string outputPath = string(argv[2]) + "/result.txt";
+    ofstream outputFile(outputPath);
 
-    if (!output_file.is_open())
+    if (!outputFile.is_open())
     {
-        cerr << "Error: Failed to create or open the output file at: " << output_path << endl;
+        cerr << "Error: Failed to create or open the output file at: " << outputPath << endl;
         return 1;
     }
 
-    writeResultToFile(output_file, result);
+    writeResultToFile(outputFile, result);
 
     cout << "The program completed successfully. The result has been saved." << endl;
     return 0;
