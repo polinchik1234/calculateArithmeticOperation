@@ -55,7 +55,7 @@ string FractionNumber::toString() const
 
     if (isNegative)
     {
-        result = result + "-";
+        result += "-";
     }
 
     for (int i = 0; i < integerPart.size(); i++)
