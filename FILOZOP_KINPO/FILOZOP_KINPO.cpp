@@ -139,8 +139,10 @@ bool FractionNumber::compareByModule(const FractionNumber& other,
 
 void FractionNumber::removeLeadingZeros(std::vector<uint8_t>& vec) const 
 {
+    // Пока в векторе больше одного элемента и первый элемент равен 0
     while (vec.size() > 1 && vec[0] == 0) 
     {
+        // Удаляем этот ноль из начала
         vec.erase(vec.begin());
     }
 }
