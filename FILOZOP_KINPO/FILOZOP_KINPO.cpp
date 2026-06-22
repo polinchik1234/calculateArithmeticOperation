@@ -149,8 +149,10 @@ void FractionNumber::removeLeadingZeros(std::vector<uint8_t>& vec) const
 
 void FractionNumber::removeTrailingZeros(std::vector<uint8_t>& vec) const 
 {
+    // Пока вектор не пустой и его самый последний элемент равен 0
     while (vec.size() > 0 && vec.back() == 0) 
     {
+        // Удаляем ноль с конца
         vec.pop_back();
     }
 }
