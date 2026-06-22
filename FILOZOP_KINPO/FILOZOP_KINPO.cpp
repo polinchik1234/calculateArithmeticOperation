@@ -98,8 +98,10 @@ void FractionNumber::appendZerosRight(std::vector<uint8_t>& vec, size_t targetLe
 
 void FractionNumber::prependZerosLeft(std::vector<uint8_t>& vec, size_t targetLen) const 
 {
+    // Пока размер вектора меньше нужной длины
     while (vec.size() < targetLen) 
     {
+        // Добавляем ноль в начало
         vec.insert(vec.begin(), 0);
     }
 }
