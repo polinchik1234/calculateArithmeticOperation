@@ -44,6 +44,11 @@ FractionNumber::FractionNumber(const string& str)
     }
 }
 
+FractionNumber::FractionNumber() 
+{
+    isNegative = false;
+}
+
 string FractionNumber::toString() const
 {
     string result;

@@ -25,9 +25,7 @@ private:
 	friend void writeResultToFile(ofstream& output_file, const FractionNumber& result);
 
 public:
-	FractionNumber() {
-		isNegative = false;
-	}
+	FractionNumber();
 	FractionNumber(const string& str);
 
 	string toString() const;
