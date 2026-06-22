@@ -266,10 +266,14 @@ FractionNumber FractionNumber::powInt(FractionNumber base, unsigned long long ex
 {
     FractionNumber result;
     result.integerPart = { 1 }; result.fractionPart = {}; result.isNegative = false;
+    // Алгоритм возведения в степень
     while (exp > 0) 
     {
+        // Если степень нечётная, умножаем результат на текущее основание
         if (exp % 2 == 1) result = result.mul(base);
+        // Возводим базу в квадрат
         base = base.mul(base);
+        // Уменьшаем степень в два раза
         exp /= 2;
     }
     return result;
