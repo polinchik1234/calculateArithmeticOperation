@@ -80,14 +80,18 @@ string FractionNumber::toString() const
     return result;
 }
 
-void FractionNumber::appendZerosRight(std::vector<uint8_t>& vec, size_t targetLen) const {
-    while (vec.size() < targetLen) {
+void FractionNumber::appendZerosRight(std::vector<uint8_t>& vec, size_t targetLen) const 
+{
+    while (vec.size() < targetLen) 
+    {
         vec.push_back(0);
     }
 }
 
-void FractionNumber::prependZerosLeft(std::vector<uint8_t>& vec, size_t targetLen) const {
-    while (vec.size() < targetLen) {
+void FractionNumber::prependZerosLeft(std::vector<uint8_t>& vec, size_t targetLen) const 
+{
+    while (vec.size() < targetLen) 
+    {
         vec.insert(vec.begin(), 0);
     }
 }
@@ -97,20 +101,25 @@ bool FractionNumber::compareByModule(const FractionNumber& other,
     const std::vector<uint8_t>& f2) const
 {
     //Сравниваем целые части по длине
-    if (this->integerPart.size() != other.integerPart.size()) {
+    if (this->integerPart.size() != other.integerPart.size()) 
+    {
         return this->integerPart.size() > other.integerPart.size();
     }
 
     //Сравниваем целые части по каждой цифре
-    for (size_t i = 0; i < this->integerPart.size(); i++) {
-        if (this->integerPart[i] != other.integerPart[i]) {
+    for (size_t i = 0; i < this->integerPart.size(); i++) 
+    {
+        if (this->integerPart[i] != other.integerPart[i]) 
+        {
             return this->integerPart[i] > other.integerPart[i];
         }
     }
 
     //Сравниваем выровненные дробные части
-    for (size_t i = 0; i < f1.size(); i++) {
-        if (f1[i] != f2[i]) {
+    for (size_t i = 0; i < f1.size(); i++) 
+    {
+        if (f1[i] != f2[i]) 
+        {
             return f1[i] > f2[i];
         }
     }
@@ -118,32 +127,39 @@ bool FractionNumber::compareByModule(const FractionNumber& other,
     return true;
 }
 
-void FractionNumber::removeLeadingZeros(std::vector<uint8_t>& vec) const {
-    while (vec.size() > 1 && vec[0] == 0) {
+void FractionNumber::removeLeadingZeros(std::vector<uint8_t>& vec) const 
+{
+    while (vec.size() > 1 && vec[0] == 0) 
+    {
         vec.erase(vec.begin());
     }
 }
 
-void FractionNumber::removeTrailingZeros(std::vector<uint8_t>& vec) const {
-    while (vec.size() > 0 && vec.back() == 0) {
+void FractionNumber::removeTrailingZeros(std::vector<uint8_t>& vec) const 
+{
+    while (vec.size() > 0 && vec.back() == 0) 
+    {
         vec.pop_back();
     }
 }
 
-bool FractionNumber::isZero() const {
+bool FractionNumber::isZero() const 
+{
     for (uint8_t d : this->integerPart) if (d != 0) return false;
     for (uint8_t d : this->fractionPart) if (d != 0) return false;
     return true;
 }
 
 // Преобразует число FractionNumber в число типа double
-double FractionNumber::convertToDouble(const FractionNumber& fn) {
+double FractionNumber::convertToDouble(const FractionNumber& fn) 
+{
     double result = 0.0;
     for (size_t i = 0; i < fn.integerPart.size(); ++i)
         result = result * 10.0 + fn.integerPart[i];
     double frac = 0.0;
     double place = 0.1;
-    for (size_t i = 0; i < fn.fractionPart.size(); ++i) {
+    for (size_t i = 0; i < fn.fractionPart.size(); ++i) 
+    {
         frac += fn.fractionPart[i] * place;
         place *= 0.1;
     }
@@ -177,28 +193,35 @@ FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
     std::string resultStr = intPartStr + "." + s;
 
     size_t dot = resultStr.find('.');
-    if (dot != std::string::npos) {
+    if (dot != std::string::npos) 
+    {
         size_t zero_sequence = resultStr.find("00000000", dot);
-        if (zero_sequence != std::string::npos && zero_sequence > dot) {
+        if (zero_sequence != std::string::npos && zero_sequence > dot) 
+        {
             resultStr = resultStr.substr(0, zero_sequence);
         }
         size_t nine_sequence = resultStr.find("99999999", dot);
-        if (nine_sequence != std::string::npos && nine_sequence > dot) {
+        if (nine_sequence != std::string::npos && nine_sequence > dot) 
+        {
             resultStr = resultStr.substr(0, nine_sequence);
-            for (int i = (int)resultStr.size() - 1; i >= 0; --i) {
+            for (int i = (int)resultStr.size() - 1; i >= 0; --i) 
+            {
                 if (resultStr[i] == '.') continue;
-                if (resultStr[i] < '9') {
+                if (resultStr[i] < '9') 
+                {
                     resultStr[i]++;
                     break;
                 }
-                else {
+                else 
+                {
                     resultStr[i] = '0';
                 }
             }
         }
     }
 
-    if (!resultStr.empty() && resultStr.back() == '.') {
+    if (!resultStr.empty() && resultStr.back() == '.') 
+    {
         resultStr.pop_back();
     }
 
@@ -207,10 +230,12 @@ FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
     return FractionNumber(resultStr);
 }
 
-FractionNumber FractionNumber::powInt(FractionNumber base, unsigned long long exp) {
+FractionNumber FractionNumber::powInt(FractionNumber base, unsigned long long exp) 
+{
     FractionNumber result;
     result.integerPart = { 1 }; result.fractionPart = {}; result.isNegative = false;
-    while (exp > 0) {
+    while (exp > 0) 
+    {
         if (exp % 2 == 1) result = result.mul(base);
         base = base.mul(base);
         exp /= 2;
@@ -218,7 +243,8 @@ FractionNumber FractionNumber::powInt(FractionNumber base, unsigned long long ex
     return result;
 }
 
-double FractionNumber::calcLn(double x) {
+double FractionNumber::calcLn(double x) 
+{
     if (x <= 0.0) return 0.0;
 
     double result = 0.0;
@@ -232,7 +258,8 @@ double FractionNumber::calcLn(double x) {
     double power = t;
     double sum = 0.0;
 
-    for (int k = 0; k < 200; ++k) {
+    for (int k = 0; k < 200; ++k) 
+    {
         double term = power / (2 * k + 1);
         sum += term;
         power *= t2;
@@ -241,10 +268,12 @@ double FractionNumber::calcLn(double x) {
     return result + 2.0 * sum;
 }
 
-double FractionNumber::calcExp(double x) {
+double FractionNumber::calcExp(double x) 
+{
     double result = 1.0;
     double term = 1.0;
-    for (int k = 1; k < 250; ++k) {
+    for (int k = 1; k < 250; ++k) 
+    {
         term *= x / k;
         result += term;
         if (term < 1e-19 && term > -1e-19) break;
@@ -252,9 +281,11 @@ double FractionNumber::calcExp(double x) {
     return result;
 }
 
-unsigned long long FractionNumber::vectorToInt(const std::vector<uint8_t>& vec) {
+unsigned long long FractionNumber::vectorToInt(const std::vector<uint8_t>& vec) 
+{
     unsigned long long result = 0;
-    for (uint8_t d : vec) {
+    for (uint8_t d : vec) 
+    {
         result = result * 10 + d;
     }
     return result;
@@ -290,10 +321,12 @@ vector<string> splitString(const string& input_data)
     size_t n = input_data.length();
 
     // Для каждого символа строки
-    while (i < n) {
+    while (i < n) 
+    {
 
         // Если символ пробел или табуляция, пропустить
-        if (input_data[i] == ' ' || input_data[i] == '\t') {
+        if (input_data[i] == ' ' || input_data[i] == '\t')
+        {
             i++;
             continue;
         }
@@ -303,7 +336,8 @@ vector<string> splitString(const string& input_data)
         size_t start = i;
 
         // Дойти до конца строки или до следующего пробела
-        while (i < n && input_data[i] != ' ' && input_data[i] != '\t') {
+        while (i < n && input_data[i] != ' ' && input_data[i] != '\t') 
+        {
             i++;
         }
 
@@ -323,7 +357,8 @@ DataErrors parseInputData(const string& input_data, string& operation, FractionN
     vector<string> tokens = splitString(input_data);
 
     // Если число токенов не равно 3
-    if (tokens.size() != 3) {
+    if (tokens.size() != 3) 
+    {
         return DataErrors::WRONG_INPUT;
     }
 
@@ -332,16 +367,19 @@ DataErrors parseInputData(const string& input_data, string& operation, FractionN
     string token3 = tokens[2];
 
     // Если первый токен - это не sqrt или +, -, *, /, ^:
-    if (op != "sqrt" && op != "+" && op != "-" && op != "*" && op != "/" && op != "^") {
+    if (op != "sqrt" && op != "+" && op != "-" && op != "*" && op != "/" && op != "^") 
+    {
         return DataErrors::WRONG_OPERATION;
     }
 
     // Если второй и третий токен не дробное число
-    try {
+    try 
+    {
         FractionNumber tempFirst(token2);
         FractionNumber tempSecond(token3);
     }
-    catch (...) {
+    catch (...) 
+    {
         return DataErrors::NO_FRACTION;
     }
 
@@ -354,23 +392,29 @@ DataErrors parseInputData(const string& input_data, string& operation, FractionN
 
 
     // Проверка диапазонов для операции возведения в степень
-    if (op == "^") {
-        if ((val1 == 0.0 && val2 < 0.0) || (val1 < -100.0 || val1 > 100.0 || val2 < -5.0 || val2 > 5.0)) {
+    if (op == "^") 
+    {
+        if ((val1 == 0.0 && val2 < 0.0) || (val1 < -100.0 || val1 > 100.0 || val2 < -5.0 || val2 > 5.0)) 
+        {
             return DataErrors::INCORRECT_RANGE;
         }
     }
 
     // Если первый токен – sqrt и второй не в диапазону [0, 100000] 
     // или третий не в диапазоне [-10, 0) U (0, 10]
-    if (op == "sqrt") {
-        if (val1 < 0.0 || val1 > 100000.0 || val2 < -10.0 || val2 > 10.0 || val2 == 0.0) {
+    if (op == "sqrt") 
+    {
+        if (val1 < 0.0 || val1 > 100000.0 || val2 < -10.0 || val2 > 10.0 || val2 == 0.0) 
+        {
             return DataErrors::INCORRECT_RANGE;
         }
     }
 
     // Если первый токен +,-,/,* и второй или третий токен больше 1000 по модулю
-    if (op == "+" || op == "-" || op == "*" || op == "/") {
-        if (abs(val1) > 1000.0 || abs(val2) > 1000.0) {
+    if (op == "+" || op == "-" || op == "*" || op == "/") 
+    {
+        if (abs(val1) > 1000.0 || abs(val2) > 1000.0) 
+        {
             return DataErrors::INCORRECT_RANGE;
         }
     }
@@ -440,13 +484,15 @@ FractionNumber FractionNumber::add(const FractionNumber& other)
     appendZerosRight(frac2, maxFracLen);
 
     // Если знаки одинаковые
-    if (this->isNegative == other.isNegative) {
+    if (this->isNegative == other.isNegative) 
+    {
         result.isNegative = this->isNegative;
         int carry = 0;
 
         // Складываем дробную часть
         result.fractionPart.resize(maxFracLen);
-        for (int i = (int)maxFracLen - 1; i >= 0; i--) {
+        for (int i = (int)maxFracLen - 1; i >= 0; i--) 
+        {
             int sum = frac1[i] + frac2[i] + carry;
             result.fractionPart[i] = sum % 10;
             carry = sum / 10;
@@ -457,7 +503,8 @@ FractionNumber FractionNumber::add(const FractionNumber& other)
         int j = (int)other.integerPart.size() - 1;
         std::vector<uint8_t> tempInt;
 
-        while (i >= 0 || j >= 0 || carry > 0) {
+        while (i >= 0 || j >= 0 || carry > 0) 
+        {
             int sum = carry;
             if (i >= 0) { sum += this->integerPart[i]; i--; }
             if (j >= 0) { sum += other.integerPart[j]; j--; }
@@ -470,9 +517,11 @@ FractionNumber FractionNumber::add(const FractionNumber& other)
         result.integerPart = tempInt;
     }
     // Если знаки разные
-    else {
+    else 
+    {
         // Сравниваем числа по модулю
-        if (this->integerPart == other.integerPart && frac1 == frac2) {
+        if (this->integerPart == other.integerPart && frac1 == frac2) 
+        {
             result.integerPart = { 0 };
             result.fractionPart = {};
             result.isNegative = false;
@@ -495,13 +544,16 @@ FractionNumber FractionNumber::add(const FractionNumber& other)
 
         // Вычитаем дробную часть
         result.fractionPart.resize(maxFracLen);
-        for (int k = (int)maxFracLen - 1; k >= 0; k--) {
+        for (int k = (int)maxFracLen - 1; k >= 0; k--) 
+        {
             int diff = fA[k] - fB[k] - borrow;
-            if (diff < 0) {
+            if (diff < 0) 
+            {
                 diff += 10;
                 borrow = 1;
             }
-            else {
+            else 
+            {
                 borrow = 0;
             }
             result.fractionPart[k] = diff;
@@ -516,13 +568,16 @@ FractionNumber FractionNumber::add(const FractionNumber& other)
 
         // Вычитаем целые части
         std::vector<uint8_t> tempInt;
-        for (int i = (int)maxIntLen - 1; i >= 0; i--) {
+        for (int i = (int)maxIntLen - 1; i >= 0; i--) 
+        {
             int diff = intA[i] - intB[i] - borrow;
-            if (diff < 0) {
+            if (diff < 0) 
+            {
                 diff += 10;
                 borrow = 1;
             }
-            else {
+            else 
+            {
                 borrow = 0;
             }
             tempInt.push_back(diff);
@@ -541,7 +596,8 @@ FractionNumber FractionNumber::add(const FractionNumber& other)
     return result;
 }
 
-FractionNumber FractionNumber::sub(const FractionNumber& other) {
+FractionNumber FractionNumber::sub(const FractionNumber& other) 
+{
 
     FractionNumber modifiedOther = other;
 
@@ -551,19 +607,22 @@ FractionNumber FractionNumber::sub(const FractionNumber& other) {
     // Складываем текущее число с изменённым числом через метод add
     FractionNumber result = this->add(modifiedOther);
 
-    if (result.isZero()) {
+    if (result.isZero()) 
+    {
         result.isNegative = false;
     }
 
     return result;
 }
 
-FractionNumber FractionNumber::mul(const FractionNumber& other) {
+FractionNumber FractionNumber::mul(const FractionNumber& other) 
+{
 
     FractionNumber result;
 
     // Если одно из чисел равно 0, вернуть 0
-    if (this->isZero() || other.isZero()) {
+    if (this->isZero() || other.isZero()) 
+    {
         result.integerPart = { 0 };
         result.fractionPart = {};
         result.isNegative = false;
@@ -590,12 +649,14 @@ FractionNumber FractionNumber::mul(const FractionNumber& other) {
     std::vector<uint8_t> resDigits(resSize, 0);
 
     // Берем цифры второго числа, двигаясь справа налево
-    for (int j = (int)num2.size() - 1; j >= 0; j--) {
+    for (int j = (int)num2.size() - 1; j >= 0; j--) 
+    {
         // Обнуляем перенос
         int carry = 0;
 
         // Берем цифры первого числа, двигаясь справа налево
-        for (int i = (int)num1.size() - 1; i >= 0; i--) {
+        for (int i = (int)num1.size() - 1; i >= 0; i--) 
+        {
             // Индекс текущей ячейки в массиве результата
             int currentPos = i + j + 1;
 
@@ -612,7 +673,8 @@ FractionNumber FractionNumber::mul(const FractionNumber& other) {
             carry = sum / 10;
 
             // Если все цифры первого числа закончились
-            if (i == 0) {
+            if (i == 0) 
+            {
                 // Записываем оставшийся перенос в ячейку слева
                 resDigits[currentPos - 1] += carry;
             }
@@ -620,25 +682,30 @@ FractionNumber FractionNumber::mul(const FractionNumber& other) {
     }
 
     // Проверяем, есть ли дробная часть
-    if (totalFracLen > 0) {
+    if (totalFracLen > 0) 
+    {
         // Проверяем, можно ли разделить результат на целую и дробную часть
-        if (resDigits.size() > totalFracLen) {
+        if (resDigits.size() > totalFracLen) 
+        {
             // Определяем целую и дробную часть
             result.fractionPart.assign(resDigits.end() - totalFracLen, resDigits.end());
             result.integerPart.assign(resDigits.begin(), resDigits.end() - totalFracLen);
         }
         // Все цифры находятся в дробной части, целая часть равна 0
-        else {
+        else 
+        {
             result.fractionPart.assign(resDigits.begin(), resDigits.end());
 
             // Дополняем дробную часть ведущими нулями, если массив цифр оказался короче, чем нужно
-            while (result.fractionPart.size() < totalFracLen) {
+            while (result.fractionPart.size() < totalFracLen) 
+            {
                 result.fractionPart.insert(result.fractionPart.begin(), 0);
             }
             result.integerPart = { 0 };
         }
     }
-    else {
+    else 
+    {
         // Если дробной части нет
         result.integerPart = resDigits;
         result.fractionPart = {};
@@ -651,15 +718,18 @@ FractionNumber FractionNumber::mul(const FractionNumber& other) {
     return result;
 }
 
-FractionNumber FractionNumber::div(const FractionNumber& other) {
+FractionNumber FractionNumber::div(const FractionNumber& other) 
+{
 
     // Если делитель равен 0, вернуть ошибку
-    if (other.isZero()) {
+    if (other.isZero()) 
+    {
         throw std::invalid_argument("Division by zero.");
     }
 
     // Если делимое равно 0, вернуть 0
-    if (this->isZero()) {
+    if (this->isZero()) 
+    {
         return FractionNumber("0");
     }
 
@@ -704,14 +774,16 @@ FractionNumber FractionNumber::div(const FractionNumber& other) {
 
     // Цикл деления столбиком
     // Выполняется, пока не закончатся цифры в делимом или пока не наберём 16 знаков в дробной части
-    while (current_digit_idx < dividend_vector.size() || result.fractionPart.size() < 16) {
+    while (current_digit_idx < dividend_vector.size() || result.fractionPart.size() < 16) 
+    {
 
         // Определяем, перешли ли мы уже к вычислению дробной части
         bool is_fraction_now = (current_digit_idx >= real_dividend_size);
 
         // Если цифры в делимом ещё есть - берём текущую, если закончились — сносим ноль
         uint8_t next_digit = 0;
-        if (current_digit_idx < dividend_vector.size()) {
+        if (current_digit_idx < dividend_vector.size()) 
+        {
             next_digit = dividend_vector[current_digit_idx];
         }
         // Сдвигаем указатель разряда вперед
@@ -723,19 +795,23 @@ FractionNumber FractionNumber::div(const FractionNumber& other) {
 
         // Считаем, сколько раз делитель поместится в текущий остаток
         int fit_count = 0;
-        while (true) {
+        while (true) 
+        {
             bool remainder_is_less = false;
 
             // Если количество разрядов разное, то меньше то число, у которого вектор короче
-            if (remainder.size() != divisor_vector.size()) {
+            if (remainder.size() != divisor_vector.size()) 
+            {
                 remainder_is_less = remainder.size() < divisor_vector.size();
             }
             // Если длины векторов одинаковы, сравниваем их поэлементно
-            else {
+            else 
+            {
                 remainder_is_less = remainder < divisor_vector;
             }
             // Если остаток стал меньше делителя, подбор цифры завершён
-            if (remainder_is_less) {
+            if (remainder_is_less) 
+            {
                 break;
             }
 
@@ -756,16 +832,19 @@ FractionNumber FractionNumber::div(const FractionNumber& other) {
         }
 
         // Добавляем цифру в целую или дробную часть
-        if (!is_fraction_now) {
+        if (!is_fraction_now) 
+        {
             result.integerPart.push_back(fit_count);
         }
-        else {
+        else 
+        {
             result.fractionPart.push_back(fit_count);
         }
 
         // Выходим из цикла, если число разделилось нацело
         if (current_digit_idx >= dividend_vector.size() &&
-            remainder.size() == 1 && remainder[0] == 0) {
+            remainder.size() == 1 && remainder[0] == 0) 
+        {
             break;
         }
     }
@@ -778,23 +857,29 @@ FractionNumber FractionNumber::div(const FractionNumber& other) {
     std::string s = result.toString();
     size_t dot = s.find('.');
 
-    if (dot != std::string::npos && s.length() > dot + 2) {
+    if (dot != std::string::npos && s.length() > dot + 2) 
+    {
         char last_char = s.back();
 
-        if (last_char != '0') {
+        if (last_char != '0') 
+        {
             size_t zero_count = 0;
-            for (int i = (int)s.length() - 2; i > (int)dot; i--) {
+            for (int i = (int)s.length() - 2; i > (int)dot; i--) 
+            {
                 if (s[i] == '0') zero_count++;
                 else break;
             }
 
-            if (zero_count >= 3) {
-                for (size_t i = s.length() - 1 - zero_count; i < s.length() - 1; i++) {
+            if (zero_count >= 3) 
+            {
+                for (size_t i = s.length() - 1 - zero_count; i < s.length() - 1; i++) 
+                {
                     s[i] = last_char;
                 }
 
                 result.fractionPart.clear();
-                for (size_t i = dot + 1; i < s.length(); i++) {
+                for (size_t i = dot + 1; i < s.length(); i++) 
+                {
                     result.fractionPart.push_back(s[i] - '0');
                 }
             }
@@ -802,7 +887,8 @@ FractionNumber FractionNumber::div(const FractionNumber& other) {
     }
 
     // Оставляем точность до 16 знаков после запятой
-    if (result.fractionPart.size() > 16) {
+    if (result.fractionPart.size() > 16) 
+    {
         result.fractionPart.resize(16);
     }
 
@@ -812,10 +898,12 @@ FractionNumber FractionNumber::div(const FractionNumber& other) {
     return result;
 }
 
-FractionNumber FractionNumber::degree(const FractionNumber& exponent) {
+FractionNumber FractionNumber::degree(const FractionNumber& exponent) 
+{
 
     // Если показатель степени равен 0, вернуть 1
-    if (exponent.isZero()) {
+    if (exponent.isZero()) 
+    {
         FractionNumber res;
         res.integerPart = { 1 };
         res.fractionPart = {};
@@ -824,9 +912,11 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent) {
     }
 
     // Если основание степени равно 0
-    if (this->isZero()) {
+    if (this->isZero()) 
+    {
         // Если степень положительная, вернуть 0
-        if (!exponent.isNegative) {
+        if (!exponent.isNegative) 
+        {
             FractionNumber res;
             res.integerPart = { 0 };
             res.fractionPart = {};
@@ -839,7 +929,8 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent) {
 
     // Проверяем, равен ли показатель степени единице
     bool otherIsOne = false;
-    if (exponent.integerPart.size() == 1 && exponent.integerPart[0] == 1 && !exponent.isNegative) {
+    if (exponent.integerPart.size() == 1 && exponent.integerPart[0] == 1 && !exponent.isNegative) 
+    {
         bool onlyZeros = true;
         for (auto d : exponent.fractionPart) if (d != 0) onlyZeros = false;
         if (onlyZeros) otherIsOne = true;
@@ -852,7 +943,8 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent) {
     for (auto d : exponent.fractionPart) if (d != 0) { expIsInteger = false; break; }
 
     
-    if (expIsInteger) {
+    if (expIsInteger) 
+    {
 
         unsigned long long loopLimit = vectorToInt(exponent.integerPart);
 
@@ -862,7 +954,8 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent) {
         FractionNumber result = powInt(baseAbs, loopLimit);
 
         // Если степень была отрицательной, получаем обратное число для результата
-        if (exponent.isNegative) {
+        if (exponent.isNegative) 
+        {
             FractionNumber one; one.integerPart = { 1 };
             result = one.div(result);
         }
@@ -880,7 +973,8 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent) {
     double exp = convertToDouble(exponent);
 
     // Нельзя возводить отрицательное число в дробную степень
-    if (base < 0 && exp != (long long)exp) {
+    if (base < 0 && exp != (long long)exp) 
+    {
         throw std::invalid_argument("Negative base with non-integer exponent.");
     }
 
@@ -896,14 +990,16 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent) {
     FractionNumber result = convertFromDouble(val, 16); // Заменено на convertFromDouble
 
     // Восстановление знака
-    if (baseNeg) {
+    if (baseNeg) 
+    {
         // Преобразуем целую часть степени в число, чтобы проверить её чётность
         unsigned long long intExp = vectorToInt(exponent.integerPart);
         // Минус остаётся только если целая часть степени была нечётной
         result.isNegative = (intExp % 2 == 1);
     }
     // Если основание было положительным, результат всегда положительный
-    else {
+    else 
+    {
         result.isNegative = false;
     }
 
@@ -911,10 +1007,12 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent) {
     return result;
 }
 
-FractionNumber FractionNumber::sqrt(const FractionNumber& other) {
+FractionNumber FractionNumber::sqrt(const FractionNumber& other) 
+{
 
     // Если подкоренное выражение равно 0, вернуть 0
-    if (this->isZero()) {
+    if (this->isZero()) 
+    {
         FractionNumber zero;
         zero.integerPart = { 0 };
         zero.fractionPart = {};
@@ -936,7 +1034,8 @@ FractionNumber FractionNumber::sqrt(const FractionNumber& other) {
     FractionNumber result = tempBase.degree(invExp);
 
     // Если исходное число под корнем было отрицательным, возвращаем минус
-    if (wasNegative) {
+    if (wasNegative) 
+    {
 
         result.isNegative = true;
     }
@@ -995,16 +1094,20 @@ int main(int argc, char* argv[])
 
     if (parse_result != DataErrors::NO_DATA_ERROR)
     {
-        if (parse_result == DataErrors::WRONG_INPUT) {
+        if (parse_result == DataErrors::WRONG_INPUT) 
+        {
             cerr << "Error: Input characters do not match the required data template." << endl;
         }
-        else if (parse_result == DataErrors::WRONG_OPERATION) {
+        else if (parse_result == DataErrors::WRONG_OPERATION) 
+        {
             cerr << "Error: Unsupported arithmetic operation." << endl;
         }
-        else if (parse_result == DataErrors::NO_FRACTION) {
+        else if (parse_result == DataErrors::NO_FRACTION) 
+        {
             cerr << "Error: Provided characters do not form a valid fractional number." << endl;
         }
-        else if (parse_result == DataErrors::INCORRECT_RANGE) {
+        else if (parse_result == DataErrors::INCORRECT_RANGE) 
+        {
             cerr << "Error: Passed arguments are out of the allowed range." << endl;
         }
         return 1;
