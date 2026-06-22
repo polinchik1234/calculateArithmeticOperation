@@ -159,7 +159,9 @@ void FractionNumber::removeTrailingZeros(std::vector<uint8_t>& vec) const
 
 bool FractionNumber::isZero() const 
 {
+    // Если целая часть не равна 0, возвращаем false
     for (uint8_t d : this->integerPart) if (d != 0) return false;
+    // Если дробная часть не равна 0, возвращаем false
     for (uint8_t d : this->fractionPart) if (d != 0) return false;
     return true;
 }
