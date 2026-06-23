@@ -335,8 +335,10 @@ double FractionNumber::calcExp(double x)
 unsigned long long FractionNumber::vectorToInt(const std::vector<uint8_t>& vec) 
 {
     unsigned long long result = 0;
+    // Собираем отдельные цифры из вектора в одно целое число
     for (uint8_t d : vec) 
     {
+        // Сдвигаем текущее число влево на один разряд и добавляем новую цифру
         result = result * 10 + d;
     }
     return result;
