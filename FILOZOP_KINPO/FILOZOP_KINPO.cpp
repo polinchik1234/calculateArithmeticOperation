@@ -161,9 +161,13 @@ void FractionNumber::removeTrailingZeros(std::vector<uint8_t>& vec)
 bool FractionNumber::isZero() const
 {
     // ≈сли цела€ часть не равна 0, возвращаем false
-    for (uint8_t d : this->integerPart) if (d != 0) return false;
+    if (!all_of(integerPart.begin(), integerPart.end(), [](uint8_t d) { return d == 0; })) {
+        return false;
+    }
     // ≈сли дробна€ часть не равна 0, возвращаем false
-    for (uint8_t d : this->fractionPart) if (d != 0) return false;
+    if (!all_of(fractionPart.begin(), fractionPart.end(), [](uint8_t d) { return d == 0; })) {
+        return false;
+    }
     return true;
 }
 
