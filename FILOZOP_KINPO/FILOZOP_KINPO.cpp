@@ -4,6 +4,7 @@
 #include <map>
 #include <fstream>
 #include <string>
+#include <numeric>
 
 FractionNumber::FractionNumber(const string& str)
 {
@@ -334,14 +335,10 @@ double FractionNumber::calcExp(double x)
 
 unsigned long long FractionNumber::vectorToInt(const std::vector<uint8_t>& vec)
 {
-    unsigned long long result = 0;
     // Собираем отдельные цифры из вектора в одно целое число
-    for (uint8_t d : vec)
-    {
-        // Сдвигаем текущее число влево на один разряд и добавляем новую цифру
-        result = result * 10 + d;
-    }
-    return result;
+    return std::accumulate(vec.begin(), vec.end(), 0ULL, [](unsigned long long result, uint8_t d) {
+        return result * 10 + d;
+        });
 }
 
 // Преобразует число FractionNumber в число типа double
