@@ -1,4 +1,4 @@
-п»ї#include "Arithmetic.h"
+#include "Arithmetic.h"
 #include <iostream>
 #include <algorithm>
 #include <map>
@@ -10,7 +10,7 @@ FractionNumber::FractionNumber(const string& str)
     isNegative = false;
     string s = str;
 
-    //РћРїСЂРµРґРµР»РµРЅРёРµ Р·РЅР°РєР°
+    //Определение знака
     if (str[0] == '-')
     {
         isNegative = true;
@@ -19,7 +19,7 @@ FractionNumber::FractionNumber(const string& str)
 
     int dot = s.find('.');
 
-    //Р•СЃР»Рё РЅРµС‚ РґСЂРѕР±РЅРѕР№ С‡Р°СЃС‚Рё
+    //Если нет дробной части
     if (dot == -1)
     {
         for (int i = 0; i < s.length(); i++)
@@ -29,7 +29,7 @@ FractionNumber::FractionNumber(const string& str)
         fractionPart.push_back(0);
     }
 
-    //Р•СЃР»Рё РµСЃС‚СЊ РґСЂРѕР±РЅР°СЏ С‡Р°СЃС‚СЊ
+    //Если есть дробная часть
     else
     {
         for (int i = 0; i < dot; i++)
@@ -44,8 +44,9 @@ FractionNumber::FractionNumber(const string& str)
     }
 }
 
-FractionNumber::FractionNumber() 
+FractionNumber::FractionNumber()
 {
+    // По умолчанию число считается положительным
     isNegative = false;
 }
 
@@ -53,30 +54,30 @@ string FractionNumber::toString() const
 {
     string result;
 
-    // Р”РѕР±Р°РІР»СЏРµРј Р·РЅР°Рє РјРёРЅСѓСЃ, РµСЃР»Рё С‡РёСЃР»Рѕ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕРµ
+    // Добавляем знак минус, если число отрицательное
     if (isNegative)
     {
         result += "-";
     }
 
-    // РџРѕСЂР°Р·СЂСЏРґРЅРѕ СЃРѕР±РёСЂР°РµРј С†РµР»СѓСЋ С‡Р°СЃС‚СЊ С‡РёСЃР»Р°
+    // Поразрядно собираем целую часть числа
     for (int i = 0; i < integerPart.size(); i++)
     {
         result = result + to_string(integerPart[i]);
     }
 
-    // Р”РѕР±Р°РІР»СЏРµРј С‚РѕС‡РєСѓ РјРµР¶РґСѓ С†РµР»РѕР№ Рё РґСЂРѕР±РЅРѕР№ С‡Р°СЃС‚СЊСЋ
+    // Добавляем точку между целой и дробной частью
     result = result + ".";
 
-    // Р¤РѕСЂРјРёСЂСѓРµРј РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ С‡РёСЃР»Р°
+    // Формируем дробную часть числа
     if (fractionPart.empty())
     {
-        // Р•СЃР»Рё РґСЂРѕР±РЅР°СЏ С‡Р°СЃС‚СЊ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚, Р·Р°РїРёСЃС‹РІР°РµРј РЅРѕР»СЊ
+        // Если дробная часть отсутствует, записываем ноль
         result = result + "0";
     }
     else
     {
-        // Р•СЃР»Рё РґСЂРѕР±РЅР°СЏ С‡Р°СЃС‚СЊ РµСЃС‚СЊ, РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕ РїРµСЂРµРЅРѕСЃРёРј РІСЃРµ С†РёС„СЂС‹
+        // Если дробная часть есть, последовательно переносим все цифры
         for (int i = 0; i < fractionPart.size(); i++)
         {
             result = result + to_string(fractionPart[i]);
@@ -86,22 +87,22 @@ string FractionNumber::toString() const
     return result;
 }
 
-void FractionNumber::appendZerosRight(std::vector<uint8_t>& vec, size_t targetLen) const 
+void FractionNumber::appendZerosRight(std::vector<uint8_t>& vec, size_t targetLen) const
 {
-    // РџРѕРєР° СЂР°Р·РјРµСЂ РІРµРєС‚РѕСЂР° РјРµРЅСЊС€Рµ РЅСѓР¶РЅРѕР№ РґР»РёРЅС‹
-    while (vec.size() < targetLen) 
+    // Пока размер вектора меньше нужной длины
+    while (vec.size() < targetLen)
     {
-        // Р”РѕР±Р°РІР»СЏРµРј РЅРѕР»СЊ РІ РєРѕРЅРµС†
+        // Добавляем ноль в конец
         vec.push_back(0);
     }
 }
 
-void FractionNumber::prependZerosLeft(std::vector<uint8_t>& vec, size_t targetLen) const 
+void FractionNumber::prependZerosLeft(std::vector<uint8_t>& vec, size_t targetLen) const
 {
-    // РџРѕРєР° СЂР°Р·РјРµСЂ РІРµРєС‚РѕСЂР° РјРµРЅСЊС€Рµ РЅСѓР¶РЅРѕР№ РґР»РёРЅС‹
-    while (vec.size() < targetLen) 
+    // Пока размер вектора меньше нужной длины
+    while (vec.size() < targetLen)
     {
-        // Р”РѕР±Р°РІР»СЏРµРј РЅРѕР»СЊ РІ РЅР°С‡Р°Р»Рѕ
+        // Добавляем ноль в начало
         vec.insert(vec.begin(), 0);
     }
 }
@@ -110,25 +111,25 @@ bool FractionNumber::compareByModule(const FractionNumber& other,
     const std::vector<uint8_t>& f1,
     const std::vector<uint8_t>& f2) const
 {
-    //РЎСЂР°РІРЅРёРІР°РµРј С†РµР»С‹Рµ С‡Р°СЃС‚Рё РїРѕ РґР»РёРЅРµ
-    if (this->integerPart.size() != other.integerPart.size()) 
+    //Сравниваем целые части по длине
+    if (this->integerPart.size() != other.integerPart.size())
     {
         return this->integerPart.size() > other.integerPart.size();
     }
 
-    //РЎСЂР°РІРЅРёРІР°РµРј С†РµР»С‹Рµ С‡Р°СЃС‚Рё РїРѕ РєР°Р¶РґРѕР№ С†РёС„СЂРµ
-    for (size_t i = 0; i < this->integerPart.size(); i++) 
+    //Сравниваем целые части по каждой цифре
+    for (size_t i = 0; i < this->integerPart.size(); i++)
     {
-        if (this->integerPart[i] != other.integerPart[i]) 
+        if (this->integerPart[i] != other.integerPart[i])
         {
             return this->integerPart[i] > other.integerPart[i];
         }
     }
 
-    //РЎСЂР°РІРЅРёРІР°РµРј РІС‹СЂРѕРІРЅРµРЅРЅС‹Рµ РґСЂРѕР±РЅС‹Рµ С‡Р°СЃС‚Рё
-    for (size_t i = 0; i < f1.size(); i++) 
+    //Сравниваем выровненные дробные части
+    for (size_t i = 0; i < f1.size(); i++)
     {
-        if (f1[i] != f2[i]) 
+        if (f1[i] != f2[i])
         {
             return f1[i] > f2[i];
         }
@@ -137,113 +138,113 @@ bool FractionNumber::compareByModule(const FractionNumber& other,
     return true;
 }
 
-void FractionNumber::removeLeadingZeros(std::vector<uint8_t>& vec) const 
+void FractionNumber::removeLeadingZeros(std::vector<uint8_t>& vec) const
 {
-    // РџРѕРєР° РІ РІРµРєС‚РѕСЂРµ Р±РѕР»СЊС€Рµ РѕРґРЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р° Рё РїРµСЂРІС‹Р№ СЌР»РµРјРµРЅС‚ СЂР°РІРµРЅ 0
-    while (vec.size() > 1 && vec[0] == 0) 
+    // Пока в векторе больше одного элемента и первый элемент равен 0
+    while (vec.size() > 1 && vec[0] == 0)
     {
-        // РЈРґР°Р»СЏРµРј СЌС‚РѕС‚ РЅРѕР»СЊ РёР· РЅР°С‡Р°Р»Р°
+        // Удаляем этот ноль из начала
         vec.erase(vec.begin());
     }
 }
 
-void FractionNumber::removeTrailingZeros(std::vector<uint8_t>& vec) const 
+void FractionNumber::removeTrailingZeros(std::vector<uint8_t>& vec) const
 {
-    // РџРѕРєР° РІРµРєС‚РѕСЂ РЅРµ РїСѓСЃС‚РѕР№ Рё РµРіРѕ СЃР°РјС‹Р№ РїРѕСЃР»РµРґРЅРёР№ СЌР»РµРјРµРЅС‚ СЂР°РІРµРЅ 0
-    while (vec.size() > 0 && vec.back() == 0) 
+    // Пока вектор не пустой и его самый последний элемент равен 0
+    while (vec.size() > 0 && vec.back() == 0)
     {
-        // РЈРґР°Р»СЏРµРј РЅРѕР»СЊ СЃ РєРѕРЅС†Р°
+        // Удаляем ноль с конца
         vec.pop_back();
     }
 }
 
-bool FractionNumber::isZero() const 
+bool FractionNumber::isZero() const
 {
-    // Р•СЃР»Рё С†РµР»Р°СЏ С‡Р°СЃС‚СЊ РЅРµ СЂР°РІРЅР° 0, РІРѕР·РІСЂР°С‰Р°РµРј false
+    // Если целая часть не равна 0, возвращаем false
     for (uint8_t d : this->integerPart) if (d != 0) return false;
-    // Р•СЃР»Рё РґСЂРѕР±РЅР°СЏ С‡Р°СЃС‚СЊ РЅРµ СЂР°РІРЅР° 0, РІРѕР·РІСЂР°С‰Р°РµРј false
+    // Если дробная часть не равна 0, возвращаем false
     for (uint8_t d : this->fractionPart) if (d != 0) return false;
     return true;
 }
 
-// РџСЂРµРѕР±СЂР°Р·СѓРµС‚ С‡РёСЃР»Рѕ FractionNumber РІ С‡РёСЃР»Рѕ С‚РёРїР° double
-double FractionNumber::convertToDouble(const FractionNumber& fn) 
+// Преобразует число FractionNumber в число типа double
+double FractionNumber::convertToDouble(const FractionNumber& fn)
 {
     double result = 0.0;
 
-    // РџРµСЂРµРІРѕРґРёРј РІРµРєС‚РѕСЂ С†РёС„СЂ С†РµР»РѕР№ С‡Р°СЃС‚Рё РІ РѕР±С‹С‡РЅРѕРµ С‡РёСЃР»Рѕ
+    // Переводим вектор цифр целой части в обычное число
     for (size_t i = 0; i < fn.integerPart.size(); ++i)
         result = result * 10.0 + fn.integerPart[i];
     double frac = 0.0;
     double place = 0.1;
 
-    // РџРµСЂРµРІРѕРґРёРј РІРµРєС‚РѕСЂ С†РёС„СЂ РґСЂРѕР±РЅРѕР№ С‡Р°СЃС‚Рё РІ С‡РёСЃР»Рѕ
-    for (size_t i = 0; i < fn.fractionPart.size(); ++i) 
+    // Переводим вектор цифр дробной части в число
+    for (size_t i = 0; i < fn.fractionPart.size(); ++i)
     {
         frac += fn.fractionPart[i] * place;
-        // РЎРґРІРёРіР°РµРј СЂР°Р·СЂСЏРґ РІРїСЂР°РІРѕ
+        // Сдвигаем разряд вправо
         place *= 0.1;
     }
 
-    // РЎРєР»Р°РґС‹РІР°РµРј С†РµР»СѓСЋ Рё РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚Рё
+    // Складываем целую и дробную части
     result += frac;
 
-    // Р•СЃР»Рё С‡РёСЃР»Рѕ Р±С‹Р»Рѕ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹Рј, РґРѕР±Р°РІР»СЏРµРј РјРёРЅСѓСЃ
+    // Если число было отрицательным, добавляем минус
     if (fn.isNegative) result = -result;
     return result;
 }
 
 FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
-    // Р Р°Р±РѕС‚Р°РµРј СЃ РјРѕРґСѓР»РµРј
+    // Работаем с модулем
     bool neg = val < 0;
     if (neg) val = -val;
 
-    // РћС‚РґРµР»СЏРµРј С†РµР»СѓСЋ С‡Р°СЃС‚СЊ Рё РїРµСЂРµРІРѕРґРёРј РµС‘ РІ СЃС‚СЂРѕРєСѓ
+    // Отделяем целую часть и переводим её в строку
     unsigned long long intPart = (unsigned long long)val;
     std::string intPartStr = std::to_string(intPart);
     val -= intPart;
 
-    // Р’С‹С‡РёСЃР»СЏРµРј РјРЅРѕР¶РёС‚РµР»СЊ РґР»СЏ СЃРґРІРёРіР° РґСЂРѕР±РЅРѕР№ С‡Р°СЃС‚Рё
+    // Вычисляем множитель для сдвига дробной части
     long double scale = 1.0;
     for (int i = 0; i < precision; ++i) scale *= 10.0L;
 
-    // РћРєСЂСѓРіР»СЏРµРј РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ РґРѕ РЅСѓР¶РЅРѕРіРѕ РєРѕР»РёС‡РµСЃС‚РІР° Р·РЅР°РєРѕРІ
+    // Округляем дробную часть до нужного количества знаков
     unsigned long long rounded = (unsigned long long)(val * scale + 0.5L);
 
-    // РџСЂРµРІСЂР°С‰Р°РµРј РїРѕР»СѓС‡РµРЅРЅСѓСЋ РѕРєСЂСѓРіР»РµРЅРЅСѓСЋ РґСЂРѕР±СЊ РІ СЃС‚СЂРѕРєСѓ С†РёС„СЂ
+    // Превращаем полученную округленную дробь в строку цифр
     std::string s = std::to_string(rounded);
 
-    // Р•СЃР»Рё РґСЂРѕР±СЊ РЅР°С‡РёРЅР°Р»Р°СЃСЊ СЃ РЅСѓР»РµР№, РІРѕР·РІСЂР°С‰Р°РµРј СЌС‚Рё РЅСѓР»Рё РЅР° РјРµСЃС‚Рѕ
+    // Если дробь начиналась с нулей, возвращаем эти нули на место
     while ((int)s.size() < precision) s = "0" + s;
 
-    // РЎРєР»РµРёРІР°РµРј С†РµР»СѓСЋ С‡Р°СЃС‚СЊ Рё РіРѕС‚РѕРІСѓСЋ РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ С‡РµСЂРµР· С‚РѕС‡РєСѓ
+    // Склеиваем целую часть и готовую дробную часть через точку
     std::string resultStr = intPartStr + "." + s;
 
     size_t dot = resultStr.find('.');
-    if (dot != std::string::npos) 
+    if (dot != std::string::npos)
     {
-        // Р•СЃР»Рё РїРѕСЃР»Рµ С‚РѕС‡РєРё РёРґРµС‚ РєСѓС‡Р° РЅСѓР»РµР№ РїРѕРґСЂСЏРґ вЂ” СѓР±РёСЂР°РµРј РёС…
+        // Если после точки идет куча нулей подряд — убираем их
         size_t zeroSequence = resultStr.find("00000000", dot);
-        if (zeroSequence != std::string::npos && zeroSequence > dot) 
+        if (zeroSequence != std::string::npos && zeroSequence > dot)
         {
             resultStr = resultStr.substr(0, zeroSequence);
         }
-        // Р•СЃР»Рё РїРѕСЃР»Рµ С‚РѕС‡РєРё РёРґРµС‚ РєСѓС‡Р° РґРµРІСЏС‚РѕРє РїРѕРґСЂСЏРґ - СѓР±РёСЂР°РµРј РёС…
+        // Если после точки идет куча девяток подряд - убираем их
         size_t nineSequence = resultStr.find("99999999", dot);
-        if (nineSequence != std::string::npos && nineSequence > dot) 
+        if (nineSequence != std::string::npos && nineSequence > dot)
         {
             resultStr = resultStr.substr(0, nineSequence);
 
-            // РњР°С‚РµРјР°С‚РёС‡РµСЃРєРё РѕРєСЂСѓРіР»СЏРµРј С‡РёСЃР»Рѕ РІРІРµСЂС…
-            for (int i = (int)resultStr.size() - 1; i >= 0; --i) 
+            // Математически округляем число вверх
+            for (int i = (int)resultStr.size() - 1; i >= 0; --i)
             {
                 if (resultStr[i] == '.') continue;
-                if (resultStr[i] < '9') 
+                if (resultStr[i] < '9')
                 {
                     resultStr[i]++;
                     break;
                 }
-                else 
+                else
                 {
                     resultStr[i] = '0';
                 }
@@ -251,94 +252,94 @@ FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
         }
     }
 
-    // Р•СЃР»Рё РЅР° РєРѕРЅС†Рµ РѕСЃС‚Р°Р»Р°СЃСЊ С‚РѕС‡РєР° вЂ” СѓРґР°Р»СЏРµРј РµС‘
-    if (!resultStr.empty() && resultStr.back() == '.') 
+    // Если на конце осталась точка — удаляем её
+    if (!resultStr.empty() && resultStr.back() == '.')
     {
         resultStr.pop_back();
     }
 
-    // Р’РѕР·РІСЂР°С‰Р°РµРј Р·РЅР°Рє РјРёРЅСѓСЃ, РµСЃР»Рё РёСЃС…РѕРґРЅРѕРµ С‡РёСЃР»Рѕ Р±С‹Р»Рѕ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹Рј
+    // Возвращаем знак минус, если исходное число было отрицательным
     if (neg) resultStr = "-" + resultStr;
     return FractionNumber(resultStr);
 }
 
-FractionNumber FractionNumber::powInt(FractionNumber base, unsigned long long exp) 
+FractionNumber FractionNumber::powInt(FractionNumber base, unsigned long long exp)
 {
     FractionNumber result;
     result.integerPart = { 1 }; result.fractionPart = {}; result.isNegative = false;
-    // РђР»РіРѕСЂРёС‚Рј РІРѕР·РІРµРґРµРЅРёСЏ РІ СЃС‚РµРїРµРЅСЊ
-    while (exp > 0) 
+    // Алгоритм возведения в степень
+    while (exp > 0)
     {
-        // Р•СЃР»Рё СЃС‚РµРїРµРЅСЊ РЅРµС‡С‘С‚РЅР°СЏ, СѓРјРЅРѕР¶Р°РµРј СЂРµР·СѓР»СЊС‚Р°С‚ РЅР° С‚РµРєСѓС‰РµРµ РѕСЃРЅРѕРІР°РЅРёРµ
+        // Если степень нечётная, умножаем результат на текущее основание
         if (exp % 2 == 1) result = result.mul(base);
-        // Р’РѕР·РІРѕРґРёРј Р±Р°Р·Сѓ РІ РєРІР°РґСЂР°С‚
+        // Возводим базу в квадрат
         base = base.mul(base);
-        // РЈРјРµРЅСЊС€Р°РµРј СЃС‚РµРїРµРЅСЊ РІ РґРІР° СЂР°Р·Р°
+        // Уменьшаем степень в два раза
         exp /= 2;
     }
     return result;
 }
 
-double FractionNumber::calcLn(double x) 
+double FractionNumber::calcLn(double x)
 {
-    // Р›РѕРіР°СЂРёС„Рј РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹С… С‡РёСЃРµР» Рё РЅСѓР»СЏ РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+    // Логарифм отрицательных чисел и нуля не существует
     if (x <= 0.0) return 0.0;
 
     double result = 0.0;
     const double LN_1_1 = 0.09531017980432493;
 
-    // РЎР¶РёРјР°РµРј x РІ СЂР°РјРєРё РѕС‚ 0.7 РґРѕ 1.3, С‡С‚РѕР±С‹ СЂР°СЃС‡РµС‚С‹ Р±С‹Р»Рё С‚РѕС‡РЅС‹РјРё
-    // Р•СЃР»Рё С‡РёСЃР»Рѕ Р±РѕР»СЊС€РѕРµ вЂ” РґРµР»РёРј РЅР° 1.1 Рё РґРѕР±Р°РІР»СЏРµРј С€Р°Рі Рє СЂРµР·СѓР»СЊС‚Р°С‚Сѓ
+    // Сжимаем x в рамки от 0.7 до 1.3, чтобы расчеты были точными
+    // Если число большое — делим на 1.1 и добавляем шаг к результату
     while (x > 1.3) { x /= 1.1; result += LN_1_1; }
-    // Р•СЃР»Рё С‡РёСЃР»Рѕ РјР°Р»РµРЅСЊРєРѕРµ вЂ” СѓРјРЅРѕР¶Р°РµРј РЅР° 1.1 Рё РІС‹С‡РёС‚Р°РµРј С€Р°Рі
+    // Если число маленькое — умножаем на 1.1 и вычитаем шаг
     while (x < 0.7) { x *= 1.1; result -= LN_1_1; }
 
-    // Р’С‹С‡РёСЃР»СЏРµРј Р»РѕРіР°СЂРёС„Рј РґР»СЏ x СЃ РїРѕРјРѕС‰СЊСЋ Р±С‹СЃС‚СЂРѕСЃС…РѕРґСЏС‰РµРіРѕСЃСЏ СЂСЏРґР°
+    // Вычисляем логарифм для x с помощью быстросходящегося ряда
     double t = (x - 1.0) / (x + 1.0);
     double t2 = t * t;
     double power = t;
     double sum = 0.0;
 
-    // Р Р°Р·Р»РѕР¶РµРЅРёРµ РІ СЂСЏРґ
-    for (int k = 0; k < 200; ++k) 
+    // Разложение в ряд
+    for (int k = 0; k < 200; ++k)
     {
         double term = power / (2 * k + 1);
         sum += term;
-        // РњРµРЅСЏРµРј СЃС‚РµРїРµРЅСЊ РґР»СЏ СЃР»РµРґСѓСЋС‰РµРіРѕ С€Р°РіР°
+        // Меняем степень для следующего шага
         power *= t2;
-        // Р•СЃР»Рё СЃР»Р°РіР°РµРјРѕРµ СЃС‚Р°Р»Рѕ РјР°Р»РµРЅСЊРєРёРј, РІС‹С…РѕРґРёРј РёР· С†РёРєР»Р°
+        // Если слагаемое стало маленьким, выходим из цикла
         if (term < 1e-19 && term > -1e-19) break;
     }
     return result + 2.0 * sum;
 }
 
-double FractionNumber::calcExp(double x) 
+double FractionNumber::calcExp(double x)
 {
     double result = 1.0;
     double term = 1.0;
 
-    // Р’С‹С‡РёСЃР»СЏРµРј СЌРєСЃРїРѕРЅРµРЅС‚Сѓ С‡РµСЂРµР· СЂР°Р·Р»РѕР¶РµРЅРёРµ РІ СЂСЏРґ РњР°РєР»РѕСЂРµРЅР°
-    for (int k = 1; k < 250; ++k) 
+    // Вычисляем экспоненту через разложение в ряд Маклорена
+    for (int k = 1; k < 250; ++k)
     {
-        // Р¤РѕСЂРјРёСЂСѓРµРј С‡Р»РµРЅ СЂСЏРґР°: СѓРјРЅРѕР¶Р°РµРј РЅР° x Рё РґРµР»РёРј РЅР° С„Р°РєС‚РѕСЂРёР°Р»
+        // Формируем член ряда: умножаем на x и делим на факториал
         term *= x / k;
 
-        // РќР°РєР°РїР»РёРІР°РµРј СЃСѓРјРјСѓ С‡Р»РµРЅРѕРІ СЂСЏРґР°
+        // Накапливаем сумму членов ряда
         result += term;
 
-        // РџСЂРѕРІРµСЂРєР° РЅР° СЃС…РѕРґРёРјРѕСЃС‚СЊ: РµСЃР»Рё С‚РѕС‡РЅРѕСЃС‚СЊ РґРѕСЃС‚РёРіРЅСѓС‚Р°, РІС‹С…РѕРґРёРј РёР· С†РёРєР»Р°
+        // Проверка на сходимость: если точность достигнута, выходим из цикла
         if (term < 1e-19 && term > -1e-19) break;
     }
     return result;
 }
 
-unsigned long long FractionNumber::vectorToInt(const std::vector<uint8_t>& vec) 
+unsigned long long FractionNumber::vectorToInt(const std::vector<uint8_t>& vec)
 {
     unsigned long long result = 0;
-    // РЎРѕР±РёСЂР°РµРј РѕС‚РґРµР»СЊРЅС‹Рµ С†РёС„СЂС‹ РёР· РІРµРєС‚РѕСЂР° РІ РѕРґРЅРѕ С†РµР»РѕРµ С‡РёСЃР»Рѕ
-    for (uint8_t d : vec) 
+    // Собираем отдельные цифры из вектора в одно целое число
+    for (uint8_t d : vec)
     {
-        // РЎРґРІРёРіР°РµРј С‚РµРєСѓС‰РµРµ С‡РёСЃР»Рѕ РІР»РµРІРѕ РЅР° РѕРґРёРЅ СЂР°Р·СЂСЏРґ Рё РґРѕР±Р°РІР»СЏРµРј РЅРѕРІСѓСЋ С†РёС„СЂСѓ
+        // Сдвигаем текущее число влево на один разряд и добавляем новую цифру
         result = result * 10 + d;
     }
     return result;
@@ -348,56 +349,56 @@ bool readFile(ifstream& inputFile, vector<string>& fileContent)
 {
     string inputLine;
 
-    // РЎС‡РёС‚С‹РІР°РµРј РїРѕСЃС‚СЂРѕС‡РЅРѕ РґР°РЅРЅС‹Рµ РёР· С„Р°Р№Р»Р° РґРѕ РєРѕРЅС†Р° С„Р°Р№Р»Р°
+    // Считываем построчно данные из файла до конца файла
     while (getline(inputFile, inputLine))
     {
         fileContent.push_back(inputLine);
     }
 
-    // РџРѕСЃР»Рµ СЃС‡РёС‚С‹РІР°РЅРёСЏ Р·Р°РєСЂС‹РІР°РµРј С„Р°Р№Р»
+    // После считывания закрываем файл
     inputFile.close();
 
-    // РџСЂРѕРІРµСЂРєР°, СѓРґР°Р»РѕСЃСЊ Р»Рё Р·Р°РіСЂСѓР·РёС‚СЊ РґР°РЅРЅС‹Рµ РёР· С„Р°Р№Р»Р°
+    // Проверка, удалось ли загрузить данные из файла
     if (!fileContent.empty())
     {
         return true;
     }
 
-    // Р•СЃР»Рё РЅРµ РїРѕР»СѓС‡РёР»РѕСЃСЊ СЃС‡РёС‚Р°С‚СЊ РґР°РЅРЅС‹Рµ, РІРѕР·РІСЂР°С‰Р°РµРј РѕС€РёР±РєСѓ Рѕ Р·Р°РїРёСЃРё С„Р°Р№Р»Р°
+    // Если не получилось считать данные, возвращаем ошибку о записи файла
     return false;
 }
 
-vector<string> splitString(const string& inputData) 
+vector<string> splitString(const string& inputData)
 {
     vector<string> splitString;
     size_t i = 0;
     size_t n = inputData.length();
 
-    // Р”Р»СЏ РєР°Р¶РґРѕРіРѕ СЃРёРјРІРѕР»Р° СЃС‚СЂРѕРєРё
-    while (i < n) 
+    // Для каждого символа строки
+    while (i < n)
     {
 
-        // Р•СЃР»Рё СЃРёРјРІРѕР» РїСЂРѕР±РµР» РёР»Рё С‚Р°Р±СѓР»СЏС†РёСЏ, РїСЂРѕРїСѓСЃС‚РёС‚СЊ
+        // Если символ пробел или табуляция, пропустить
         if (inputData[i] == ' ' || inputData[i] == '\t')
         {
             i++;
             continue;
         }
 
-        // Р•СЃР»Рё СЃРёРјРІРѕР» РЅРµ РїСЂРѕР±РµР»
-        // Р—Р°РїРѕРјРёРЅР°РµРј РёРЅРґРµРєСЃ РЅР°С‡Р°Р»Р° РїРѕРґСЃС‚СЂРѕРєРё
+        // Если символ не пробел
+        // Запоминаем индекс начала подстроки
         size_t start = i;
 
-        // Р”РѕР№С‚Рё РґРѕ РєРѕРЅС†Р° СЃС‚СЂРѕРєРё РёР»Рё РґРѕ СЃР»РµРґСѓСЋС‰РµРіРѕ РїСЂРѕР±РµР»Р°
-        while (i < n && inputData[i] != ' ' && inputData[i] != '\t') 
+        // Дойти до конца строки или до следующего пробела
+        while (i < n && inputData[i] != ' ' && inputData[i] != '\t')
         {
             i++;
         }
 
-        // Р’Р·СЏС‚СЊ РїРѕР»СѓС‡РёРІС€СѓСЋСЃСЏ РїРѕРґСЃС‚СЂРѕРєСѓ
+        // Взять получившуюся подстроку
         string sub = inputData.substr(start, i - start);
 
-        // Р”РѕР±Р°РІРёС‚СЊ РµС‘ РІ РєРѕРЅС‚РµР№РЅРµСЂ
+        // Добавить её в контейнер
         splitString.push_back(sub);
     }
 
@@ -406,11 +407,11 @@ vector<string> splitString(const string& inputData)
 
 DataErrors parseInputData(const string& inputData, string& operation, FractionNumber& first, FractionNumber& second)
 {
-    //Р Р°Р·Р±РёРІР°РµРј СЃС‚СЂРѕРєСѓ РЅР° С‚РѕРєРµРЅС‹
+    //Разбиваем строку на токены
     vector<string> tokens = splitString(inputData);
 
-    // Р•СЃР»Рё С‡РёСЃР»Рѕ С‚РѕРєРµРЅРѕРІ РЅРµ СЂР°РІРЅРѕ 3
-    if (tokens.size() != 3) 
+    // Если число токенов не равно 3
+    if (tokens.size() != 3)
     {
         return DataErrors::WRONG_INPUT;
     }
@@ -419,19 +420,19 @@ DataErrors parseInputData(const string& inputData, string& operation, FractionNu
     string token2 = tokens[1];
     string token3 = tokens[2];
 
-    // Р•СЃР»Рё РїРµСЂРІС‹Р№ С‚РѕРєРµРЅ - СЌС‚Рѕ РЅРµ sqrt РёР»Рё +, -, *, /, ^:
-    if (op != "sqrt" && op != "+" && op != "-" && op != "*" && op != "/" && op != "^") 
+    // Если первый токен - это не sqrt или +, -, *, /, ^:
+    if (op != "sqrt" && op != "+" && op != "-" && op != "*" && op != "/" && op != "^")
     {
         return DataErrors::WRONG_OPERATION;
     }
 
-    // Р•СЃР»Рё РІС‚РѕСЂРѕР№ Рё С‚СЂРµС‚РёР№ С‚РѕРєРµРЅ РЅРµ РґСЂРѕР±РЅРѕРµ С‡РёСЃР»Рѕ
-    try 
+    // Если второй и третий токен не дробное число
+    try
     {
         FractionNumber tempFirst(token2);
         FractionNumber tempSecond(token3);
     }
-    catch (...) 
+    catch (...)
     {
         return DataErrors::NO_FRACTION;
     }
@@ -439,61 +440,61 @@ DataErrors parseInputData(const string& inputData, string& operation, FractionNu
     FractionNumber num1(token2);
     FractionNumber num2(token3);
 
-    // Р”Р»СЏ СѓРґРѕР±СЃС‚РІР° РїСЂРѕРІРµСЂРєРё РґРёР°РїР°Р·РѕРЅРѕРІ РїРµСЂРµРІРѕРґРёРј РІ double
+    // Для удобства проверки диапазонов переводим в double
     double val1 = num1.convertToDouble(num1);
     double val2 = num2.convertToDouble(num2);
 
 
-    // РџСЂРѕРІРµСЂРєР° РґРёР°РїР°Р·РѕРЅРѕРІ РґР»СЏ РѕРїРµСЂР°С†РёРё РІРѕР·РІРµРґРµРЅРёСЏ РІ СЃС‚РµРїРµРЅСЊ
-    if (op == "^") 
+    // Проверка диапазонов для операции возведения в степень
+    if (op == "^")
     {
-        if ((val1 == 0.0 && val2 < 0.0) || (val1 < -100.0 || val1 > 100.0 || val2 < -5.0 || val2 > 5.0)) 
+        if ((val1 == 0.0 && val2 < 0.0) || (val1 < -100.0 || val1 > 100.0 || val2 < -5.0 || val2 > 5.0))
         {
             return DataErrors::INCORRECT_RANGE;
         }
     }
 
-    // Р•СЃР»Рё РїРµСЂРІС‹Р№ С‚РѕРєРµРЅ вЂ“ sqrt Рё РІС‚РѕСЂРѕР№ РЅРµ РІ РґРёР°РїР°Р·РѕРЅСѓ [0, 100000] 
-    // РёР»Рё С‚СЂРµС‚РёР№ РЅРµ РІ РґРёР°РїР°Р·РѕРЅРµ [-10, 0) U (0, 10]
-    if (op == "sqrt") 
+    // Если первый токен – sqrt и второй не в диапазону [0, 100000] 
+    // или третий не в диапазоне [-10, 0) U (0, 10]
+    if (op == "sqrt")
     {
-        if (val1 < 0.0 || val1 > 100000.0 || val2 < -10.0 || val2 > 10.0 || val2 == 0.0) 
+        if (val1 < 0.0 || val1 > 100000.0 || val2 < -10.0 || val2 > 10.0 || val2 == 0.0)
         {
             return DataErrors::INCORRECT_RANGE;
         }
     }
 
-    // Р•СЃР»Рё РїРµСЂРІС‹Р№ С‚РѕРєРµРЅ +,-,/,* Рё РІС‚РѕСЂРѕР№ РёР»Рё С‚СЂРµС‚РёР№ С‚РѕРєРµРЅ Р±РѕР»СЊС€Рµ 1000 РїРѕ РјРѕРґСѓР»СЋ
-    if (op == "+" || op == "-" || op == "*" || op == "/") 
+    // Если первый токен +,-,/,* и второй или третий токен больше 1000 по модулю
+    if (op == "+" || op == "-" || op == "*" || op == "/")
     {
-        if (abs(val1) > 1000.0 || abs(val2) > 1000.0) 
+        if (abs(val1) > 1000.0 || abs(val2) > 1000.0)
         {
             return DataErrors::INCORRECT_RANGE;
         }
     }
 
-    // РЎРѕС…СЂР°РЅСЏРµРј РІ operation Р·РЅР°С‡РµРЅРёРµ РїРµСЂРІРѕРіРѕ С‚РѕРєРµРЅР°
+    // Сохраняем в operation значение первого токена
     operation = op;
 
-    // РџСЂРµРѕР±СЂР°Р·РѕРІС‹РІР°РµРј РІС‚РѕСЂРѕР№ С‚РѕРєРµРЅ РІ РѕР±СЉРµРєС‚ FractionNumber Рё СЃРѕС…СЂР°РЅСЏРµРј РІ first
+    // Преобразовываем второй токен в объект FractionNumber и сохраняем в first
     first = num1;
 
-    // РџСЂРµРѕР±СЂР°Р·РѕРІС‹РІР°РµРј С‚СЂРµС‚РёР№ С‚РѕРєРµРЅ РІ РѕР±СЉРµРєС‚ FractionNumber Рё СЃРѕС…СЂР°РЅРµРј РІ second
+    // Преобразовываем третий токен в объект FractionNumber и сохранем в second
     second = num2;
 
-    // РћС€РёР±РѕРє РЅРµС‚
+    // Ошибок нет
     return DataErrors::NO_DATA_ERROR;
 }
 
 void writeResultToFile(ofstream& outputFile, const FractionNumber& result)
 {
-    // Р•СЃР»Рё С‡РёСЃР»Рѕ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕРµ Рё СЌС‚Рѕ РЅРµ РЅРѕР»СЊ
+    // Если число отрицательное и это не ноль
     if (result.isNegative && !result.isZero())
     {
         outputFile << "-";
     }
 
-    // Р’С‹РІРѕРґ С†РµР»РѕР№ С‡Р°СЃС‚Рё
+    // Вывод целой части
     if (result.integerPart.empty())
     {
         outputFile << "0";
@@ -506,7 +507,7 @@ void writeResultToFile(ofstream& outputFile, const FractionNumber& result)
         }
     }
 
-    // Р•СЃР»Рё РµСЃС‚СЊ РґСЂРѕР±РЅР°СЏ С‡Р°СЃС‚СЊ, РїРёС€РµРј С‚РѕС‡РєСѓ Рё СЃР°РјСѓ РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ
+    // Если есть дробная часть, пишем точку и саму дробную часть
     if (!result.fractionPart.empty())
     {
         outputFile << ".";
@@ -522,41 +523,41 @@ void writeResultToFile(ofstream& outputFile, const FractionNumber& result)
 
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
-    // Р•СЃР»Рё РїРµСЂРІРѕРµ С‡РёСЃР»Рѕ СЂР°РІРЅРѕ 0, РІРµСЂРЅСѓС‚СЊ РІС‚РѕСЂРѕРµ
+    // Если первое число равно 0, вернуть второе
     if (this->isZero()) return other;
-    // Р•СЃР»Рё РІС‚РѕСЂРѕРµ С‡РёСЃР»Рѕ СЂР°РІРЅРѕ 0, РІРµСЂРЅСѓС‚СЊ РїРµСЂРІРѕРµ
+    // Если второе число равно 0, вернуть первое
     if (other.isZero()) return *this;
 
     FractionNumber result;
 
-    // Р”РѕРїРѕР»РЅСЏРµРј Р±РѕР»РµРµ РєРѕСЂРѕС‚РєСѓСЋ РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ РЅСѓР»СЏРјРё СЃРїСЂР°РІР° РґРѕ РјР°РєСЃРёРјР°Р»СЊРЅРѕР№ РґР»РёРЅС‹
+    // Дополняем более короткую дробную часть нулями справа до максимальной длины
     size_t maxFracLen = std::max(this->fractionPart.size(), other.fractionPart.size());
     std::vector<uint8_t> frac1 = this->fractionPart;
     std::vector<uint8_t> frac2 = other.fractionPart;
     appendZerosRight(frac1, maxFracLen);
     appendZerosRight(frac2, maxFracLen);
 
-    // Р•СЃР»Рё Р·РЅР°РєРё РѕРґРёРЅР°РєРѕРІС‹Рµ
-    if (this->isNegative == other.isNegative) 
+    // Если знаки одинаковые
+    if (this->isNegative == other.isNegative)
     {
         result.isNegative = this->isNegative;
         int carry = 0;
 
-        // РЎРєР»Р°РґС‹РІР°РµРј РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ
+        // Складываем дробную часть
         result.fractionPart.resize(maxFracLen);
-        for (int i = (int)maxFracLen - 1; i >= 0; i--) 
+        for (int i = (int)maxFracLen - 1; i >= 0; i--)
         {
             int sum = frac1[i] + frac2[i] + carry;
             result.fractionPart[i] = sum % 10;
             carry = sum / 10;
         }
 
-        // РЎРєР»Р°РґС‹РІР°РµРј С†РµР»СѓСЋ С‡Р°СЃС‚СЊ
+        // Складываем целую часть
         int i = (int)this->integerPart.size() - 1;
         int j = (int)other.integerPart.size() - 1;
         std::vector<uint8_t> tempInt;
 
-        while (i >= 0 || j >= 0 || carry > 0) 
+        while (i >= 0 || j >= 0 || carry > 0)
         {
             int sum = carry;
             if (i >= 0) { sum += this->integerPart[i]; i--; }
@@ -569,11 +570,11 @@ FractionNumber FractionNumber::add(const FractionNumber& other)
         std::reverse(tempInt.begin(), tempInt.end());
         result.integerPart = tempInt;
     }
-    // Р•СЃР»Рё Р·РЅР°РєРё СЂР°Р·РЅС‹Рµ
-    else 
+    // Если знаки разные
+    else
     {
-        // РЎСЂР°РІРЅРёРІР°РµРј С‡РёСЃР»Р° РїРѕ РјРѕРґСѓР»СЋ
-        if (this->integerPart == other.integerPart && frac1 == frac2) 
+        // Сравниваем числа по модулю
+        if (this->integerPart == other.integerPart && frac1 == frac2)
         {
             result.integerPart = { 0 };
             result.fractionPart = {};
@@ -581,55 +582,55 @@ FractionNumber FractionNumber::add(const FractionNumber& other)
             return result;
         }
 
-        // РќР°С…РѕРґРёРј, РєР°РєРѕРµ РёР· С‡РёСЃРµР» Р±РѕР»СЊС€Рµ
+        // Находим, какое из чисел больше
         bool firstIsBigger = compareByModule(other, frac1, frac2);
 
-        // РћРїСЂРµРґРµР»СЏРµРј, РєР°РєРѕРµ РёР· С‡РёСЃРµР» СѓРјРµРЅСЊС€Р°РµРјРѕРµ
+        // Определяем, какое из чисел уменьшаемое
         const FractionNumber& A = firstIsBigger ? *this : other;
-        // РћРїСЂРµРґРµР»СЏРµРј, РєР°РєРѕРµ РёР· С‡РёСЃРµР» РІС‹С‡РёС‚Р°РµРјРѕРµ
+        // Определяем, какое из чисел вычитаемое
         const FractionNumber& B = firstIsBigger ? other : *this;
         std::vector<uint8_t> fA = firstIsBigger ? frac1 : frac2;
         std::vector<uint8_t> fB = firstIsBigger ? frac2 : frac1;
 
-        // РћРїСЂРµРґРµР»СЏРµРј Р·РЅР°Рє РїРѕ С‡РёСЃР»Сѓ Сѓ РєРѕС‚РѕСЂРѕРіРѕ РјРѕРґСѓР»СЊ Р±РѕР»СЊС€Рµ
+        // Определяем знак по числу у которого модуль больше
         result.isNegative = A.isNegative;
         int borrow = 0;
 
-        // Р’С‹С‡РёС‚Р°РµРј РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ
+        // Вычитаем дробную часть
         result.fractionPart.resize(maxFracLen);
-        for (int k = (int)maxFracLen - 1; k >= 0; k--) 
+        for (int k = (int)maxFracLen - 1; k >= 0; k--)
         {
             int diff = fA[k] - fB[k] - borrow;
-            if (diff < 0) 
+            if (diff < 0)
             {
                 diff += 10;
                 borrow = 1;
             }
-            else 
+            else
             {
                 borrow = 0;
             }
             result.fractionPart[k] = diff;
         }
 
-        // Р’С‹СЂР°РІРЅРёРІР°РµРј С†РµР»С‹Рµ С‡Р°СЃС‚Рё РЅСѓР»СЏРјРё СЃР»РµРІР°
+        // Выравниваем целые части нулями слева
         std::vector<uint8_t> intA = A.integerPart;
         std::vector<uint8_t> intB = B.integerPart;
         size_t maxIntLen = std::max(intA.size(), intB.size());
         prependZerosLeft(intA, maxIntLen);
         prependZerosLeft(intB, maxIntLen);
 
-        // Р’С‹С‡РёС‚Р°РµРј С†РµР»С‹Рµ С‡Р°СЃС‚Рё
+        // Вычитаем целые части
         std::vector<uint8_t> tempInt;
-        for (int i = (int)maxIntLen - 1; i >= 0; i--) 
+        for (int i = (int)maxIntLen - 1; i >= 0; i--)
         {
             int diff = intA[i] - intB[i] - borrow;
-            if (diff < 0) 
+            if (diff < 0)
             {
                 diff += 10;
                 borrow = 1;
             }
-            else 
+            else
             {
                 borrow = 0;
             }
@@ -639,28 +640,28 @@ FractionNumber FractionNumber::add(const FractionNumber& other)
         std::reverse(tempInt.begin(), tempInt.end());
         result.integerPart = tempInt;
 
-        // РЈР±РёСЂР°РµРј РІРµРґСѓС‰РёРµ РЅСѓР»Рё
+        // Убираем ведущие нули
         removeLeadingZeros(result.integerPart);
     }
 
-    // РЈР±РёСЂР°РµРј С…РІРѕСЃС‚РѕРІС‹Рµ РЅСѓР»Рё
+    // Убираем хвостовые нули
     removeTrailingZeros(result.fractionPart);
 
     return result;
 }
 
-FractionNumber FractionNumber::sub(const FractionNumber& other) 
+FractionNumber FractionNumber::sub(const FractionNumber& other)
 {
 
     FractionNumber modifiedOther = other;
 
-    // РњРµРЅСЏРµРј Р·РЅР°Рє РЅР° РїСЂРѕС‚РёРІРѕРїРѕР»РѕР¶РЅС‹Р№
+    // Меняем знак на противоположный
     modifiedOther.isNegative = !other.isNegative;
 
-    // РЎРєР»Р°РґС‹РІР°РµРј С‚РµРєСѓС‰РµРµ С‡РёСЃР»Рѕ СЃ РёР·РјРµРЅС‘РЅРЅС‹Рј С‡РёСЃР»РѕРј С‡РµСЂРµР· РјРµС‚РѕРґ add
+    // Складываем текущее число с изменённым числом через метод add
     FractionNumber result = this->add(modifiedOther);
 
-    if (result.isZero()) 
+    if (result.isZero())
     {
         result.isNegative = false;
     }
@@ -668,13 +669,13 @@ FractionNumber FractionNumber::sub(const FractionNumber& other)
     return result;
 }
 
-FractionNumber FractionNumber::mul(const FractionNumber& other) 
+FractionNumber FractionNumber::mul(const FractionNumber& other)
 {
 
     FractionNumber result;
 
-    // Р•СЃР»Рё РѕРґРЅРѕ РёР· С‡РёСЃРµР» СЂР°РІРЅРѕ 0, РІРµСЂРЅСѓС‚СЊ 0
-    if (this->isZero() || other.isZero()) 
+    // Если одно из чисел равно 0, вернуть 0
+    if (this->isZero() || other.isZero())
     {
         result.integerPart = { 0 };
         result.fractionPart = {};
@@ -682,111 +683,111 @@ FractionNumber FractionNumber::mul(const FractionNumber& other)
         return result;
     }
 
-    // РћРїСЂРµРґРµР»СЏРµРј Р·РЅР°Рє СЂРµР·СѓР»СЊС‚Р°С‚Р°
+    // Определяем знак результата
     result.isNegative = (this->isNegative != other.isNegative);
 
-    // РЎРєР»Р°РґС‹РІР°РµРј РєРѕР»РёС‡РµСЃС‚РІРѕ С†РёС„СЂ РІ РґСЂРѕР±РЅС‹С… С‡Р°СЃС‚СЏС…
+    // Складываем количество цифр в дробных частях
     size_t totalFracLen = this->fractionPart.size() + other.fractionPart.size();
 
-    // РћР±СЉРµРґРёРЅСЏРµРј С†РµР»СѓСЋ Рё РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ Сѓ РїРµСЂРІРѕРіРѕ С‡РёСЃР»Р°
+    // Объединяем целую и дробную часть у первого числа
     std::vector<uint8_t> num1 = this->integerPart;
     num1.insert(num1.end(), this->fractionPart.begin(), this->fractionPart.end());
 
-    // РћР±СЉРµРґРёРЅСЏРµРј С†РµР»СѓСЋ Рё РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ Сѓ РІС‚РѕСЂРѕРіРѕ С‡РёСЃР»Р°
+    // Объединяем целую и дробную часть у второго числа
     std::vector<uint8_t> num2 = other.integerPart;
     num2.insert(num2.end(), other.fractionPart.begin(), other.fractionPart.end());
 
-    // РЎРѕР·РґР°РµРј РјР°СЃСЃРёРІ РґР»СЏ СЂРµР·СѓР»СЊС‚Р°С‚Р° СЂР°Р·РјРµСЂРѕРј, СЂР°РІРЅС‹Рј СЃСѓРјРјРµ РєРѕР»РёС‡РµСЃС‚РІР° С†РёС„СЂ 
-    // РїРµСЂРІРѕРіРѕ Рё РІС‚РѕСЂРѕРіРѕ С†РµР»С‹С… С‡РёСЃРµР». Р—Р°РїРѕР»РЅСЏРµРј РІСЃРµ СЏС‡РµР№РєРё РЅСѓР»СЏРјРё
+    // Создаем массив для результата размером, равным сумме количества цифр 
+    // первого и второго целых чисел. Заполняем все ячейки нулями
     size_t resSize = num1.size() + num2.size();
     std::vector<uint8_t> resDigits(resSize, 0);
 
-    // Р‘РµСЂРµРј С†РёС„СЂС‹ РІС‚РѕСЂРѕРіРѕ С‡РёСЃР»Р°, РґРІРёРіР°СЏСЃСЊ СЃРїСЂР°РІР° РЅР°Р»РµРІРѕ
-    for (int j = (int)num2.size() - 1; j >= 0; j--) 
+    // Берем цифры второго числа, двигаясь справа налево
+    for (int j = (int)num2.size() - 1; j >= 0; j--)
     {
-        // РћР±РЅСѓР»СЏРµРј РїРµСЂРµРЅРѕСЃ
+        // Обнуляем перенос
         int carry = 0;
 
-        // Р‘РµСЂРµРј С†РёС„СЂС‹ РїРµСЂРІРѕРіРѕ С‡РёСЃР»Р°, РґРІРёРіР°СЏСЃСЊ СЃРїСЂР°РІР° РЅР°Р»РµРІРѕ
-        for (int i = (int)num1.size() - 1; i >= 0; i--) 
+        // Берем цифры первого числа, двигаясь справа налево
+        for (int i = (int)num1.size() - 1; i >= 0; i--)
         {
-            // РРЅРґРµРєСЃ С‚РµРєСѓС‰РµР№ СЏС‡РµР№РєРё РІ РјР°СЃСЃРёРІРµ СЂРµР·СѓР»СЊС‚Р°С‚Р°
+            // Индекс текущей ячейки в массиве результата
             int currentPos = i + j + 1;
 
-            // РџРµСЂРµРјРЅРѕР¶Р°РµРј С‚РµРєСѓС‰РёРµ С†РёС„СЂС‹
+            // Перемножаем текущие цифры
             int prod = num1[i] * num2[j];
 
-            // РџСЂРёР±Р°РІР»СЏРµРј Р·РЅР°С‡РµРЅРёРµ, РєРѕС‚РѕСЂРѕРµ СѓР¶Рµ Р»РµР¶РёС‚ РІ СЏС‡РµР№РєРµ РјР°СЃСЃРёРІР° СЂРµР·СѓР»СЊС‚Р°С‚Р°, Рё РЅР°РєРѕРїР»РµРЅРЅС‹Р№ РїРµСЂРµРЅРѕСЃ
+            // Прибавляем значение, которое уже лежит в ячейке массива результата, и накопленный перенос
             int sum = prod + carry + resDigits[currentPos];
 
-            // Р—Р°РїРёСЃС‹РІР°РµРј РїРѕСЃР»РµРґРЅСЋСЋ С†РёС„СЂСѓ
+            // Записываем последнюю цифру
             resDigits[currentPos] = sum % 10;
 
-            // РћР±РЅРѕРІР»СЏРµРј РїРµСЂРµРЅРѕСЃ
+            // Обновляем перенос
             carry = sum / 10;
 
-            // Р•СЃР»Рё РІСЃРµ С†РёС„СЂС‹ РїРµСЂРІРѕРіРѕ С‡РёСЃР»Р° Р·Р°РєРѕРЅС‡РёР»РёСЃСЊ
-            if (i == 0) 
+            // Если все цифры первого числа закончились
+            if (i == 0)
             {
-                // Р—Р°РїРёСЃС‹РІР°РµРј РѕСЃС‚Р°РІС€РёР№СЃСЏ РїРµСЂРµРЅРѕСЃ РІ СЏС‡РµР№РєСѓ СЃР»РµРІР°
+                // Записываем оставшийся перенос в ячейку слева
                 resDigits[currentPos - 1] += carry;
             }
         }
     }
 
-    // РџСЂРѕРІРµСЂСЏРµРј, РµСЃС‚СЊ Р»Рё РґСЂРѕР±РЅР°СЏ С‡Р°СЃС‚СЊ
-    if (totalFracLen > 0) 
+    // Проверяем, есть ли дробная часть
+    if (totalFracLen > 0)
     {
-        // РџСЂРѕРІРµСЂСЏРµРј, РјРѕР¶РЅРѕ Р»Рё СЂР°Р·РґРµР»РёС‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚ РЅР° С†РµР»СѓСЋ Рё РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ
-        if (resDigits.size() > totalFracLen) 
+        // Проверяем, можно ли разделить результат на целую и дробную часть
+        if (resDigits.size() > totalFracLen)
         {
-            // РћРїСЂРµРґРµР»СЏРµРј С†РµР»СѓСЋ Рё РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ
+            // Определяем целую и дробную часть
             result.fractionPart.assign(resDigits.end() - totalFracLen, resDigits.end());
             result.integerPart.assign(resDigits.begin(), resDigits.end() - totalFracLen);
         }
-        // Р’СЃРµ С†РёС„СЂС‹ РЅР°С…РѕРґСЏС‚СЃСЏ РІ РґСЂРѕР±РЅРѕР№ С‡Р°СЃС‚Рё, С†РµР»Р°СЏ С‡Р°СЃС‚СЊ СЂР°РІРЅР° 0
-        else 
+        // Все цифры находятся в дробной части, целая часть равна 0
+        else
         {
             result.fractionPart.assign(resDigits.begin(), resDigits.end());
 
-            // Р”РѕРїРѕР»РЅСЏРµРј РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ РІРµРґСѓС‰РёРјРё РЅСѓР»СЏРјРё, РµСЃР»Рё РјР°СЃСЃРёРІ С†РёС„СЂ РѕРєР°Р·Р°Р»СЃСЏ РєРѕСЂРѕС‡Рµ, С‡РµРј РЅСѓР¶РЅРѕ
-            while (result.fractionPart.size() < totalFracLen) 
+            // Дополняем дробную часть ведущими нулями, если массив цифр оказался короче, чем нужно
+            while (result.fractionPart.size() < totalFracLen)
             {
                 result.fractionPart.insert(result.fractionPart.begin(), 0);
             }
             result.integerPart = { 0 };
         }
     }
-    else 
+    else
     {
-        // Р•СЃР»Рё РґСЂРѕР±РЅРѕР№ С‡Р°СЃС‚Рё РЅРµС‚
+        // Если дробной части нет
         result.integerPart = resDigits;
         result.fractionPart = {};
     }
 
-    // РЈР±РёСЂР°РµРј РІРµРґСѓС‰РёРµ Рё С…РІРѕСЃС‚РѕРІС‹Рµ РЅСѓР»Рё
+    // Убираем ведущие и хвостовые нули
     removeLeadingZeros(result.integerPart);
     removeTrailingZeros(result.fractionPart);
 
     return result;
 }
 
-FractionNumber FractionNumber::div(const FractionNumber& other) 
+FractionNumber FractionNumber::div(const FractionNumber& other)
 {
 
-    // Р•СЃР»Рё РґРµР»РёС‚РµР»СЊ СЂР°РІРµРЅ 0, РІРµСЂРЅСѓС‚СЊ РѕС€РёР±РєСѓ
-    if (other.isZero()) 
+    // Если делитель равен 0, вернуть ошибку
+    if (other.isZero())
     {
         throw std::invalid_argument("Division by zero.");
     }
 
-    // Р•СЃР»Рё РґРµР»РёРјРѕРµ СЂР°РІРЅРѕ 0, РІРµСЂРЅСѓС‚СЊ 0
-    if (this->isZero()) 
+    // Если делимое равно 0, вернуть 0
+    if (this->isZero())
     {
         return FractionNumber("0");
     }
 
-    // РћРїСЂРµРґРµР»СЏРµРј Р·РЅР°Рє СЂРµР·СѓР»СЊС‚Р°С‚Р°
+    // Определяем знак результата
     bool targetNegative = (this->isNegative != other.isNegative);
 
     std::vector<uint8_t> fracA = this->fractionPart;
@@ -794,23 +795,23 @@ FractionNumber FractionNumber::div(const FractionNumber& other)
 
     size_t maxFracLen = std::max(fracA.size(), fracB.size());
 
-    // Р’С‹СЂР°РІРЅРёРІР°РµРј РґСЂРѕР±РЅС‹Рµ С‡Р°СЃС‚Рё РЅСѓР»СЏРјРё
+    // Выравниваем дробные части нулями
     appendZerosRight(fracA, maxFracLen);
     appendZerosRight(fracB, maxFracLen);
 
-    // РћР±СЉРµРґРёРЅСЏРµРј С†РµР»СѓСЋ Рё РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ Сѓ РїРµСЂРІРѕРіРѕ С‡РёСЃР»Р°
+    // Объединяем целую и дробную часть у первого числа
     std::vector<uint8_t> dividendVector = this->integerPart;
     dividendVector.insert(dividendVector.end(), fracA.begin(), fracA.end());
 
-    // РћР±СЉРµРґРёРЅСЏРµРј С†РµР»СѓСЋ Рё РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ Сѓ РІС‚РѕСЂРѕРіРѕ С‡РёСЃР»Р°
+    // Объединяем целую и дробную часть у второго числа
     std::vector<uint8_t> divisorVector = other.integerPart;
     divisorVector.insert(divisorVector.end(), fracB.begin(), fracB.end());
 
-    // РЈРґР°Р»СЏРµРј РІРµРґСѓС‰РёРµ РЅСѓР»Рё Сѓ РѕР±РѕРёС… С‡РёСЃРµР»
+    // Удаляем ведущие нули у обоих чисел
     removeLeadingZeros(divisorVector);
     removeLeadingZeros(dividendVector);
 
-    // Р—Р°РїРѕРјРёРЅР°РµРј РёСЃС…РѕРґРЅС‹Р№ СЂР°Р·РјРµСЂ РґРµР»РёРјРѕРіРѕ, С‡С‚РѕР±С‹ Р·РЅР°С‚СЊ, РіРґРµ Р·Р°РєР°РЅС‡РёРІР°РµС‚СЃСЏ С†РµР»Р°СЏ С‡Р°СЃС‚СЊ
+    // Запоминаем исходный размер делимого, чтобы знать, где заканчивается целая часть
     size_t realDividendSize = dividendVector.size();
 
     FractionNumber result;
@@ -825,113 +826,113 @@ FractionNumber FractionNumber::div(const FractionNumber& other)
     divFn.fractionPart = {};
     divFn.isNegative = false;
 
-    // Р¦РёРєР» РґРµР»РµРЅРёСЏ СЃС‚РѕР»Р±РёРєРѕРј
-    // Р’С‹РїРѕР»РЅСЏРµС‚СЃСЏ, РїРѕРєР° РЅРµ Р·Р°РєРѕРЅС‡Р°С‚СЃСЏ С†РёС„СЂС‹ РІ РґРµР»РёРјРѕРј РёР»Рё РїРѕРєР° РЅРµ РЅР°Р±РµСЂС‘Рј 16 Р·РЅР°РєРѕРІ РІ РґСЂРѕР±РЅРѕР№ С‡Р°СЃС‚Рё
-    while (currentDigitIdx < dividendVector.size() || result.fractionPart.size() < 16) 
+    // Цикл деления столбиком
+    // Выполняется, пока не закончатся цифры в делимом или пока не наберём 16 знаков в дробной части
+    while (currentDigitIdx < dividendVector.size() || result.fractionPart.size() < 16)
     {
 
-        // РћРїСЂРµРґРµР»СЏРµРј, РїРµСЂРµС€Р»Рё Р»Рё РјС‹ СѓР¶Рµ Рє РІС‹С‡РёСЃР»РµРЅРёСЋ РґСЂРѕР±РЅРѕР№ С‡Р°СЃС‚Рё
+        // Определяем, перешли ли мы уже к вычислению дробной части
         bool isFractionNow = (currentDigitIdx >= realDividendSize);
 
-        // Р•СЃР»Рё С†РёС„СЂС‹ РІ РґРµР»РёРјРѕРј РµС‰С‘ РµСЃС‚СЊ - Р±РµСЂС‘Рј С‚РµРєСѓС‰СѓСЋ, РµСЃР»Рё Р·Р°РєРѕРЅС‡РёР»РёСЃСЊ вЂ” СЃРЅРѕСЃРёРј РЅРѕР»СЊ
+        // Если цифры в делимом ещё есть - берём текущую, если закончились — сносим ноль
         uint8_t nextDigit = 0;
-        if (currentDigitIdx < dividendVector.size()) 
+        if (currentDigitIdx < dividendVector.size())
         {
             nextDigit = dividendVector[currentDigitIdx];
         }
-        // РЎРґРІРёРіР°РµРј СѓРєР°Р·Р°С‚РµР»СЊ СЂР°Р·СЂСЏРґР° РІРїРµСЂРµРґ
+        // Сдвигаем указатель разряда вперед
         currentDigitIdx++;
 
-        // Р”РѕР±Р°РІР»СЏРµРј СЃРЅРµСЃС‘РЅРЅСѓСЋ С†РёС„СЂСѓ РІ РєРѕРЅРµС† С‚РµРєСѓС‰РµРіРѕ РѕСЃС‚Р°С‚РєР° Рё СѓР±РёСЂР°РµРј Р»РёС€РЅРёРµ РІРµРґСѓС‰РёРµ РЅСѓР»Рё
+        // Добавляем снесённую цифру в конец текущего остатка и убираем лишние ведущие нули
         remainder.push_back(nextDigit);
         removeLeadingZeros(remainder);
 
-        // РЎС‡РёС‚Р°РµРј, СЃРєРѕР»СЊРєРѕ СЂР°Р· РґРµР»РёС‚РµР»СЊ РїРѕРјРµСЃС‚РёС‚СЃСЏ РІ С‚РµРєСѓС‰РёР№ РѕСЃС‚Р°С‚РѕРє
+        // Считаем, сколько раз делитель поместится в текущий остаток
         int fitCount = 0;
-        while (true) 
+        while (true)
         {
             bool remainderIsLess = false;
 
-            // Р•СЃР»Рё РєРѕР»РёС‡РµСЃС‚РІРѕ СЂР°Р·СЂСЏРґРѕРІ СЂР°Р·РЅРѕРµ, С‚Рѕ РјРµРЅСЊС€Рµ С‚Рѕ С‡РёСЃР»Рѕ, Сѓ РєРѕС‚РѕСЂРѕРіРѕ РІРµРєС‚РѕСЂ РєРѕСЂРѕС‡Рµ
-            if (remainder.size() != divisorVector.size()) 
+            // Если количество разрядов разное, то меньше то число, у которого вектор короче
+            if (remainder.size() != divisorVector.size())
             {
                 remainderIsLess = remainder.size() < divisorVector.size();
             }
-            // Р•СЃР»Рё РґР»РёРЅС‹ РІРµРєС‚РѕСЂРѕРІ РѕРґРёРЅР°РєРѕРІС‹, СЃСЂР°РІРЅРёРІР°РµРј РёС… РїРѕСЌР»РµРјРµРЅС‚РЅРѕ
-            else 
+            // Если длины векторов одинаковы, сравниваем их поэлементно
+            else
             {
                 remainderIsLess = remainder < divisorVector;
             }
-            // Р•СЃР»Рё РѕСЃС‚Р°С‚РѕРє СЃС‚Р°Р» РјРµРЅСЊС€Рµ РґРµР»РёС‚РµР»СЏ, РїРѕРґР±РѕСЂ С†РёС„СЂС‹ Р·Р°РІРµСЂС€С‘РЅ
-            if (remainderIsLess) 
+            // Если остаток стал меньше делителя, подбор цифры завершён
+            if (remainderIsLess)
             {
                 break;
             }
 
-            // РќР°СЃС‚СЂР°РёРІР°РµРј РѕР±СЉРµРєС‚ РѕСЃС‚Р°С‚РєР° РїРѕРґ С‚РµРєСѓС‰РёР№ РІРµРєС‚РѕСЂ remainder
+            // Настраиваем объект остатка под текущий вектор remainder
             remFn.integerPart = remainder;
             remFn.fractionPart = {};
             remFn.isNegative = false;
 
-            // Р’С‹С‡РёС‚Р°РµРј РґРµР»РёС‚РµР»СЊ РёР· РѕСЃС‚Р°С‚РєР°
+            // Вычитаем делитель из остатка
             FractionNumber subRes = remFn.sub(divFn);
 
-            // РћР±РЅРѕРІР»СЏРµРј РѕСЃС‚Р°С‚РѕРє РїРѕР»СѓС‡РµРЅРЅРѕР№ СЂР°Р·РЅРѕСЃС‚СЊСЋ Рё Р·Р°С‡РёС‰Р°РµРј РІРµРґСѓС‰РёРµ РЅСѓР»Рё
+            // Обновляем остаток полученной разностью и зачищаем ведущие нули
             remainder = subRes.integerPart;
             removeLeadingZeros(remainder);
 
-            // РЈРІРµР»РёС‡РёРІР°РµРј СЃС‡С‘С‚С‡РёРє СѓСЃРїРµС€РЅС‹С… РІС‹С‡РёС‚Р°РЅРёР№
+            // Увеличиваем счётчик успешных вычитаний
             fitCount++;
         }
 
-        // Р”РѕР±Р°РІР»СЏРµРј С†РёС„СЂСѓ РІ С†РµР»СѓСЋ РёР»Рё РґСЂРѕР±РЅСѓСЋ С‡Р°СЃС‚СЊ
-        if (!isFractionNow) 
+        // Добавляем цифру в целую или дробную часть
+        if (!isFractionNow)
         {
             result.integerPart.push_back(fitCount);
         }
-        else 
+        else
         {
             result.fractionPart.push_back(fitCount);
         }
 
-        // Р’С‹С…РѕРґРёРј РёР· С†РёРєР»Р°, РµСЃР»Рё С‡РёСЃР»Рѕ СЂР°Р·РґРµР»РёР»РѕСЃСЊ РЅР°С†РµР»Рѕ
+        // Выходим из цикла, если число разделилось нацело
         if (currentDigitIdx >= dividendVector.size() &&
-            remainder.size() == 1 && remainder[0] == 0) 
+            remainder.size() == 1 && remainder[0] == 0)
         {
             break;
         }
     }
 
-    // Р•СЃР»Рё С†РµР»Р°СЏ С‡Р°СЃС‚СЊ РїСѓСЃС‚Р°СЏ, Р·Р°РїРёСЃС‹РІР°РµРј 0
+    // Если целая часть пустая, записываем 0
     if (result.integerPart.empty()) result.integerPart.push_back(0);
     removeLeadingZeros(result.integerPart);
 
-    // РћР±СЂР°Р±Р°С‚С‹РІР°РµРј СЃР»СѓС‡Р°Рё СЃ РїРµСЂРёРѕРґРёС‡РµСЃРєРёРјРё РґСЂРѕР±СЏРјРё
+    // Обрабатываем случаи с периодическими дробями
     std::string s = result.toString();
     size_t dot = s.find('.');
 
-    if (dot != std::string::npos && s.length() > dot + 2) 
+    if (dot != std::string::npos && s.length() > dot + 2)
     {
         char lastChar = s.back();
 
-        if (lastChar != '0') 
+        if (lastChar != '0')
         {
             size_t zeroCount = 0;
-            for (int i = (int)s.length() - 2; i > (int)dot; i--) 
+            for (int i = (int)s.length() - 2; i > (int)dot; i--)
             {
                 if (s[i] == '0') zeroCount++;
                 else break;
             }
 
-            if (zeroCount >= 3) 
+            if (zeroCount >= 3)
             {
-                for (size_t i = s.length() - 1 - zeroCount; i < s.length() - 1; i++) 
+                for (size_t i = s.length() - 1 - zeroCount; i < s.length() - 1; i++)
                 {
                     s[i] = lastChar;
                 }
 
                 result.fractionPart.clear();
-                for (size_t i = dot + 1; i < s.length(); i++) 
+                for (size_t i = dot + 1; i < s.length(); i++)
                 {
                     result.fractionPart.push_back(s[i] - '0');
                 }
@@ -939,23 +940,23 @@ FractionNumber FractionNumber::div(const FractionNumber& other)
         }
     }
 
-    // РћСЃС‚Р°РІР»СЏРµРј С‚РѕС‡РЅРѕСЃС‚СЊ РґРѕ 16 Р·РЅР°РєРѕРІ РїРѕСЃР»Рµ Р·Р°РїСЏС‚РѕР№
-    if (result.fractionPart.size() > 16) 
+    // Оставляем точность до 16 знаков после запятой
+    if (result.fractionPart.size() > 16)
     {
         result.fractionPart.resize(16);
     }
 
-    // РЈР±РёСЂР°РµРј С…РІРѕСЃС‚РѕРІС‹Рµ РЅСѓР»Рё
+    // Убираем хвостовые нули
     removeTrailingZeros(result.fractionPart);
 
     return result;
 }
 
-FractionNumber FractionNumber::degree(const FractionNumber& exponent) 
+FractionNumber FractionNumber::degree(const FractionNumber& exponent)
 {
 
-    // Р•СЃР»Рё РїРѕРєР°Р·Р°С‚РµР»СЊ СЃС‚РµРїРµРЅРё СЂР°РІРµРЅ 0, РІРµСЂРЅСѓС‚СЊ 1
-    if (exponent.isZero()) 
+    // Если показатель степени равен 0, вернуть 1
+    if (exponent.isZero())
     {
         FractionNumber res;
         res.integerPart = { 1 };
@@ -964,11 +965,11 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent)
         return res;
     }
 
-    // Р•СЃР»Рё РѕСЃРЅРѕРІР°РЅРёРµ СЃС‚РµРїРµРЅРё СЂР°РІРЅРѕ 0
-    if (this->isZero()) 
+    // Если основание степени равно 0
+    if (this->isZero())
     {
-        // Р•СЃР»Рё СЃС‚РµРїРµРЅСЊ РїРѕР»РѕР¶РёС‚РµР»СЊРЅР°СЏ, РІРµСЂРЅСѓС‚СЊ 0
-        if (!exponent.isNegative) 
+        // Если степень положительная, вернуть 0
+        if (!exponent.isNegative)
         {
             FractionNumber res;
             res.integerPart = { 0 };
@@ -976,82 +977,82 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent)
             res.isNegative = false;
             return res;
         }
-        // Р’С‹РІРѕРґРёРј РѕС€РёР±РєСѓ
+        // Выводим ошибку
         throw std::invalid_argument("Zero raised to a negative power.");
     }
 
-    // РџСЂРѕРІРµСЂСЏРµРј, СЂР°РІРµРЅ Р»Рё РїРѕРєР°Р·Р°С‚РµР»СЊ СЃС‚РµРїРµРЅРё РµРґРёРЅРёС†Рµ
+    // Проверяем, равен ли показатель степени единице
     bool otherIsOne = false;
-    if (exponent.integerPart.size() == 1 && exponent.integerPart[0] == 1 && !exponent.isNegative) 
+    if (exponent.integerPart.size() == 1 && exponent.integerPart[0] == 1 && !exponent.isNegative)
     {
         bool onlyZeros = true;
         for (auto d : exponent.fractionPart) if (d != 0) onlyZeros = false;
         if (onlyZeros) otherIsOne = true;
     }
-    // Р•СЃР»Рё СЃС‚РµРїРµРЅСЊ СЂР°РІРЅР° 1, РІРѕР·РІСЂР°С‰Р°РµРј РѕСЃРЅРѕРІР°РЅРёРµ
+    // Если степень равна 1, возвращаем основание
     if (otherIsOne) return *this;
 
-    // РџСЂРѕРІРµСЂСЏРµРј, СЏРІР»СЏРµС‚СЃСЏ Р»Рё СЃС‚РµРїРµРЅСЊ С†РµР»С‹Рј С‡РёСЃР»РѕРј
+    // Проверяем, является ли степень целым числом
     bool expIsInteger = true;
     for (auto d : exponent.fractionPart) if (d != 0) { expIsInteger = false; break; }
 
-    
-    if (expIsInteger) 
+
+    if (expIsInteger)
     {
 
         unsigned long long loopLimit = vectorToInt(exponent.integerPart);
 
-        // РЎРѕР·РґР°РµРј РјРѕРґСѓР»СЊ РѕСЃРЅРѕРІР°РЅРёСЏ
+        // Создаем модуль основания
         FractionNumber baseAbs = *this; baseAbs.isNegative = false;
-        // Р’С‹Р·С‹РІР°РµРј РІРѕР·РІРµРґРµРЅРёРµ РІ СЃС‚РµРїРµРЅСЊ РґР»СЏ РјРѕРґСѓР»СЏ С‡РёСЃР»Р°
+        // Вызываем возведение в степень для модуля числа
         FractionNumber result = powInt(baseAbs, loopLimit);
 
-        // Р•СЃР»Рё СЃС‚РµРїРµРЅСЊ Р±С‹Р»Р° РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕР№, РїРѕР»СѓС‡Р°РµРј РѕР±СЂР°С‚РЅРѕРµ С‡РёСЃР»Рѕ РґР»СЏ СЂРµР·СѓР»СЊС‚Р°С‚Р°
-        if (exponent.isNegative) 
+        // Если степень была отрицательной, получаем обратное число для результата
+        if (exponent.isNegative)
         {
             FractionNumber one; one.integerPart = { 1 };
             result = one.div(result);
         }
 
-        // РћРїСЂРµРґРµР»СЏРµРј Р·РЅР°Рє РёС‚РѕРіРѕРІРѕРіРѕ С‡РёСЃР»Р°
-        // РјРёРЅСѓСЃ СЃРѕС…СЂР°РЅСЏРµС‚СЃСЏ, РµСЃР»Рё РёСЃС…РѕРґРЅРѕРµ С‡РёСЃР»Рѕ Р±С‹Р»Рѕ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹Рј Рё СЃС‚РµРїРµРЅСЊ РЅРµС‡С‘С‚РЅР°СЏ
+        // Определяем знак итогового числа
+        // минус сохраняется, если исходное число было отрицательным и степень нечётная
         result.isNegative = this->isNegative && (loopLimit % 2 == 1);
-        // РЈР±РёСЂР°РµРј РІРѕР·РјРѕР¶РЅС‹Рµ Р»РёС€РЅРёРµ РЅСѓР»Рё РЅР° РєРѕРЅС†Рµ РґСЂРѕР±РЅРѕР№ С‡Р°СЃС‚Рё Рё РІРѕР·РІСЂР°С‰Р°РµРј СЂРµР·СѓР»СЊС‚Р°С‚
+        // Убираем возможные лишние нули на конце дробной части и возвращаем результат
         removeTrailingZeros(result.fractionPart);
         return result;
     }
 
-    // РџРµСЂРµРІРѕРґРёРј РѕСЃРЅРѕРІР°РЅРёРµ Рё СЃС‚РµРїРµРЅСЊ РёР· РѕР±СЉРµРєС‚РѕРІ РєР»Р°СЃСЃР° РІ С‚РёРї double
+    // Переводим основание и степень из объектов класса в тип double
     double base = convertToDouble(*this);
     double exp = convertToDouble(exponent);
 
-    // РќРµР»СЊР·СЏ РІРѕР·РІРѕРґРёС‚СЊ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕРµ С‡РёСЃР»Рѕ РІ РґСЂРѕР±РЅСѓСЋ СЃС‚РµРїРµРЅСЊ
-    if (base < 0 && exp != (long long)exp) 
+    // Нельзя возводить отрицательное число в дробную степень
+    if (base < 0 && exp != (long long)exp)
     {
         throw std::invalid_argument("Negative base with non-integer exponent.");
     }
 
-    // Р—Р°РїРѕРјРёРЅР°РµРј, Р±С‹Р»Рѕ Р»Рё РѕСЃРЅРѕРІР°РЅРёРµ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹Рј, Рё СЂР°Р±РѕС‚Р°РµРј СЃ РјРѕРґСѓР»РµРј
+    // Запоминаем, было ли основание отрицательным, и работаем с модулем
     bool baseNeg = base < 0;
     if (baseNeg) base = -base;
 
-    // Р’С‹С‡РёСЃР»СЏРµРј СЃС‚РµРїРµРЅСЊ РїРѕ С„РѕСЂРјСѓР»Рµ: x^y = e^(y * ln(x))
+    // Вычисляем степень по формуле: x^y = e^(y * ln(x))
     double lnBase = calcLn(base);
     double val = calcExp(exp * lnBase);
 
-    // РљРѕРЅРІРµСЂС‚РёСЂСѓРµРј РїРѕР»СѓС‡РµРЅРЅС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚ РѕР±СЂР°С‚РЅРѕ РІ FractionNumber
-    FractionNumber result = convertFromDouble(val, 16); // Р—Р°РјРµРЅРµРЅРѕ РЅР° convertFromDouble
+    // Конвертируем полученный результат обратно в FractionNumber
+    FractionNumber result = convertFromDouble(val, 16); // Заменено на convertFromDouble
 
-    // Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ Р·РЅР°РєР°
-    if (baseNeg) 
+    // Восстановление знака
+    if (baseNeg)
     {
-        // РџСЂРµРѕР±СЂР°Р·СѓРµРј С†РµР»СѓСЋ С‡Р°СЃС‚СЊ СЃС‚РµРїРµРЅРё РІ С‡РёСЃР»Рѕ, С‡С‚РѕР±С‹ РїСЂРѕРІРµСЂРёС‚СЊ РµС‘ С‡С‘С‚РЅРѕСЃС‚СЊ
+        // Преобразуем целую часть степени в число, чтобы проверить её чётность
         unsigned long long intExp = vectorToInt(exponent.integerPart);
-        // РњРёРЅСѓСЃ РѕСЃС‚Р°С‘С‚СЃСЏ С‚РѕР»СЊРєРѕ РµСЃР»Рё С†РµР»Р°СЏ С‡Р°СЃС‚СЊ СЃС‚РµРїРµРЅРё Р±С‹Р»Р° РЅРµС‡С‘С‚РЅРѕР№
+        // Минус остаётся только если целая часть степени была нечётной
         result.isNegative = (intExp % 2 == 1);
     }
-    // Р•СЃР»Рё РѕСЃРЅРѕРІР°РЅРёРµ Р±С‹Р»Рѕ РїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹Рј, СЂРµР·СѓР»СЊС‚Р°С‚ РІСЃРµРіРґР° РїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹Р№
-    else 
+    // Если основание было положительным, результат всегда положительный
+    else
     {
         result.isNegative = false;
     }
@@ -1060,11 +1061,11 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent)
     return result;
 }
 
-FractionNumber FractionNumber::sqrt(const FractionNumber& other) 
+FractionNumber FractionNumber::sqrt(const FractionNumber& other)
 {
 
-    // Р•СЃР»Рё РїРѕРґРєРѕСЂРµРЅРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ СЂР°РІРЅРѕ 0, РІРµСЂРЅСѓС‚СЊ 0
-    if (this->isZero()) 
+    // Если подкоренное выражение равно 0, вернуть 0
+    if (this->isZero())
     {
         FractionNumber zero;
         zero.integerPart = { 0 };
@@ -1073,21 +1074,21 @@ FractionNumber FractionNumber::sqrt(const FractionNumber& other)
         return zero;
     }
 
-    // Р’С‹С‡РёСЃР»СЏРµРј РѕР±СЂР°С‚РЅРѕРµ С‡РёСЃР»Рѕ РґР»СЏ СЃС‚РµРїРµРЅРё РєРѕСЂРЅСЏ
+    // Вычисляем обратное число для степени корня
     FractionNumber one("1");
     FractionNumber invExp = one.div(other);
 
     FractionNumber tempBase = *this;
 
-    // Р‘РµСЂРµРј РјРѕРґСѓР»СЊ С‡РёСЃР»Р°
+    // Берем модуль числа
     bool wasNegative = tempBase.isNegative;
     tempBase.isNegative = false;
 
-    // Р’РѕР·РІРѕРґРёРј РІ СЃС‚РµРїРµРЅСЊ
+    // Возводим в степень
     FractionNumber result = tempBase.degree(invExp);
 
-    // Р•СЃР»Рё РёСЃС…РѕРґРЅРѕРµ С‡РёСЃР»Рѕ РїРѕРґ РєРѕСЂРЅРµРј Р±С‹Р»Рѕ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹Рј, РІРѕР·РІСЂР°С‰Р°РµРј РјРёРЅСѓСЃ
-    if (wasNegative) 
+    // Если исходное число под корнем было отрицательным, возвращаем минус
+    if (wasNegative)
     {
 
         result.isNegative = true;
@@ -1098,40 +1099,40 @@ FractionNumber FractionNumber::sqrt(const FractionNumber& other)
 
 int main(int argc, char* argv[])
 {
-    // Р•СЃР»Рё РєРѕР»РёС‡РµСЃС‚РІРѕ Р°СЂРіСѓРјРµРЅС‚РѕРІ РЅРµ СЂР°РІРЅРѕ 3
+    // Если количество аргументов не равно 3
     if (argc != 3)
     {
-        // Р’С‹РІРµСЃС‚Рё РѕС€РёР±РєСѓ Рѕ РЅРµРїСЂР°РІРёР»СЊРЅРѕРј СѓРєР°Р·Р°РЅРёРё РїР°СЂР°РјРµС‚СЂРѕРІ Р·Р°РїСѓСЃРєР°
+        // Вывести ошибку о неправильном указании параметров запуска
         cerr << "Error: Invalid program launch parameters!" << endl;
         cerr << "Usage: " << argv[0] << " <path_to_input_file> <path_to_output_directory>" << endl;
         return 1;
     }
 
-    // РЎС‡РёС‚Р°С‚СЊ РІС…РѕРґРЅРѕР№ С„Р°Р№Р»
+    // Считать входной файл
     ifstream inputFile(argv[1]);
 
-    // Р•СЃР»Рё С„Р°Р№Р» РЅРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ
+    // Если файл не удалось открыть
     if (!inputFile.is_open())
     {
-        // Р’С‹РІРѕРґРёРј РѕС€РёР±РєСѓ Рѕ РЅРµРєРѕСЂСЂРµРєС‚РЅРѕРј РІС…РѕРґРЅРѕРј С„Р°Р№Р»Рµ
+        // Выводим ошибку о некорректном входном файле
         cerr << "Error: Incorrect input file. Failed to open: " << argv[1] << endl;
         return 1;
     }
 
     vector<string> fileContent;
 
-    // Р•СЃР»Рё РЅРµ СѓРґР°Р»РѕСЃСЊ СЃС‡РёС‚Р°С‚СЊ РґР°РЅРЅС‹Рµ РёР· РІС…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р°
+    // Если не удалось считать данные из входного файла
     if (!readFile(inputFile, fileContent))
     {
-        // Р’С‹РІРѕРґРёРј РѕС€РёР±РєСѓ Рѕ РЅРµРІРѕР·РјРѕР¶РЅРѕСЃС‚Рё СЃС‡РёС‚Р°С‚СЊ РґР°РЅРЅС‹Рµ РёР· С„Р°Р№Р»Р°
+        // Выводим ошибку о невозможности считать данные из файла
         cerr << "Error: Unable to read data from the file or the file is empty." << endl;
         return 1;
     }
 
-    // Р•СЃР»Рё РІС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ РЅРµ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‚ С‚СЂРµР±РѕРІР°РЅРёСЏРј
+    // Если входные данные не соответствуют требованиям
     if (fileContent.size() != 1)
     {
-        // Р’С‹РІРѕРґРёРј РѕС€РёР±РєСѓ Рѕ РЅРµРІРµСЂРЅРѕРј РєРѕР»РёС‡РµСЃС‚РІРµ СЃС‚СЂРѕРє РІ С„Р°Р№Р»Рµ
+        // Выводим ошибку о неверном количестве строк в файле
         cerr << "Error: Invalid number of lines in the file. Exactly 1 line is expected." << endl;
         return 1;
     }
@@ -1142,31 +1143,31 @@ int main(int argc, char* argv[])
     FractionNumber first;
     FractionNumber second;
 
-    // РџСЂРѕРІРµСЂСЏРµРј СЃС‚СЂРѕРєСѓ РёР· С„Р°Р№Р»Р° РЅР° РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ РґР°РЅРЅС‹С… Рё СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРµ РґРёР°РїР°Р·РѕРЅСѓ
+    // Проверяем строку из файла на корректность данных и соответствие диапазону
     DataErrors parseResult = parseInputData(targetLine, operation, first, second);
 
     if (parseResult != DataErrors::NO_DATA_ERROR)
     {
-        if (parseResult == DataErrors::WRONG_INPUT) 
+        if (parseResult == DataErrors::WRONG_INPUT)
         {
             cerr << "Error: Input characters do not match the required data template." << endl;
         }
-        else if (parseResult == DataErrors::WRONG_OPERATION) 
+        else if (parseResult == DataErrors::WRONG_OPERATION)
         {
             cerr << "Error: Unsupported arithmetic operation." << endl;
         }
-        else if (parseResult == DataErrors::NO_FRACTION) 
+        else if (parseResult == DataErrors::NO_FRACTION)
         {
             cerr << "Error: Provided characters do not form a valid fractional number." << endl;
         }
-        else if (parseResult == DataErrors::INCORRECT_RANGE) 
+        else if (parseResult == DataErrors::INCORRECT_RANGE)
         {
             cerr << "Error: Passed arguments are out of the allowed range." << endl;
         }
         return 1;
     }
 
-    // Р’С‹С‡РёСЃР»СЏРµРј СЂРµР·СѓР»СЊС‚Р°С‚ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРѕР№ РѕРїРµСЂР°С†РёРё
+    // Вычисляем результат арифметической операции
     FractionNumber result;
 
     if (operation == "+") result = first.add(second);
@@ -1176,7 +1177,7 @@ int main(int argc, char* argv[])
     else if (operation == "^") result = first.degree(second);
     else if (operation == "sqrt") result = first.sqrt(second);
 
-    // Р—Р°РїРёСЃС‹РІР°РµРј СЂРµР·СѓР»СЊС‚Р°С‚ РІ РІС‹С…РѕРґРЅРѕР№ С„Р°Р№Р»
+    // Записываем результат в выходной файл
     string outputPath = string(argv[2]) + "/result.txt";
     ofstream outputFile(outputPath);
 
