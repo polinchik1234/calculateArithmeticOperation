@@ -405,6 +405,60 @@ vector<string> splitString(const string& inputData)
     return splitString;
 }
 
+bool checkPower(double val1, double val2)
+{
+    // ѕроверка диапазонов дл€ операции возведени€ в степень
+    if ((val1 == 0.0 && val2 < 0.0) || (val1 < -100.0 || val1 > 100.0 || val2 < -5.0 || val2 > 5.0))
+    {
+        return false;
+    }
+    return true;
+}
+
+bool checkSqrt(double val1, double val2)
+{
+    // ≈сли первый токен Ц sqrt и второй не в диапазону [0, 100000] 
+    // или третий не в диапазоне [-10, 0) U (0, 10]
+    if (val1 < 0.0 || val1 > 100000.0 || val2 < -10.0 || val2 > 10.0 || val2 == 0.0)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool checkBasicOps(double val1, double val2)
+{
+    // ≈сли первый токен +,-,/,* и второй или третий токен больше 1000 по модулю
+    if (abs(val1) > 1000.0 || abs(val2) > 1000.0)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool validateRanges(const string& op, double val1, double val2)
+{
+    // ≈сли операци€ - возведение в степень
+    if (op == "^")
+    {
+        return checkPower(val1, val2);
+    }
+
+    // ≈сли операци€ - нахождение корн€
+    if (op == "sqrt")
+    {
+        return checkSqrt(val1, val2);
+    }
+
+    // ≈сли операци€ - сложение, вычитание, умножение, деление
+    if (op == "+" || op == "-" || op == "*" || op == "/")
+    {
+        return checkBasicOps(val1, val2);
+    }
+
+    return true;
+}
+
 DataErrors parseInputData(const string& inputData, string& operation, FractionNumber& first, FractionNumber& second)
 {
     //–азбиваем строку на токены
@@ -444,33 +498,10 @@ DataErrors parseInputData(const string& inputData, string& operation, FractionNu
     double val1 = num1.convertToDouble(num1);
     double val2 = num2.convertToDouble(num2);
 
-
-    // ѕроверка диапазонов дл€ операции возведени€ в степень
-    if (op == "^")
+    // ѕровер€ем, соответсвуют ли диапазоны
+    if (!validateRanges(op, val1, val2))
     {
-        if ((val1 == 0.0 && val2 < 0.0) || (val1 < -100.0 || val1 > 100.0 || val2 < -5.0 || val2 > 5.0))
-        {
-            return DataErrors::INCORRECT_RANGE;
-        }
-    }
-
-    // ≈сли первый токен Ц sqrt и второй не в диапазону [0, 100000] 
-    // или третий не в диапазоне [-10, 0) U (0, 10]
-    if (op == "sqrt")
-    {
-        if (val1 < 0.0 || val1 > 100000.0 || val2 < -10.0 || val2 > 10.0 || val2 == 0.0)
-        {
-            return DataErrors::INCORRECT_RANGE;
-        }
-    }
-
-    // ≈сли первый токен +,-,/,* и второй или третий токен больше 1000 по модулю
-    if (op == "+" || op == "-" || op == "*" || op == "/")
-    {
-        if (abs(val1) > 1000.0 || abs(val2) > 1000.0)
-        {
-            return DataErrors::INCORRECT_RANGE;
-        }
+        return DataErrors::INCORRECT_RANGE;
     }
 
     // —охран€ем в operation значение первого токена
@@ -485,6 +516,8 @@ DataErrors parseInputData(const string& inputData, string& operation, FractionNu
     // ќшибок нет
     return DataErrors::NO_DATA_ERROR;
 }
+
+
 
 void writeResultToFile(ofstream& outputFile, const FractionNumber& result)
 {
