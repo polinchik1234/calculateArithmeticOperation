@@ -167,33 +167,6 @@ bool FractionNumber::isZero() const
     return true;
 }
 
-// Преобразует число FractionNumber в число типа double
-double FractionNumber::convertToDouble(const FractionNumber& fn)
-{
-    double result = 0.0;
-
-    // Переводим вектор цифр целой части в обычное число
-    for (size_t i = 0; i < fn.integerPart.size(); ++i)
-        result = result * 10.0 + fn.integerPart[i];
-    double frac = 0.0;
-    double place = 0.1;
-
-    // Переводим вектор цифр дробной части в число
-    for (size_t i = 0; i < fn.fractionPart.size(); ++i)
-    {
-        frac += fn.fractionPart[i] * place;
-        // Сдвигаем разряд вправо
-        place *= 0.1;
-    }
-
-    // Складываем целую и дробную части
-    result += frac;
-
-    // Если число было отрицательным, добавляем минус
-    if (fn.isNegative) result = -result;
-    return result;
-}
-
 void FractionNumber::incrementString(std::string& str) const
 {
     // Проходим по строке с конца к началу для поразрядного переноса
@@ -364,6 +337,29 @@ unsigned long long FractionNumber::vectorToInt(const std::vector<uint8_t>& vec)
         // Сдвигаем текущее число влево на один разряд и добавляем новую цифру
         result = result * 10 + d;
     }
+    return result;
+}
+
+// Преобразует число FractionNumber в число типа double
+double FractionNumber::convertToDouble(const FractionNumber& fn)
+{
+    double result = static_cast<double>(vectorToInt(fn.integerPart));
+    double frac = 0.0;
+    double place = 0.1;
+
+    // Переводим вектор цифр дробной части в число
+    for (size_t i = 0; i < fn.fractionPart.size(); ++i)
+    {
+        frac += fn.fractionPart[i] * place;
+        // Сдвигаем разряд вправо
+        place *= 0.1;
+    }
+
+    // Складываем целую и дробную части
+    result += frac;
+
+    // Если число было отрицательным, добавляем минус
+    if (fn.isNegative) result = -result;
     return result;
 }
 
