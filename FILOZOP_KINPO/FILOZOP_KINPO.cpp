@@ -835,7 +835,6 @@ FractionNumber FractionNumber::subDifferentSign(const FractionNumber& other, con
     return result;
 }
  
-
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
     // Если первое число равно 0, вернуть второе
@@ -970,10 +969,7 @@ FractionNumber FractionNumber::mul(const FractionNumber& other)
             result.fractionPart.assign(resDigits.begin(), resDigits.end());
 
             // Дополняем дробную часть ведущими нулями, если массив цифр оказался короче, чем нужно
-            while (result.fractionPart.size() < totalFracLen)
-            {
-                result.fractionPart.insert(result.fractionPart.begin(), 0);
-            }
+            prependZerosLeft(result.fractionPart, totalFracLen);
             result.integerPart = { 0 };
         }
     }
