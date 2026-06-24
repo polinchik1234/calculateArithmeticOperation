@@ -742,6 +742,110 @@ bool FractionNumber::checkDegreeSpecialCases(const FractionNumber& exponent, Fra
     return false;
 }
 
+FractionNumber FractionNumber::addSameSign(const FractionNumber& other, const std::vector<uint8_t>& frac1, const std::vector<uint8_t>& frac2, size_t maxFracLen)
+{
+    FractionNumber result;
+    result.isNegative = this->isNegative;
+    int carry = 0;
+
+    // Складываем дробную часть
+    result.fractionPart.resize(maxFracLen);
+    for (int i = (int)maxFracLen - 1; i >= 0; i--)
+    {
+        int sum = frac1[i] + frac2[i] + carry;
+        result.fractionPart[i] = sum % 10;
+        carry = sum / 10;
+    }
+
+    // Складываем целую часть
+    int i = (int)this->integerPart.size() - 1;
+    int j = (int)other.integerPart.size() - 1;
+    std::vector<uint8_t> tempInt;
+
+    while (i >= 0 || j >= 0 || carry > 0)
+    {
+        int sum = carry;
+        if (i >= 0) { sum += this->integerPart[i]; i--; }
+        if (j >= 0) { sum += other.integerPart[j]; j--; }
+
+        tempInt.push_back(sum % 10);
+        carry = sum / 10;
+    }
+
+    std::reverse(tempInt.begin(), tempInt.end());
+    result.integerPart = tempInt;
+
+    return result;
+}
+
+void FractionNumber::subtractVectors(const std::vector<uint8_t>& A, const std::vector<uint8_t>& B, std::vector<uint8_t>& result, int& borrow) const
+{
+    result.resize(A.size());
+    for (int i = (int)A.size() - 1; i >= 0; i--)
+    {
+        int diff = A[i] - B[i] - borrow;
+        if (diff < 0)
+        {
+            diff += 10;
+            borrow = 1;
+        }
+        else
+        {
+            borrow = 0;
+        }
+        result[i] = diff;
+    }
+}
+
+FractionNumber FractionNumber::subDifferentSign(const FractionNumber& other, const std::vector<uint8_t>& frac1, const std::vector<uint8_t>& frac2, size_t maxFracLen)
+{
+    FractionNumber result;
+
+    // Сравниваем числа по модулю
+    if (this->integerPart == other.integerPart && frac1 == frac2)
+    {
+        result.integerPart = { 0 };
+        result.fractionPart = {};
+        result.isNegative = false;
+        return result;
+    }
+
+    // Находим, какое из чисел больше
+    bool firstIsBigger = compareByModule(other, frac1, frac2);
+
+    // Определяем, какое из чисел уменьшаемое
+    const FractionNumber& A = firstIsBigger ? *this : other;
+    // Определяем, какое из чисел вычитаемое
+    const FractionNumber& B = firstIsBigger ? other : *this;
+    std::vector<uint8_t> fA = firstIsBigger ? frac1 : frac2;
+    std::vector<uint8_t> fB = firstIsBigger ? frac2 : frac1;
+
+    // Определяем знак по числу у которого модуль больше
+    result.isNegative = A.isNegative;
+    int borrow = 0;
+
+    // Вычитаем дробную часть
+    subtractVectors(fA, fB, result.fractionPart, borrow);
+
+    // Выравниваем целые части нулями слева
+    std::vector<uint8_t> intA = A.integerPart;
+    std::vector<uint8_t> intB = B.integerPart;
+    size_t maxIntLen = std::max(intA.size(), intB.size());
+    prependZerosLeft(intA, maxIntLen);
+    prependZerosLeft(intB, maxIntLen);
+
+    // Вычитаем целые части
+    std::vector<uint8_t> tempInt;
+    subtractVectors(intA, intB, tempInt, borrow);
+    result.integerPart = tempInt;
+
+    // Убираем ведущие нули
+    removeLeadingZeros(result.integerPart);
+
+    return result;
+}
+ 
+
 FractionNumber FractionNumber::add(const FractionNumber& other)
 {
     // Если первое число равно 0, вернуть второе
@@ -761,108 +865,12 @@ FractionNumber FractionNumber::add(const FractionNumber& other)
     // Если знаки одинаковые
     if (this->isNegative == other.isNegative)
     {
-        result.isNegative = this->isNegative;
-        int carry = 0;
-
-        // Складываем дробную часть
-        result.fractionPart.resize(maxFracLen);
-        for (int i = (int)maxFracLen - 1; i >= 0; i--)
-        {
-            int sum = frac1[i] + frac2[i] + carry;
-            result.fractionPart[i] = sum % 10;
-            carry = sum / 10;
-        }
-
-        // Складываем целую часть
-        int i = (int)this->integerPart.size() - 1;
-        int j = (int)other.integerPart.size() - 1;
-        std::vector<uint8_t> tempInt;
-
-        while (i >= 0 || j >= 0 || carry > 0)
-        {
-            int sum = carry;
-            if (i >= 0) { sum += this->integerPart[i]; i--; }
-            if (j >= 0) { sum += other.integerPart[j]; j--; }
-
-            tempInt.push_back(sum % 10);
-            carry = sum / 10;
-        }
-
-        std::reverse(tempInt.begin(), tempInt.end());
-        result.integerPart = tempInt;
+        result = addSameSign(other, frac1, frac2, maxFracLen);
     }
     // Если знаки разные
     else
     {
-        // Сравниваем числа по модулю
-        if (this->integerPart == other.integerPart && frac1 == frac2)
-        {
-            result.integerPart = { 0 };
-            result.fractionPart = {};
-            result.isNegative = false;
-            return result;
-        }
-
-        // Находим, какое из чисел больше
-        bool firstIsBigger = compareByModule(other, frac1, frac2);
-
-        // Определяем, какое из чисел уменьшаемое
-        const FractionNumber& A = firstIsBigger ? *this : other;
-        // Определяем, какое из чисел вычитаемое
-        const FractionNumber& B = firstIsBigger ? other : *this;
-        std::vector<uint8_t> fA = firstIsBigger ? frac1 : frac2;
-        std::vector<uint8_t> fB = firstIsBigger ? frac2 : frac1;
-
-        // Определяем знак по числу у которого модуль больше
-        result.isNegative = A.isNegative;
-        int borrow = 0;
-
-        // Вычитаем дробную часть
-        result.fractionPart.resize(maxFracLen);
-        for (int k = (int)maxFracLen - 1; k >= 0; k--)
-        {
-            int diff = fA[k] - fB[k] - borrow;
-            if (diff < 0)
-            {
-                diff += 10;
-                borrow = 1;
-            }
-            else
-            {
-                borrow = 0;
-            }
-            result.fractionPart[k] = diff;
-        }
-
-        // Выравниваем целые части нулями слева
-        std::vector<uint8_t> intA = A.integerPart;
-        std::vector<uint8_t> intB = B.integerPart;
-        size_t maxIntLen = std::max(intA.size(), intB.size());
-        prependZerosLeft(intA, maxIntLen);
-        prependZerosLeft(intB, maxIntLen);
-
-        // Вычитаем целые части
-        std::vector<uint8_t> tempInt;
-        for (int i = (int)maxIntLen - 1; i >= 0; i--)
-        {
-            int diff = intA[i] - intB[i] - borrow;
-            if (diff < 0)
-            {
-                diff += 10;
-                borrow = 1;
-            }
-            else
-            {
-                borrow = 0;
-            }
-            tempInt.push_back(diff);
-        }
-
-        std::reverse(tempInt.begin(), tempInt.end());
-        result.integerPart = tempInt;
-
-        // Убираем ведущие нули
-        removeLeadingZeros(result.integerPart);
+        result = subDifferentSign(other, frac1, frac2, maxFracLen);
     }
 
     // Убираем хвостовые нули

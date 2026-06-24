@@ -34,6 +34,19 @@ private:
 	void finalizeResult(FractionNumber& result) const;
 	bool checkDegreeSpecialCases(const FractionNumber& exponent, FractionNumber& result, bool& isHandled);
 	bool isFractionPartZero(const FractionNumber& fn) const;
+	FractionNumber addSameSign(const FractionNumber& other,
+		const std::vector<uint8_t>& frac1,
+		const std::vector<uint8_t>& frac2,
+		size_t maxFracLen);
+
+	FractionNumber subDifferentSign(const FractionNumber& other,
+		const std::vector<uint8_t>& frac1,
+		const std::vector<uint8_t>& frac2,
+		size_t maxFracLen);
+	void subtractVectors(const std::vector<uint8_t>& A,
+		const std::vector<uint8_t>& B,
+		std::vector<uint8_t>& result,
+		int& borrow) const;
 
 public:
 	FractionNumber();
