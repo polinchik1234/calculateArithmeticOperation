@@ -87,7 +87,7 @@ string FractionNumber::toString() const
     return result;
 }
 
-void FractionNumber::appendZerosRight(std::vector<uint8_t>& vec, size_t targetLen) const
+void FractionNumber::appendZerosRight(std::vector<uint8_t>& vec, size_t targetLen)
 {
     // ѕока размер вектора меньше нужной длины
     while (vec.size() < targetLen)
@@ -97,7 +97,7 @@ void FractionNumber::appendZerosRight(std::vector<uint8_t>& vec, size_t targetLe
     }
 }
 
-void FractionNumber::prependZerosLeft(std::vector<uint8_t>& vec, size_t targetLen) const
+void FractionNumber::prependZerosLeft(std::vector<uint8_t>& vec, size_t targetLen)
 {
     // ѕока размер вектора меньше нужной длины
     while (vec.size() < targetLen)
@@ -138,7 +138,7 @@ bool FractionNumber::compareByModule(const FractionNumber& other,
     return true;
 }
 
-void FractionNumber::removeLeadingZeros(std::vector<uint8_t>& vec) const
+void FractionNumber::removeLeadingZeros(std::vector<uint8_t>& vec)
 {
     // ѕока в векторе больше одного элемента и первый элемент равен 0
     while (vec.size() > 1 && vec[0] == 0)
@@ -148,7 +148,7 @@ void FractionNumber::removeLeadingZeros(std::vector<uint8_t>& vec) const
     }
 }
 
-void FractionNumber::removeTrailingZeros(std::vector<uint8_t>& vec) const
+void FractionNumber::removeTrailingZeros(std::vector<uint8_t>& vec)
 {
     // ѕока вектор не пустой и его самый последний элемент равен 0
     while (vec.size() > 0 && vec.back() == 0)
@@ -167,7 +167,7 @@ bool FractionNumber::isZero() const
     return true;
 }
 
-void FractionNumber::incrementString(std::string& str) const
+void FractionNumber::incrementString(std::string& str)
 {
     // ѕроходим по строке с конца к началу дл€ поразр€дного переноса
     for (int i = (int)str.size() - 1; i >= 0; --i)
@@ -189,7 +189,7 @@ void FractionNumber::incrementString(std::string& str) const
     }
 }
 
-void FractionNumber::handleFloatingArtifacts(std::string& resultStr) const
+void FractionNumber::handleFloatingArtifacts(std::string& resultStr)
 {
     // Ќаходим позицию точки в строке
     size_t dot = resultStr.find('.');
@@ -672,7 +672,7 @@ void FractionNumber::finalizeResult(FractionNumber& result) const
     const_cast<FractionNumber*>(this)->removeTrailingZeros(result.fractionPart);
 }
 
-bool FractionNumber::isFractionPartZero(const FractionNumber& fn) const
+bool FractionNumber::isFractionPartZero(const FractionNumber& fn)
 {
     // ѕровер€ем, €вл€етс€ ли дробна€ часть пустой или состо€щей только из нулей
     for (uint8_t d : fn.fractionPart)
@@ -768,7 +768,7 @@ FractionNumber FractionNumber::addSameSign(const FractionNumber& other, const st
     return result;
 }
 
-void FractionNumber::subtractVectors(const std::vector<uint8_t>& A, const std::vector<uint8_t>& B, std::vector<uint8_t>& result, int& borrow) const
+void FractionNumber::subtractVectors(const std::vector<uint8_t>& A, const std::vector<uint8_t>& B, std::vector<uint8_t>& result, int& borrow)
 {
     result.resize(A.size());
     for (int i = (int)A.size() - 1; i >= 0; i--)

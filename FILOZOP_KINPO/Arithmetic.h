@@ -9,21 +9,21 @@ private:
 	vector<uint8_t> fractionPart;
 	bool isNegative;
 
-	void appendZerosRight(std::vector<uint8_t>& vec, size_t targetLen) const;
-	void prependZerosLeft(std::vector<uint8_t>& vec, size_t targetLen) const;
+	static void appendZerosRight(std::vector<uint8_t>& vec, size_t targetLen);
+	static void prependZerosLeft(std::vector<uint8_t>& vec, size_t targetLen);
 	bool compareByModule(const FractionNumber& other,
 		const std::vector<uint8_t>& f1,
 		const std::vector<uint8_t>& f2) const;
-	void removeLeadingZeros(std::vector<uint8_t>& vec) const;
-	void removeTrailingZeros(std::vector<uint8_t>& vec) const;
+	static void removeLeadingZeros(std::vector<uint8_t>& vec);
+	static void removeTrailingZeros(std::vector<uint8_t>& vec);
 	bool isZero() const;
 	FractionNumber convertFromDouble(double val, int precision);
-	FractionNumber powInt(FractionNumber base, unsigned long long exp);
-	double calcLn(double x);
-	double calcExp(double x);
-	unsigned long long vectorToInt(const std::vector<uint8_t>& vec);
+	static FractionNumber powInt(FractionNumber base, unsigned long long exp);
+	static double calcLn(double x);
+	static double calcExp(double x);
+	static unsigned long long vectorToInt(const std::vector<uint8_t>& vec);
 	friend void writeResultToFile(ofstream& output_file, const FractionNumber& result);
-	int subDiv(std::vector<uint8_t>& remainder,
+	static int subDiv(std::vector<uint8_t>& remainder,
 		const std::vector<uint8_t>& divisorVector,
 		FractionNumber& remFn,
 		FractionNumber& divFn);
@@ -33,22 +33,21 @@ private:
 		std::vector<uint8_t>& divisorVector) const;
 	void finalizeResult(FractionNumber& result) const;
 	bool checkDegreeSpecialCases(const FractionNumber& exponent, FractionNumber& result, bool& isHandled);
-	bool isFractionPartZero(const FractionNumber& fn) const;
+	static bool isFractionPartZero(const FractionNumber& fn);
 	FractionNumber addSameSign(const FractionNumber& other,
 		const std::vector<uint8_t>& frac1,
 		const std::vector<uint8_t>& frac2,
 		size_t maxFracLen);
-
 	FractionNumber subDifferentSign(const FractionNumber& other,
 		const std::vector<uint8_t>& frac1,
 		const std::vector<uint8_t>& frac2,
 		size_t maxFracLen);
-	void subtractVectors(const std::vector<uint8_t>& A,
+	static void subtractVectors(const std::vector<uint8_t>& A,
 		const std::vector<uint8_t>& B,
 		std::vector<uint8_t>& result,
-		int& borrow) const;
-	void handleFloatingArtifacts(std::string& resultStr) const;
-	void incrementString(std::string& str) const;
+		int& borrow);
+	static void handleFloatingArtifacts(std::string& resultStr);
+	static void incrementString(std::string& str);
 
 public:
 	FractionNumber();
@@ -62,7 +61,7 @@ public:
 	FractionNumber div(const FractionNumber& other);
 	FractionNumber sqrt(const FractionNumber& rootDegree);
 	FractionNumber degree(const FractionNumber& exponent);
-	double convertToDouble(const FractionNumber& fn);
+	static double convertToDouble(const FractionNumber& fn);
 };
 
 enum class DataErrors {
