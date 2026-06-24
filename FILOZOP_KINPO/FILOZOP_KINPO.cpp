@@ -541,37 +541,9 @@ DataErrors parseInputData(const string& inputData, string& operation, FractionNu
 
 void writeResultToFile(ofstream& outputFile, const FractionNumber& result)
 {
-    // Если число отрицательное и это не ноль
-    if (result.isNegative && !result.isZero())
-    {
-        outputFile << "-";
-    }
-
-    // Вывод целой части
-    if (result.integerPart.empty())
-    {
-        outputFile << "0";
-    }
-    else
-    {
-        for (uint8_t digit : result.integerPart)
-        {
-            outputFile << (int)digit;
-        }
-    }
-
-    // Если есть дробная часть, пишем точку и саму дробную часть
-    if (!result.fractionPart.empty())
-    {
-        outputFile << ".";
-
-        for (uint8_t digit : result.fractionPart)
-        {
-            outputFile << (int)digit;
-        }
-    }
-
-    outputFile.close();
+   // Записываем готовую строку в файл
+   outputFile << result.toString();
+   outputFile.close();
 }
 
 int FractionNumber::subDiv(std::vector<uint8_t>& remainder, const std::vector<uint8_t>& divisorVector, FractionNumber& remFn, FractionNumber& divFn)
