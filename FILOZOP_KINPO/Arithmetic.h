@@ -32,6 +32,8 @@ private:
 		std::vector<uint8_t>& dividendVector,
 		std::vector<uint8_t>& divisorVector) const;
 	void finalizeResult(FractionNumber& result) const;
+	bool checkDegreeSpecialCases(const FractionNumber& exponent, FractionNumber& result, bool& isHandled);
+	bool isFractionPartZero(const FractionNumber& fn) const;
 
 public:
 	FractionNumber();
