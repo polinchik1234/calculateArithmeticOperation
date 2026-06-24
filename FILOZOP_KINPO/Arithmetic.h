@@ -23,6 +23,15 @@ private:
 	double calcExp(double x);
 	unsigned long long vectorToInt(const std::vector<uint8_t>& vec);
 	friend void writeResultToFile(ofstream& output_file, const FractionNumber& result);
+	int subDiv(std::vector<uint8_t>& remainder,
+		const std::vector<uint8_t>& divisorVector,
+		FractionNumber& remFn,
+		FractionNumber& divFn);
+	void checkPeriod(FractionNumber& result);
+	void prepareDivVectors(const FractionNumber& other,
+		std::vector<uint8_t>& dividendVector,
+		std::vector<uint8_t>& divisorVector) const;
+	void finalizeResult(FractionNumber& result) const;
 
 public:
 	FractionNumber();

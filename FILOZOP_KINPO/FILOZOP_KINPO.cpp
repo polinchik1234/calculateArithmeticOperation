@@ -517,8 +517,6 @@ DataErrors parseInputData(const string& inputData, string& operation, FractionNu
     return DataErrors::NO_DATA_ERROR;
 }
 
-
-
 void writeResultToFile(ofstream& outputFile, const FractionNumber& result)
 {
     // Если число отрицательное и это не ноль
@@ -552,6 +550,136 @@ void writeResultToFile(ofstream& outputFile, const FractionNumber& result)
     }
 
     outputFile.close();
+}
+
+int FractionNumber::subDiv(std::vector<uint8_t>& remainder, const std::vector<uint8_t>& divisorVector, FractionNumber& remFn, FractionNumber& divFn)
+{
+    int fitCount = 0;
+    while (true)
+    {
+        bool remainderIsLess = false;
+
+        // Если количество разрядов разное, то меньше то число, у которого вектор короче
+        if (remainder.size() != divisorVector.size())
+        {
+            remainderIsLess = remainder.size() < divisorVector.size();
+        }
+        // Если длины векторов одинаковы, сравниваем их поэлементно
+        else
+        {
+            remainderIsLess = remainder < divisorVector;
+        }
+        // Если остаток стал меньше делителя, подбор цифры завершён
+        if (remainderIsLess)
+        {
+            break;
+        }
+
+        // Настраиваем объект остатка под текущий вектор remainder
+        remFn.integerPart = remainder;
+        remFn.fractionPart = {};
+        remFn.isNegative = false;
+
+        // Вычитаем делитель из остатка
+        FractionNumber subRes = remFn.sub(divFn);
+
+        // Обновляем остаток полученной разностью и зачищаем ведущие нули
+        remainder = subRes.integerPart;
+        remFn.removeLeadingZeros(remainder);
+
+        // Увеличиваем счётчик успешных вычитаний
+        fitCount++;
+    }
+    return fitCount;
+}
+
+void FractionNumber::checkPeriod(FractionNumber& result)
+{
+    // Обрабатываем случаи с периодическими дробями
+    std::string s = result.toString();
+    size_t dot = s.find('.');
+
+    // Проверяем, что в строке есть точка и хотя бы два знака после нее
+    if (dot != std::string::npos && s.length() > dot + 2)
+    {
+        char lastChar = s.back();
+
+        // Если последний символ не ноль, ищем зацикливание периода
+        if (lastChar != '0')
+        {
+            size_t zeroCount = 0;
+            // Считаем количество подряд идущих нулей перед последней цифрой
+            for (int i = (int)s.length() - 2; i > (int)dot; i--)
+            {
+                if (s[i] == '0') zeroCount++;
+                else break;
+            }
+
+            // Если обнаружено три или более нуля, фиксируем период дробной части
+            if (zeroCount >= 3)
+            {
+                // Заполняем выявленный период повторяющимся символом
+                for (size_t i = s.length() - 1 - zeroCount; i < s.length() - 1; i++)
+                {
+                    s[i] = lastChar;
+                }
+
+                // Очищаем старый вектор и записываем обновленную дробную часть
+                result.fractionPart.clear();
+                for (size_t i = dot + 1; i < s.length(); i++)
+                {
+                    result.fractionPart.push_back(s[i] - '0');
+                }
+            }
+        }
+    }
+}
+
+void FractionNumber::prepareDivVectors(const FractionNumber& other,
+    std::vector<uint8_t>& dividendVector,
+    std::vector<uint8_t>& divisorVector) const
+{
+    std::vector<uint8_t> fracA = this->fractionPart;
+    std::vector<uint8_t> fracB = other.fractionPart;
+
+    size_t maxFracLen = std::max(fracA.size(), fracB.size());
+
+    // Выравниваем дробные части нулями
+    const_cast<FractionNumber*>(this)->appendZerosRight(fracA, maxFracLen);
+    const_cast<FractionNumber*>(&other)->appendZerosRight(fracB, maxFracLen);
+
+    // Объединяем целую и дробную части
+    dividendVector = this->integerPart;
+    dividendVector.insert(dividendVector.end(), fracA.begin(), fracA.end());
+
+    divisorVector = other.integerPart;
+    divisorVector.insert(divisorVector.end(), fracB.begin(), fracB.end());
+
+    // Удаляем ведущие нули
+    const_cast<FractionNumber*>(this)->removeLeadingZeros(divisorVector);
+    const_cast<FractionNumber*>(this)->removeLeadingZeros(dividendVector);
+}
+
+void FractionNumber::finalizeResult(FractionNumber& result) const
+{
+    // Если целая часть пустая, записываем 0
+    if (result.integerPart.empty())
+    {
+        result.integerPart.push_back(0);
+    }
+    const_cast<FractionNumber*>(this)->removeLeadingZeros(result.integerPart);
+
+    // Вызываем обработку периодических дробей
+    const_cast<FractionNumber*>(this)->checkPeriod(result);
+
+    // Оставляем точность до 16 знаков после запятой
+    if (result.fractionPart.size() > 16)
+    {
+        result.fractionPart.resize(16);
+    }
+
+    // Убираем хвостовые нули
+    const_cast<FractionNumber*>(this)->removeTrailingZeros(result.fractionPart);
 }
 
 FractionNumber FractionNumber::add(const FractionNumber& other)
@@ -807,7 +935,6 @@ FractionNumber FractionNumber::mul(const FractionNumber& other)
 
 FractionNumber FractionNumber::div(const FractionNumber& other)
 {
-
     // Если делитель равен 0, вернуть ошибку
     if (other.isZero())
     {
@@ -823,26 +950,11 @@ FractionNumber FractionNumber::div(const FractionNumber& other)
     // Определяем знак результата
     bool targetNegative = (this->isNegative != other.isNegative);
 
-    std::vector<uint8_t> fracA = this->fractionPart;
-    std::vector<uint8_t> fracB = other.fractionPart;
+    std::vector<uint8_t> dividendVector;
+    std::vector<uint8_t> divisorVector;
 
-    size_t maxFracLen = std::max(fracA.size(), fracB.size());
-
-    // Выравниваем дробные части нулями
-    appendZerosRight(fracA, maxFracLen);
-    appendZerosRight(fracB, maxFracLen);
-
-    // Объединяем целую и дробную часть у первого числа
-    std::vector<uint8_t> dividendVector = this->integerPart;
-    dividendVector.insert(dividendVector.end(), fracA.begin(), fracA.end());
-
-    // Объединяем целую и дробную часть у второго числа
-    std::vector<uint8_t> divisorVector = other.integerPart;
-    divisorVector.insert(divisorVector.end(), fracB.begin(), fracB.end());
-
-    // Удаляем ведущие нули у обоих чисел
-    removeLeadingZeros(divisorVector);
-    removeLeadingZeros(dividendVector);
+    // Вызов внешней функции для подготовки векторов (выравнивание и слияние)
+    prepareDivVectors(other, dividendVector, divisorVector);
 
     // Запоминаем исходный размер делимого, чтобы знать, где заканчивается целая часть
     size_t realDividendSize = dividendVector.size();
@@ -863,7 +975,6 @@ FractionNumber FractionNumber::div(const FractionNumber& other)
     // Выполняется, пока не закончатся цифры в делимом или пока не наберём 16 знаков в дробной части
     while (currentDigitIdx < dividendVector.size() || result.fractionPart.size() < 16)
     {
-
         // Определяем, перешли ли мы уже к вычислению дробной части
         bool isFractionNow = (currentDigitIdx >= realDividendSize);
 
@@ -880,43 +991,8 @@ FractionNumber FractionNumber::div(const FractionNumber& other)
         remainder.push_back(nextDigit);
         removeLeadingZeros(remainder);
 
-        // Считаем, сколько раз делитель поместится в текущий остаток
-        int fitCount = 0;
-        while (true)
-        {
-            bool remainderIsLess = false;
-
-            // Если количество разрядов разное, то меньше то число, у которого вектор короче
-            if (remainder.size() != divisorVector.size())
-            {
-                remainderIsLess = remainder.size() < divisorVector.size();
-            }
-            // Если длины векторов одинаковы, сравниваем их поэлементно
-            else
-            {
-                remainderIsLess = remainder < divisorVector;
-            }
-            // Если остаток стал меньше делителя, подбор цифры завершён
-            if (remainderIsLess)
-            {
-                break;
-            }
-
-            // Настраиваем объект остатка под текущий вектор remainder
-            remFn.integerPart = remainder;
-            remFn.fractionPart = {};
-            remFn.isNegative = false;
-
-            // Вычитаем делитель из остатка
-            FractionNumber subRes = remFn.sub(divFn);
-
-            // Обновляем остаток полученной разностью и зачищаем ведущие нули
-            remainder = subRes.integerPart;
-            removeLeadingZeros(remainder);
-
-            // Увеличиваем счётчик успешных вычитаний
-            fitCount++;
-        }
+        // Получаем количество успешных вхождений через внешнюю функцию
+        int fitCount = subDiv(remainder, divisorVector, remFn, divFn);
 
         // Добавляем цифру в целую или дробную часть
         if (!isFractionNow)
@@ -936,51 +1012,8 @@ FractionNumber FractionNumber::div(const FractionNumber& other)
         }
     }
 
-    // Если целая часть пустая, записываем 0
-    if (result.integerPart.empty()) result.integerPart.push_back(0);
-    removeLeadingZeros(result.integerPart);
-
-    // Обрабатываем случаи с периодическими дробями
-    std::string s = result.toString();
-    size_t dot = s.find('.');
-
-    if (dot != std::string::npos && s.length() > dot + 2)
-    {
-        char lastChar = s.back();
-
-        if (lastChar != '0')
-        {
-            size_t zeroCount = 0;
-            for (int i = (int)s.length() - 2; i > (int)dot; i--)
-            {
-                if (s[i] == '0') zeroCount++;
-                else break;
-            }
-
-            if (zeroCount >= 3)
-            {
-                for (size_t i = s.length() - 1 - zeroCount; i < s.length() - 1; i++)
-                {
-                    s[i] = lastChar;
-                }
-
-                result.fractionPart.clear();
-                for (size_t i = dot + 1; i < s.length(); i++)
-                {
-                    result.fractionPart.push_back(s[i] - '0');
-                }
-            }
-        }
-    }
-
-    // Оставляем точность до 16 знаков после запятой
-    if (result.fractionPart.size() > 16)
-    {
-        result.fractionPart.resize(16);
-    }
-
-    // Убираем хвостовые нули
-    removeTrailingZeros(result.fractionPart);
+    // Обработка пустой целой части, ведущих/хвостовых нулей, точности и периодов
+    finalizeResult(result);
 
     return result;
 }
