@@ -1266,8 +1266,16 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    // Вычисляем результат арифметической операции через вспомогательный метод
-    FractionNumber result = calculateResult(operation, first, second);
+    FractionNumber result;
+    try
+    {
+        result = calculateResult(operation, first, second);
+    }
+    catch (const std::exception& e)
+    {
+        cerr << "Runtime Error: " << e.what() << endl;
+        return 1;
+    }
 
     // Записываем результат в выходной файл
     string outputPath = string(argv[2]) + "/result.txt";
