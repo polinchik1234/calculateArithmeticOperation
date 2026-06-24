@@ -542,7 +542,7 @@ void writeResultToFile(ofstream& outputFile, const FractionNumber& result)
    outputFile.close();
 }
 
-int FractionNumber::subDiv(std::vector<uint8_t>& remainder, const std::vector<uint8_t>& divisorVector, FractionNumber& remFn, FractionNumber& divFn)
+int FractionNumber::subDiv(std::vector<uint8_t>& remainder, const std::vector<uint8_t>& divisorVector, FractionNumber& remFn, const FractionNumber& divFn)
 {
     int fitCount = 0;
     while (true)
@@ -1195,7 +1195,7 @@ void printParseError(DataErrors parseResult)
     }
 }
 
-FractionNumber calculateResult(const string& operation, FractionNumber& first, FractionNumber& second)
+FractionNumber calculateResult(const string& operation, FractionNumber& first, const FractionNumber& second)
 {
     FractionNumber result;
 

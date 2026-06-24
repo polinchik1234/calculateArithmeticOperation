@@ -26,7 +26,7 @@ private:
 	static int subDiv(std::vector<uint8_t>& remainder,
 		const std::vector<uint8_t>& divisorVector,
 		FractionNumber& remFn,
-		FractionNumber& divFn);
+		const FractionNumber& divFn);
 	void checkPeriod(FractionNumber& result);
 	void prepareDivVectors(const FractionNumber& other,
 		std::vector<uint8_t>& dividendVector,
