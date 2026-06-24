@@ -51,7 +51,7 @@ private:
 
 public:
 	FractionNumber();
-	FractionNumber(const string& str);
+	explicit FractionNumber(const string& str);
 
 	string toString() const;
 
