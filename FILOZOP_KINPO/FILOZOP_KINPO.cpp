@@ -1099,9 +1099,7 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent)
         // Если степень была отрицательной, получаем обратное число для результата
         if (exponent.isNegative)
         {
-            FractionNumber one;
-            one.integerPart = { 1 };
-            result = one.div(result);
+            result = FractionNumber("1").div(result);
         }
 
         // Определяем знак итогового числа
@@ -1135,18 +1133,7 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent)
     result = convertFromDouble(val, 16); // Заменено на convertFromDouble
 
     // Восстановление знака
-    if (baseNeg)
-    {
-        // Преобразуем целую часть степени в число, чтобы проверить её чётность
-        unsigned long long intExp = vectorToInt(exponent.integerPart);
-        // Минус остаётся только если целая часть степени была нечётной
-        result.isNegative = (intExp % 2 == 1);
-    }
-    // Если основание было положительным, результат всегда положительный
-    else
-    {
-        result.isNegative = false;
-    }
+    result.isNegative = false;
 
     removeTrailingZeros(result.fractionPart);
     return result;
