@@ -205,7 +205,7 @@ void FractionNumber::handleFloatingArtifacts(std::string& resultStr)
     if (zeroSequence != std::string::npos && zeroSequence > dot)
     {
         // Отсекаем хвост из нулей и последующих случайных цифр
-        resultStr = resultStr.substr(0, zeroSequence);
+        resultStr.resize(zeroSequence);
     }
 
     // Поиск длинной последовательности девяток
@@ -213,7 +213,7 @@ void FractionNumber::handleFloatingArtifacts(std::string& resultStr)
     if (nineSequence != std::string::npos && nineSequence > dot)
     {
         // Отрезаем хвост из девяток
-        resultStr = resultStr.substr(0, nineSequence);
+        resultStr.resize(nineSequence);
 
         // Математически округляем оставшееся число вверх
         incrementString(resultStr);
@@ -338,7 +338,7 @@ unsigned long long FractionNumber::vectorToInt(const std::vector<uint8_t>& vec)
     // Собираем отдельные цифры из вектора в одно целое число
     return std::accumulate(vec.begin(), vec.end(), 0ULL, [](unsigned long long result, uint8_t d) {
         return result * 10 + d;
-        });
+    });
 }
 
 // Преобразует число FractionNumber в число типа double
