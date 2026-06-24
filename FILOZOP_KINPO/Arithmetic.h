@@ -47,6 +47,8 @@ private:
 		const std::vector<uint8_t>& B,
 		std::vector<uint8_t>& result,
 		int& borrow) const;
+	void handleFloatingArtifacts(std::string& resultStr) const;
+	void incrementString(std::string& str) const;
 
 public:
 	FractionNumber();

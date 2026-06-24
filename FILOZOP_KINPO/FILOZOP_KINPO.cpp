@@ -194,7 +194,62 @@ double FractionNumber::convertToDouble(const FractionNumber& fn)
     return result;
 }
 
-FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
+void FractionNumber::incrementString(std::string& str) const
+{
+    // Проходим по строке с конца к началу для поразрядного переноса
+    for (int i = (int)str.size() - 1; i >= 0; --i)
+    {
+        // Пропускаем точку
+        if (str[i] == '.') continue;
+
+        // Если текущая цифра меньше 9, увеличиваем её и завершаем перенос
+        if (str[i] < '9')
+        {
+            str[i]++;
+            break;
+        }
+        else
+        {
+            // Если была девятка, она превращается в ноль, и перенос идет в следующий разряд
+            str[i] = '0';
+        }
+    }
+}
+
+void FractionNumber::handleFloatingArtifacts(std::string& resultStr) const
+{
+    // Находим позицию точки в строке
+    size_t dot = resultStr.find('.');
+    if (dot == std::string::npos) return;
+
+    // Поиск длинной последовательности нулей
+    size_t zeroSequence = resultStr.find("00000000", dot);
+    if (zeroSequence != std::string::npos && zeroSequence > dot)
+    {
+        // Отсекаем хвост из нулей и последующих случайных цифр
+        resultStr = resultStr.substr(0, zeroSequence);
+    }
+
+    // Поиск длинной последовательности девяток
+    size_t nineSequence = resultStr.find("99999999", dot);
+    if (nineSequence != std::string::npos && nineSequence > dot)
+    {
+        // Отрезаем хвост из девяток
+        resultStr = resultStr.substr(0, nineSequence);
+
+        // Математически округляем оставшееся число вверх
+        incrementString(resultStr);
+    }
+
+    // Если после всех усечений на конце осталась точка, удаляем её
+    if (!resultStr.empty() && resultStr.back() == '.')
+    {
+        resultStr.pop_back();
+    }
+}
+
+FractionNumber FractionNumber::convertFromDouble(double val, int precision)
+{
     // Работаем с модулем
     bool neg = val < 0;
     if (neg) val = -val;
@@ -220,49 +275,16 @@ FractionNumber FractionNumber::convertFromDouble(double val, int precision) {
     // Склеиваем целую часть и готовую дробную часть через точку
     std::string resultStr = intPartStr + "." + s;
 
-    size_t dot = resultStr.find('.');
-    if (dot != std::string::npos)
-    {
-        // Если после точки идет куча нулей подряд — убираем их
-        size_t zeroSequence = resultStr.find("00000000", dot);
-        if (zeroSequence != std::string::npos && zeroSequence > dot)
-        {
-            resultStr = resultStr.substr(0, zeroSequence);
-        }
-        // Если после точки идет куча девяток подряд - убираем их
-        size_t nineSequence = resultStr.find("99999999", dot);
-        if (nineSequence != std::string::npos && nineSequence > dot)
-        {
-            resultStr = resultStr.substr(0, nineSequence);
-
-            // Математически округляем число вверх
-            for (int i = (int)resultStr.size() - 1; i >= 0; --i)
-            {
-                if (resultStr[i] == '.') continue;
-                if (resultStr[i] < '9')
-                {
-                    resultStr[i]++;
-                    break;
-                }
-                else
-                {
-                    resultStr[i] = '0';
-                }
-            }
-        }
-    }
-
-    // Если на конце осталась точка — удаляем её
-    if (!resultStr.empty() && resultStr.back() == '.')
-    {
-        resultStr.pop_back();
-    }
+    // Выносим исправление погрешностей double во внешний метод
+    handleFloatingArtifacts(resultStr);
 
     // Возвращаем знак минус, если исходное число было отрицательным
     if (neg) resultStr = "-" + resultStr;
+
+    // Используем уже готовый конструктор класса
     return FractionNumber(resultStr);
 }
-
+    
 FractionNumber FractionNumber::powInt(FractionNumber base, unsigned long long exp)
 {
     FractionNumber result;
