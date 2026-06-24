@@ -1194,6 +1194,45 @@ FractionNumber FractionNumber::sqrt(const FractionNumber& other)
     return result;
 }
 
+void printParseError(DataErrors parseResult)
+{
+    // Если строка не соответсвуют заявленным требованиям
+    if (parseResult == DataErrors::WRONG_INPUT)
+    {
+        cerr << "Error: Input characters do not match the required data template." << endl;
+    }
+    // Если указана неизвестная или неподдерживаемая математическая операция
+    else if (parseResult == DataErrors::WRONG_OPERATION)
+    {
+        cerr << "Error: Unsupported arithmetic operation." << endl;
+    }
+    // Если переданные токены не получается преобразовать в объекты чисел
+    else if (parseResult == DataErrors::NO_FRACTION)
+    {
+        cerr << "Error: Provided characters do not form a valid fractional number." << endl;
+    }
+    // Если входные аргументы вышли за рамки ограничений
+    else if (parseResult == DataErrors::INCORRECT_RANGE)
+    {
+        cerr << "Error: Passed arguments are out of the allowed range." << endl;
+    }
+}
+
+FractionNumber calculateResult(const string& operation, FractionNumber& first, FractionNumber& second)
+{
+    FractionNumber result;
+
+    // В зависимости от переданного знака вызываем нужный метод вычисления
+    if (operation == "+") result = first.add(second);
+    else if (operation == "-") result = first.sub(second);
+    else if (operation == "*") result = first.mul(second);
+    else if (operation == "/") result = first.div(second);
+    else if (operation == "^") result = first.degree(second);
+    else if (operation == "sqrt") result = first.sqrt(second);
+
+    return result;
+}
+
 int main(int argc, char* argv[])
 {
     // Если количество аргументов не равно 3
@@ -1245,34 +1284,13 @@ int main(int argc, char* argv[])
 
     if (parseResult != DataErrors::NO_DATA_ERROR)
     {
-        if (parseResult == DataErrors::WRONG_INPUT)
-        {
-            cerr << "Error: Input characters do not match the required data template." << endl;
-        }
-        else if (parseResult == DataErrors::WRONG_OPERATION)
-        {
-            cerr << "Error: Unsupported arithmetic operation." << endl;
-        }
-        else if (parseResult == DataErrors::NO_FRACTION)
-        {
-            cerr << "Error: Provided characters do not form a valid fractional number." << endl;
-        }
-        else if (parseResult == DataErrors::INCORRECT_RANGE)
-        {
-            cerr << "Error: Passed arguments are out of the allowed range." << endl;
-        }
+        // Вызов внешней функции для вывода конкретной ошибки парсинга
+        printParseError(parseResult);
         return 1;
     }
 
-    // Вычисляем результат арифметической операции
-    FractionNumber result;
-
-    if (operation == "+") result = first.add(second);
-    else if (operation == "-") result = first.sub(second);
-    else if (operation == "*") result = first.mul(second);
-    else if (operation == "/") result = first.div(second);
-    else if (operation == "^") result = first.degree(second);
-    else if (operation == "sqrt") result = first.sqrt(second);
+    // Вычисляем результат арифметической операции через вспомогательный метод
+    FractionNumber result = calculateResult(operation, first, second);
 
     // Записываем результат в выходной файл
     string outputPath = string(argv[2]) + "/result.txt";
