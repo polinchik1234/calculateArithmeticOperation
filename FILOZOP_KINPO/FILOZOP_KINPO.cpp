@@ -1145,11 +1145,7 @@ FractionNumber FractionNumber::sqrt(const FractionNumber& other)
     // ≈сли подкоренное выражение равно 0, вернуть 0
     if (this->isZero())
     {
-        FractionNumber zero;
-        zero.integerPart = { 0 };
-        zero.fractionPart = {};
-        zero.isNegative = false;
-        return zero;
+        return FractionNumber("0");
     }
 
     // ¬ычисл€ем обратное число дл€ степени корн€
