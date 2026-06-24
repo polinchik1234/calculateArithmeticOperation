@@ -679,10 +679,10 @@ void FractionNumber::finalizeResult(FractionNumber& result) const
 bool FractionNumber::isFractionPartZero(const FractionNumber& fn)
 {
     // Проверяем, является ли дробная часть пустой или состоящей только из нулей
-    for (uint8_t d : fn.fractionPart)
-    {
-        if (d != 0) return false;
+    if (!all_of(fn.fractionPart.begin(), fn.fractionPart.end(), [](uint8_t d) { return d == 0; })) {
+        return false;
     }
+
     return true;
 }
 
