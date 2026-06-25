@@ -1132,10 +1132,6 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent)
         throw std::invalid_argument("Negative base with non-integer exponent.");
     }
 
-    // «апоминаем, было ли основание отрицательным, и работаем с модулем
-    bool baseNeg = base < 0;
-    if (baseNeg) base = -base;
-
     // ¬ычисл€ем степень по формуле: x^y = e^(y * ln(x))
     double lnBase = calcLn(base);
     double val = calcExp(exp * lnBase);
