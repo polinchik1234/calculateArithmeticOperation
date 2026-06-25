@@ -1769,6 +1769,123 @@ namespace Tests
             FractionNumber expected("14348907");
             Assert::AreEqual(expected.toString(), result.toString(), L"3^15 should equal 14348907");
         }
+        TEST_METHOD(BaseTwo_ExponentMinusOne)
+        {
+            FractionNumber a("2");
+            FractionNumber b("-1");
+            FractionNumber result = a.degree(b);
+            FractionNumber expected("0.5");
+            Assert::AreEqual(expected.toString(), result.toString());
+        }
+
+        TEST_METHOD(BaseTwo_ExponentTwo)
+        {
+            FractionNumber a("2");
+            FractionNumber b("2");
+            FractionNumber result = a.degree(b);
+            FractionNumber expected("4");
+            Assert::AreEqual(expected.toString(), result.toString());
+        }
+
+        TEST_METHOD(BaseZero_PositiveExponent)
+        {
+            FractionNumber a("0");
+            FractionNumber b("5");
+            FractionNumber result = a.degree(b);
+            FractionNumber expected("0");
+            Assert::AreEqual(expected.toString(), result.toString());
+        }
+
+        TEST_METHOD(AnyBase_ExponentZero)
+        {
+            FractionNumber a("5");
+            FractionNumber b("0");
+            FractionNumber result = a.degree(b);
+            FractionNumber expected("1");
+            Assert::AreEqual(expected.toString(), result.toString());
+        }
+
+        TEST_METHOD(NegativeBase_PositiveOddExponent)
+        {
+            FractionNumber a("-2");
+            FractionNumber b("3");
+            FractionNumber result = a.degree(b);
+            FractionNumber expected("-8");
+            Assert::AreEqual(expected.toString(), result.toString());
+        }
+
+        TEST_METHOD(NegativeBase_NegativeEvenExponent)
+        {
+            FractionNumber a("-2");
+            FractionNumber b("-2");
+            FractionNumber result = a.degree(b);
+            FractionNumber expected("0.25");
+            Assert::AreEqual(expected.toString(), result.toString(), L"(-2)^(-2) should equal 0.25");
+        }
+
+        TEST_METHOD(BaseZero_NegativeIntegerExponent_ThrowsException)
+        {
+            FractionNumber a("0");
+            FractionNumber b("-2");
+            bool errorThrown = false;
+            try {
+                FractionNumber result = a.degree(b);
+            }
+            catch (const std::exception&) {
+                errorThrown = true;
+            }
+            Assert::IsTrue(errorThrown, L"0^(-2) should throw an error inside integer block");
+        }
+
+        TEST_METHOD(NegativeBase_NegativeOddExponent)
+        {
+            FractionNumber a("-2");
+            FractionNumber b("-3");
+            FractionNumber result = a.degree(b);
+            FractionNumber expected("-0.125");
+            Assert::AreEqual(expected.toString(), result.toString(), L"(-2)^(-3) should equal -0.125");
+        }
+
+        TEST_METHOD(PositiveBase_FractionalExponent_SquareRoot)
+        {
+            FractionNumber a("100.0");
+            FractionNumber b("0.5");
+            FractionNumber result = a.degree(b);
+            FractionNumber expected("10");
+            Assert::AreEqual(expected.toString(), result.toString(), L"100^0.5 should equal 10");
+        }
+
+        TEST_METHOD(BaseOne_FractionalExponent)
+        {
+            FractionNumber a("1.0");
+            FractionNumber b("2.5");
+            FractionNumber result = a.degree(b);
+            FractionNumber expected("1");
+            Assert::AreEqual(expected.toString(), result.toString(), L"1^2.5 should equal 1");
+        }
+
+        TEST_METHOD(PositiveBase_GeneralFractionalExponent)
+        {
+            FractionNumber a("2.0");
+            FractionNumber b("1.5");
+            FractionNumber result = a.degree(b);
+            FractionNumber expected("2.8284271247461904");
+            Assert::AreEqual(expected.toString(), result.toString(), L"2^1.5 should equal 2.8284271247461904");
+        }
+
+        TEST_METHOD(NegativeBase_FractionalExponent_ThrowsException)
+        {
+            FractionNumber a("-2");
+            FractionNumber b("0.5");
+            bool errorThrown = false;
+            try {
+                FractionNumber result = a.degree(b);
+            }
+            catch (const std::exception&) {
+                errorThrown = true;
+            }
+            Assert::IsTrue(errorThrown, L"Negative base with fractional exponent should throw an exception");
+        }
     };
 
 
