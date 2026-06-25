@@ -174,23 +174,18 @@ bool FractionNumber::isZero() const
 
 void FractionNumber::incrementString(std::string& str)
 {
-    // Проходим по строке с конца к началу для поразрядного переноса
-    for (int i = (int)str.size() - 1; i >= 0; --i)
-    {
-        // Пропускаем точку
-        if (str[i] == '.') continue;
+    int i = (int)str.size() - 1;
 
-        // Если текущая цифра меньше 9, увеличиваем её и завершаем перенос
-        if (str[i] < '9')
-        {
-            str[i]++;
-            break;
-        }
-        else
-        {
-            // Если была девятка, она превращается в ноль, и перенос идет в следующий разряд
-            str[i] = '0';
-        }
+    // Если на самом конце оказалась точка, просто сдвигаем указатель на цифру перед ней
+    if (i >= 0 && str[i] == '.')
+    {
+        --i;
+    }
+
+    // Увеличиваем текущую цифру на единицу
+    if (i >= 0)
+    {
+        str[i]++;
     }
 }
 
@@ -427,7 +422,7 @@ vector<string> splitString(const string& inputData)
 bool checkPower(double val1, double val2)
 {
     // Проверка диапазонов для операции возведения в степень
-    if ((val1 == 0.0 && val2 < 0.0) || (val1 < -100.0 || val1 > 100.0 || val2 < -5.0 || val2 > 5.0))
+    if (val1 < -100.0 || val1 > 100.0 || val2 < -5.0 || val2 > 5.0)
     {
         return false;
     }
@@ -436,12 +431,28 @@ bool checkPower(double val1, double val2)
 
 bool checkSqrt(double val1, double val2)
 {
-    // Если первый токен – sqrt и второй не в диапазону [0, 100000] 
-    // или третий не в диапазоне [-10, 0) U (0, 10]
-    if (val1 < 0.0 || val1 > 100000.0 || val2 < -10.0 || val2 > 10.0 || val2 == 0.0)
+    // Разрешаем диапазон, например, от -100000.0 до 100000.0
+    if (val1 < -100000.0 || val1 > 100000.0 || val2 < -10.0 || val2 > 10.0 || val2 == 0.0)
     {
         return false;
     }
+
+    // 2. Если подкоренное выражение отрицательное, степень корня ОБЯЗАНА быть нечетным целым числом
+    if (val1 < 0.0)
+    {
+        // Проверяем, является ли степень val2 целым числом
+        if (val2 != (long long)val2)
+        {
+            return false; // Дробную степень для отрицательного числа нельзя (например, (-8)^(3.5))
+        }
+
+        long long degree = (long long)val2;
+        if (degree % 2 == 0)
+        {
+            return false; // Четный корень из отрицательного числа нельзя (например, квадратный корень из -4)
+        }
+    }
+
     return true;
 }
 
@@ -470,12 +481,7 @@ bool validateRanges(const string& op, double val1, double val2)
     }
 
     // Если операция - сложение, вычитание, умножение, деление
-    if (op == "+" || op == "-" || op == "*" || op == "/")
-    {
-        return checkBasicOps(val1, val2);
-    }
-
-    return true;
+    return (op == "+" || op == "-" || op == "*" || op == "/") && checkBasicOps(val1, val2);
 }
 
 DataErrors parseInputData(const string& inputData, string& operation, FractionNumber& first, FractionNumber& second)
@@ -500,12 +506,8 @@ DataErrors parseInputData(const string& inputData, string& operation, FractionNu
     }
 
     // Если второй и третий токен не дробное число
-    try
-    {
-        FractionNumber tempFirst(token2);
-        FractionNumber tempSecond(token3);
-    }
-    catch (...)
+    if (token2.find_first_not_of("0123456789.-") != std::string::npos ||
+        token3.find_first_not_of("0123456789.-") != std::string::npos)
     {
         return DataErrors::NO_FRACTION;
     }
@@ -609,18 +611,9 @@ void FractionNumber::checkPeriod(FractionNumber& result)
             // Если обнаружено три или более нуля, фиксируем период дробной части
             if (zeroCount >= 3)
             {
-                // Заполняем выявленный период повторяющимся символом
-                for (size_t i = s.length() - 1 - zeroCount; i < s.length() - 1; i++)
-                {
-                    s[i] = lastChar;
-                }
-
-                // Очищаем старый вектор и записываем обновленную дробную часть
-                result.fractionPart.clear();
-                for (size_t i = dot + 1; i < s.length(); i++)
-                {
-                    result.fractionPart.push_back(s[i] - '0');
-                }
+                uint8_t targetDigit = lastChar - '0';
+                // Заполняем нули в хвосте вектора нужной цифрой
+                fill(result.fractionPart.end() - 1 - zeroCount, result.fractionPart.end(), targetDigit);
             }
         }
     }
@@ -653,21 +646,10 @@ void FractionNumber::prepareDivVectors(const FractionNumber& other,
 
 void FractionNumber::finalizeResult(FractionNumber& result) const
 {
-    // Если целая часть пустая, записываем 0
-    if (result.integerPart.empty())
-    {
-        result.integerPart.push_back(0);
-    }
     const_cast<FractionNumber*>(this)->removeLeadingZeros(result.integerPart);
 
-    // Вызываем обработку периодических дробей
+    // Проверяем получившийся хвост на периоды
     const_cast<FractionNumber*>(this)->checkPeriod(result);
-
-    // Оставляем точность до 16 знаков после запятой
-    if (result.fractionPart.size() > 16)
-    {
-        result.fractionPart.resize(16);
-    }
 
     // Убираем хвостовые нули
     const_cast<FractionNumber*>(this)->removeTrailingZeros(result.fractionPart);
@@ -790,10 +772,13 @@ void FractionNumber::subtractVectors(const std::vector<uint8_t>& A, const std::v
 
 FractionNumber FractionNumber::subDifferentSign(const FractionNumber& other, const std::vector<uint8_t>& frac1, const std::vector<uint8_t>& frac2, size_t maxFracLen)
 {
-    FractionNumber result;
+   FractionNumber result;
 
-    // Сравниваем числа по модулю
-    if (this->integerPart == other.integerPart && frac1 == frac2)
+    // Находим, какое из чисел больше по модулю.
+    bool firstIsBigger = compareByModule(other, frac1, frac2);
+
+    // Проверяем на равенство модулей через результат сравнения
+    if (!firstIsBigger && this->integerPart == other.integerPart && frac1 == frac2)
     {
         result.integerPart = { 0 };
         result.fractionPart = {};
@@ -801,12 +786,8 @@ FractionNumber FractionNumber::subDifferentSign(const FractionNumber& other, con
         return result;
     }
 
-    // Находим, какое из чисел больше
-    bool firstIsBigger = compareByModule(other, frac1, frac2);
-
-    // Определяем, какое из чисел уменьшаемое
+    // Определяем, какое из чисел уменьшаемое, а какое вычитаемое
     const FractionNumber& A = firstIsBigger ? *this : other;
-    // Определяем, какое из чисел вычитаемое
     const FractionNumber& B = firstIsBigger ? other : *this;
     std::vector<uint8_t> fA = firstIsBigger ? frac1 : frac2;
     std::vector<uint8_t> fB = firstIsBigger ? frac2 : frac1;
@@ -957,22 +938,8 @@ FractionNumber FractionNumber::mul(const FractionNumber& other)
     // Проверяем, есть ли дробная часть
     if (totalFracLen > 0)
     {
-        // Проверяем, можно ли разделить результат на целую и дробную часть
-        if (resDigits.size() > totalFracLen)
-        {
-            // Определяем целую и дробную часть
-            result.fractionPart.assign(resDigits.end() - totalFracLen, resDigits.end());
-            result.integerPart.assign(resDigits.begin(), resDigits.end() - totalFracLen);
-        }
-        // Все цифры находятся в дробной части, целая часть равна 0
-        else
-        {
-            result.fractionPart.assign(resDigits.begin(), resDigits.end());
-
-            // Дополняем дробную часть ведущими нулями, если массив цифр оказался короче, чем нужно
-            prependZerosLeft(result.fractionPart, totalFracLen);
-            result.integerPart = { 0 };
-        }
+        result.fractionPart.assign(resDigits.end() - totalFracLen, resDigits.end());
+        result.integerPart.assign(resDigits.begin(), resDigits.end() - totalFracLen);
     }
     else
     {
@@ -1268,6 +1235,8 @@ int main(int argc, char* argv[])
     }
 
     FractionNumber result;
+    bool hasRuntimeError = false;
+
     try
     {
         result = calculateResult(operation, first, second);
@@ -1275,6 +1244,12 @@ int main(int argc, char* argv[])
     catch (const std::exception& e)
     {
         cerr << "Runtime Error: " << e.what() << endl;
+        hasRuntimeError = true; // Запоминаем ошибку, чтобы корректно выйти после скобки
+    }
+
+    // Если во время вычислений упало исключение, выходим здесь (скобка выше теперь позеленеет)
+    if (hasRuntimeError)
+    {
         return 1;
     }
 
