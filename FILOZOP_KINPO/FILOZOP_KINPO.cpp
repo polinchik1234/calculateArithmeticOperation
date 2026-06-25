@@ -1,3 +1,37 @@
+/*!
+\file
+\brief Данный файл содержит заголовочный класс FractionNumber.
+*
+\mainpage Документация для класса вещественных чисел произвольной точности "FractionNumber"
+Данная библиотека предназначена для работы с вещественными числами произвольной точности.
+Класс представляет числа в виде динамических векторов
+для целой и дробной частей, что позволяет обходить аппаратные ограничения стандартных
+типов данных вроде double или float.
+
+Библиотека поддерживает следующие возможности:
+- Основные арифметические операции (сложение, вычитание, умножение, деление в столбик).
+- Нахождение циклических периодов при делении.
+- Извлечение корня заданной степени и возведение в произвольную степень (включая работу с дробными и отрицательными показателями).
+- Автоматическую обработку знаков, удаление незначащих нулей и исправление ошибок округления.
+
+Для функционирования программы достаточно стандартной библиотеки шаблонов C++ (STL),
+включая модули `<string>` и `<vector>`. Программа разработана на языке С++
+с поддержкой современных стандартов и подходит для интеграции в любые консольные
+или графические приложения.
+
+Программа должна получать два аргумента командной строки: путь к входному
+файлу с исходными данными (числами и математическими операциями) и путь к
+выходному файлу для сохранения результатов работы программы.
+
+Пример команды запуска программы:
+\code
+./FractionNumberCalculator ./input.txt ./output.txt
+\endcode
+
+\author Filozop Polina
+\date June 2026
+\version 1.0
+*/
 #include "Arithmetic.h"
 #include <iostream>
 #include <algorithm>
@@ -437,19 +471,19 @@ bool checkSqrt(double val1, double val2)
         return false;
     }
 
-    // 2. Если подкоренное выражение отрицательное, степень корня ОБЯЗАНА быть нечетным целым числом
+    // Если подкоренное выражение отрицательное, степень корня ОБЯЗАНА быть нечетным целым числом
     if (val1 < 0.0)
     {
         // Проверяем, является ли степень val2 целым числом
         if (val2 != (long long)val2)
         {
-            return false; // Дробную степень для отрицательного числа нельзя (например, (-8)^(3.5))
+            return false; // Дробную степень для отрицательного числа нельзя
         }
 
         long long degree = (long long)val2;
         if (degree % 2 == 0)
         {
-            return false; // Четный корень из отрицательного числа нельзя (например, квадратный корень из -4)
+            return false; // Четный корень из отрицательного числа нельзя 
         }
     }
 
@@ -718,7 +752,9 @@ bool FractionNumber::checkDegreeSpecialCases(const FractionNumber& exponent, Fra
 FractionNumber FractionNumber::addSameSign(const FractionNumber& other, const std::vector<uint8_t>& frac1, const std::vector<uint8_t>& frac2, size_t maxFracLen)
 {
     FractionNumber result;
+    // Знак результата такой же, как у слагаемых
     result.isNegative = this->isNegative;
+    // Перенос в следующий разряд
     int carry = 0;
 
     // Складываем дробную часть
@@ -726,7 +762,9 @@ FractionNumber FractionNumber::addSameSign(const FractionNumber& other, const st
     for (int i = (int)maxFracLen - 1; i >= 0; i--)
     {
         int sum = frac1[i] + frac2[i] + carry;
+        // Записываем последнюю цифру суммы
         result.fractionPart[i] = sum % 10;
+        // Вычисляем перенос на следующий шаг
         carry = sum / 10;
     }
 
@@ -735,6 +773,7 @@ FractionNumber FractionNumber::addSameSign(const FractionNumber& other, const st
     int j = (int)other.integerPart.size() - 1;
     std::vector<uint8_t> tempInt;
 
+    // Продолжаем, пока не пройдем все цифры обоих чисел или пока есть остаток от переноса
     while (i >= 0 || j >= 0 || carry > 0)
     {
         int sum = carry;
@@ -744,7 +783,7 @@ FractionNumber FractionNumber::addSameSign(const FractionNumber& other, const st
         tempInt.push_back(sum % 10);
         carry = sum / 10;
     }
-
+    // Так как цифры добавлялись в конец, переворачиваем вектор для правильного порядка
     std::reverse(tempInt.begin(), tempInt.end());
     result.integerPart = tempInt;
 
@@ -754,16 +793,20 @@ FractionNumber FractionNumber::addSameSign(const FractionNumber& other, const st
 void FractionNumber::subtractVectors(const std::vector<uint8_t>& A, const std::vector<uint8_t>& B, std::vector<uint8_t>& result, int& borrow)
 {
     result.resize(A.size());
+    // Поразрядное вычитание в столбик
     for (int i = (int)A.size() - 1; i >= 0; i--)
     {
         int diff = A[i] - B[i] - borrow;
         if (diff < 0)
         {
+            // Занимаем 10 у старшего разряда
             diff += 10;
+            // Запоминаем заём
             borrow = 1;
         }
         else
         {
+            // Заём не потребовался
             borrow = 0;
         }
         result[i] = diff;
@@ -1178,6 +1221,26 @@ FractionNumber calculateResult(const string& operation, FractionNumber& first, c
     return result;
 }
 
+/**
+ * @brief Главная функция программы для выполнения арифметических операций произвольной точности.
+ * @details Функция координирует весь жизненный цикл работы приложения:
+ * 1. Проверяет параметры запуска (аргументы командной строки).
+ * 2. Считывает математическое выражение из входного текстового файла (строго 1 строка).
+ * 3. Выполняет лексический анализ и валидацию данных (парсинг строки).
+ * 4. Вычисляет результат операции с помощью класса FractionNumber.
+ * 5. Формирует выходной файл "result.txt" в указанной директории и записывает туда ответ.
+ *
+ * @param[in] argc Количество аргументов командной строки. Ожидается строго 3.
+ * @param[in] argv Массив указателей на строки-аргументы:
+ * - argv[0]: Путь к исполняемому файлу программы.
+ * - argv[1]: Путь к входному текстовому файлу с выражением.
+ * - argv[2]: Путь к выходному каталогу для сохранения "result.txt".
+ *
+ * @return Код завершения программы:
+ * - 0: Программа успешно завершила работу, результат сохранен.
+ * - 1: Произошла ошибка (неверные аргументы, ошибка чтения/записи файла,
+ * неверный формат входных данных или математическая ошибка в ходе вычислений).
+ */
 int main(int argc, char* argv[])
 {
     // Если количество аргументов не равно 3
