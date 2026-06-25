@@ -2116,5 +2116,17 @@ namespace Tests
             Assert::AreEqual(expected.toString(), result.toString(),
                 L"Square root of 1024 should equal 32");
         }
+
+        TEST_METHOD(NegativeBaseOddExponent)
+        {
+            FractionNumber a("-8");
+            FractionNumber b("3");
+
+            FractionNumber result = a.sqrt(b);
+
+            FractionNumber expected("-2");
+
+            Assert::AreEqual(expected.toString(), result.toString());
+        }
     };
 }
