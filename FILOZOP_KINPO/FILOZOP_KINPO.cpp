@@ -579,46 +579,55 @@ void writeResultToFile(ofstream& outputFile, const FractionNumber& result)
    outputFile.close();
 }
 
-int FractionNumber::subDiv(std::vector<uint8_t>& remainder, const std::vector<uint8_t>& divisorVector, FractionNumber& remFn, const FractionNumber& divFn)
+int FractionNumber::subDiv(std::vector<uint8_t>& remainder, const FractionNumber& divFn)
 {
+    // Счетчик, определяющий, сколько раз делитель "поместился" в текущем остатке
     int fitCount = 0;
+
+    const std::vector<uint8_t>& divisorVector = divFn.integerPart;
+
+    // Цикл последовательного вычитания делителя из остатка до тех пор, пока остаток не станет меньше делителя
     while (true)
     {
         bool remainderIsLess = false;
 
+        // Сравниваем текущий остаток (remainder) и делитель (divisorVector)
         // Если количество разрядов разное, то меньше то число, у которого вектор короче
         if (remainder.size() != divisorVector.size())
         {
             remainderIsLess = remainder.size() < divisorVector.size();
         }
-        // Если длины векторов одинаковы, сравниваем их поэлементно
+        // Если длины векторов одинаковы, сравниваем их поэлементно от старшего разряда к младшему
         else
         {
             remainderIsLess = remainder < divisorVector;
         }
-        // Если остаток стал меньше делителя, подбор цифры завершён
+        // Если промежуточный остаток стал строго меньше делителя, подбор текущей цифры завершён
         if (remainderIsLess)
         {
             break;
         }
 
-        // Настраиваем объект остатка под текущий вектор remainder
-        remFn.integerPart = remainder;
-        remFn.fractionPart = {};
-        remFn.isNegative = false;
+        // Подготовка текущего объекта к выполнению операции вычитания
+        // Инициализируем целую часть текущего объекта значением промежуточного остатка
+        this->integerPart = remainder;
+        this->fractionPart = {};
+        this->isNegative = false;
 
-        // Вычитаем делитель из остатка
-        FractionNumber subRes = remFn.sub(divFn);
-
-        // Обновляем остаток полученной разностью и зачищаем ведущие нули
+        // Вызываем метод вычитания sub() у текущего объекта
+        FractionNumber subRes = this->sub(divFn);
+        // Записываем полученную разность обратно в рабочий вектор remainder
         remainder = subRes.integerPart;
-        remFn.removeLeadingZeros(remainder);
+        // Удаляем возможные ведущие нули
+        this->removeLeadingZeros(remainder);
 
-        // Увеличиваем счётчик успешных вычитаний
+        // Увеличиваем счётчик успешных вычитаний на единицу
         fitCount++;
     }
+    // Возвращаем итоговое количество вхождений
     return fitCount;
 }
+
 
 void FractionNumber::checkPeriod(FractionNumber& result)
 {
@@ -1057,7 +1066,7 @@ FractionNumber FractionNumber::div(const FractionNumber& other)
         removeLeadingZeros(remainder);
 
         // Получаем количество успешных вхождений через внешнюю функцию
-        int fitCount = subDiv(remainder, divisorVector, remFn, divFn);
+        int fitCount = remFn.subDiv(remainder, divFn);
 
         // Добавляем цифру в целую или дробную часть
         if (!isFractionNow)

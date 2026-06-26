@@ -97,17 +97,12 @@ private:
 	 */
 	friend void writeResultToFile(ofstream& output_file, const FractionNumber& result);
 	/**
-	 * @brief Вспомогательный метод деления в столбик.
-	 * @param[in,out] remainder Текущий остаток в виде вектора.
-	 * @param[in] divisorVector Вектор делителя.
-	 * @param[in,out] remFn Текущий остаток как объект FractionNumber.
-	 * @param[in] divFn Делитель как объект FractionNumber.
-	 * @return Количество успешных вычитаний.
+	 * @brief Метод поразрядного деления для подбора цифры частного.
+	 * @param[in,out] remainder Текущий рабочий остаток деления в виде вектора цифр.
+	 * @param[in] divFn Объект делителя для выполнения операции вычитания.
+	 * @return int Количество успешных вычитаний.
 	 */
-	static int subDiv(std::vector<uint8_t>& remainder,
-		const std::vector<uint8_t>& divisorVector,
-		FractionNumber& remFn,
-		const FractionNumber& divFn);
+	int subDiv(std::vector<uint8_t>& remainder, const FractionNumber& divFn);
 	/**
 	 * @brief Проверяет дробную часть результата на наличие циклических периодов при делении.
 	 * @param[in,out] result Модифицируемый объект результата деления.
