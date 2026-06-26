@@ -105,9 +105,8 @@ private:
 	int subDiv(std::vector<uint8_t>& remainder, const FractionNumber& divFn);
 	/**
 	 * @brief Проверяет дробную часть результата на наличие циклических периодов при делении.
-	 * @param[in,out] result Модифицируемый объект результата деления.
 	 */
-	void checkPeriod(FractionNumber& result);
+	void checkPeriod();
 	/**
 	 * @brief Подготавливает векторы делимого и делителя (выравнивает разряды, убирает точки).
 	 * @param[in] other Делитель.

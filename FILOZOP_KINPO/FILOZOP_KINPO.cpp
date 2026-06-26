@@ -602,11 +602,10 @@ int FractionNumber::subDiv(std::vector<uint8_t>& remainder, const FractionNumber
     return fitCount;
 }
 
-
-void FractionNumber::checkPeriod(FractionNumber& result)
+void FractionNumber::checkPeriod()
 {
     // Обрабатываем случаи с периодическими дробями
-    std::string s = result.toString();
+    std::string s = this->toString();
     size_t dot = s.find('.');
 
     // Проверяем, что в строке есть точка и хотя бы два знака после нее
@@ -630,7 +629,7 @@ void FractionNumber::checkPeriod(FractionNumber& result)
             {
                 uint8_t targetDigit = lastChar - '0';
                 // Заполняем нули в хвосте вектора нужной цифрой
-                fill(result.fractionPart.end() - 1 - zeroCount, result.fractionPart.end(), targetDigit);
+                std::fill(this->fractionPart.end() - 1 - zeroCount, this->fractionPart.end(), targetDigit);
             }
         }
     }
@@ -666,7 +665,7 @@ void FractionNumber::finalizeResult(FractionNumber& result) const
     const_cast<FractionNumber*>(this)->removeLeadingZeros(result.integerPart);
 
     // Проверяем получившийся хвост на периоды
-    const_cast<FractionNumber*>(this)->checkPeriod(result);
+    result.checkPeriod();
 
     // Убираем хвостовые нули
     const_cast<FractionNumber*>(this)->removeTrailingZeros(result.fractionPart);
