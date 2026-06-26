@@ -292,10 +292,14 @@ FractionNumber FractionNumber::convertFromDouble(double val, int precision)
     return FractionNumber(resultStr);
 }
     
-FractionNumber FractionNumber::powInt(FractionNumber base, unsigned long long exp)
+FractionNumber FractionNumber::powInt(unsigned long long exp) const
 {
     FractionNumber result;
     result.integerPart = { 1 }; result.fractionPart = {}; result.isNegative = false;
+
+    // Копируем текущий объект как основание
+    FractionNumber base = *this;
+
     // Алгоритм возведения в степень
     while (exp > 0)
     {
@@ -1087,7 +1091,7 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent)
         baseAbs.isNegative = false;
 
         // Вызываем возведение в степень для модуля числа
-        result = powInt(baseAbs, loopLimit);
+        result = baseAbs.powInt(loopLimit);
 
         // Если степень была отрицательной, получаем обратное число для результата
         if (exponent.isNegative)

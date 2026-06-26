@@ -71,7 +71,7 @@ private:
 	 * @param[in] exp Целочисленный показатель степени.
 	 * @return Результат возведения в степень.
 	 */
-	static FractionNumber powInt(FractionNumber base, unsigned long long exp);
+	FractionNumber powInt(unsigned long long exp) const;
 	/**
 	 * @brief Вычисляет натуральный логарифм числа.
 	 * @param[in] x Исходное число.
