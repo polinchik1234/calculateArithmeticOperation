@@ -130,11 +130,10 @@ private:
 	 */
 	bool checkDegreeSpecialCases(const FractionNumber& exponent, FractionNumber& result, bool& isHandled);
 	/**
-	 * @brief ѕровер€ет, €вл€етс€ ли дробна€ часть числа нулевой.
-	 * @param[in] fn ѕровер€емый объект FractionNumber.
-	 * @return true, если дробна€ часть отсутствует или равна нулю.
-	 */
-	static bool isFractionPartZero(const FractionNumber& fn);
+	* @brief ѕровер€ет, €вл€етс€ ли дробна€ часть текущего числа нулевой.
+	* @return true, если дробна€ часть отсутствует или равна нулю, иначе false.
+	*/
+	bool isFractionPartZero() const;
 	/**
 	 * @brief —кладывает два числа с одинаковыми знаками.
 	 * @param[in] other ¬торое число.

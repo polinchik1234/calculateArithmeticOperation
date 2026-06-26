@@ -671,10 +671,10 @@ void FractionNumber::finalizeResult(FractionNumber& result) const
     const_cast<FractionNumber*>(this)->removeTrailingZeros(result.fractionPart);
 }
 
-bool FractionNumber::isFractionPartZero(const FractionNumber& fn)
+bool FractionNumber::isFractionPartZero() const
 {
     // ѕровер€ем, €вл€етс€ ли дробна€ часть пустой или состо€щей только из нулей
-    if (!all_of(fn.fractionPart.begin(), fn.fractionPart.end(), [](uint8_t d) { return d == 0; })) {
+    if (!all_of(this->fractionPart.begin(), this->fractionPart.end(), [](uint8_t d) { return d == 0; })) {
         return false;
     }
 
@@ -717,7 +717,7 @@ bool FractionNumber::checkDegreeSpecialCases(const FractionNumber& exponent, Fra
     bool otherIsOne = false;
     if (exponent.integerPart.size() == 1 && exponent.integerPart[0] == 1 && !exponent.isNegative)
     {
-        bool onlyZeros = isFractionPartZero(exponent);
+        bool onlyZeros = exponent.isFractionPartZero();
         if (onlyZeros) otherIsOne = true;
     }
     // ≈сли степень равна 1, возвращаем основание
@@ -1076,7 +1076,7 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent)
     }
 
     // ѕровер€ем, €вл€етс€ ли степень целым числом
-    bool expIsInteger = isFractionPartZero(exponent);
+    bool expIsInteger = exponent.isFractionPartZero();
 
     if (expIsInteger)
     {
