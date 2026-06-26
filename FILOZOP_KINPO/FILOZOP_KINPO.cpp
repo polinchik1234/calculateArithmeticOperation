@@ -453,122 +453,96 @@ vector<string> splitString(const string& inputData)
     return splitString;
 }
 
-bool checkPower(double val1, double val2)
+bool validateRange(double value,
+    const std::vector<Range>& includeRanges,
+    const std::vector<Range>& excludeRanges)
 {
-    // Проверка диапазонов для операции возведения в степень
-    if (val1 < -100.0 || val1 > 100.0 || val2 < -5.0 || val2 > 5.0)
-    {
-        return false;
+    bool included = false;
+    // Проверяем, входит ли значение хотя бы в один из разрешенных интервалов
+    for (const Range& r : includeRanges) {
+        if (r.include(value)) { included = true; break; }
+    }
+    // Если значение не попало ни в один разрешенный интервал, валидация не пройдена
+    if (!included) return false;
+    // Проверяем, не попадает ли значение в какой-либо из запрещенных интервалов
+    for (const Range& r : excludeRanges) {
+        if (r.include(value)) return false;
     }
     return true;
 }
 
-bool checkSqrt(double val1, double val2)
+bool checkSqrtSign(double val1, double val2)
 {
-    // Разрешаем диапазон, например, от -100000.0 до 100000.0
-    if (val1 < -100000.0 || val1 > 100000.0 || val2 < -10.0 || val2 > 10.0 || val2 == 0.0)
-    {
-        return false;
-    }
-
-    // Если подкоренное выражение отрицательное, степень корня ОБЯЗАНА быть нечетным целым числом
-    if (val1 < 0.0)
-    {
-        // Проверяем, является ли степень val2 целым числом
-        if (val2 != (long long)val2)
-        {
-            return false; // Дробную степень для отрицательного числа нельзя
-        }
-
-        long long degree = (long long)val2;
-        if (degree % 2 == 0)
-        {
-            return false; // Четный корень из отрицательного числа нельзя 
-        }
-    }
-
-    return true;
+    // Если подкоренное выражение неотрицательное, извлечение корня любой степени всегда возможно
+    if (val1 >= 0.0) return true;
+    // Если подкоренное выражение отрицательное, проверяем степень корня: она должна быть строго целым числом
+    if (val2 != static_cast<long long>(val2)) return false;
+    // Для отрицательного основания степень корня обязательно должна быть нечетной
+    return static_cast<long long>(val2) % 2 != 0;
 }
 
-bool checkBasicOps(double val1, double val2)
+DataErrors parseInputData(const std::string& inputData,
+    std::string& operation,
+    FractionNumber& first,
+    FractionNumber& second)
 {
-    // Если первый токен +,-,/,* и второй или третий токен больше 1000 по модулю
-    if (abs(val1) > 1000.0 || abs(val2) > 1000.0)
-    {
-        return false;
-    }
-    return true;
-}
-
-bool validateRanges(const string& op, double val1, double val2)
-{
-    // Если операция - возведение в степень
-    if (op == "^")
-    {
-        return checkPower(val1, val2);
-    }
-
-    // Если операция - нахождение корня
-    if (op == "sqrt")
-    {
-        return checkSqrt(val1, val2);
-    }
-
-    // Если операция - сложение, вычитание, умножение, деление
-    return (op == "+" || op == "-" || op == "*" || op == "/") && checkBasicOps(val1, val2);
-}
-
-DataErrors parseInputData(const string& inputData, string& operation, FractionNumber& first, FractionNumber& second)
-{
-    //Разбиваем строку на токены
-    vector<string> tokens = splitString(inputData);
-
-    // Если число токенов не равно 3
+    // Разбиваем входную строку на токены по пробельным символам
+    std::vector<std::string> tokens = splitString(inputData);
+    // Должно быть ровно 3 токена
     if (tokens.size() != 3)
-    {
         return DataErrors::WRONG_INPUT;
-    }
 
-    string op = tokens[0];
-    string token2 = tokens[1];
-    string token3 = tokens[2];
+    const std::string& op = tokens[0];
 
-    // Если первый токен - это не sqrt или +, -, *, /, ^:
-    if (op != "sqrt" && op != "+" && op != "-" && op != "*" && op != "/" && op != "^")
-    {
+    // Проверяем, поддерживает ли программа данную математическую операцию
+    if (op != "+" && op != "-" && op != "*" &&
+        op != "/" && op != "^" && op != "sqrt")
         return DataErrors::WRONG_OPERATION;
-    }
 
-    // Если второй и третий токен не дробное число
-    if (token2.find_first_not_of("0123456789.-") != std::string::npos ||
-        token3.find_first_not_of("0123456789.-") != std::string::npos)
-    {
+    // Пытаемся распарсить строки операндов в объекты FractionNumber
+    FractionNumber num1, num2;
+    try {
+        num1 = FractionNumber(tokens[1]);
+        num2 = FractionNumber(tokens[2]);
+    }
+    catch (...) {
+        // Формат чисел некорректен
         return DataErrors::NO_FRACTION;
     }
 
-    FractionNumber num1(token2);
-    FractionNumber num2(token3);
-
-    // Для удобства проверки диапазонов переводим в double
+    // Для проверки диапазонов приводим длинные числа к типу double
     double val1 = num1.convertToDouble(num1);
     double val2 = num2.convertToDouble(num2);
 
-    // Проверяем, соответсвуют ли диапазоны
-    if (!validateRanges(op, val1, val2))
-    {
-        return DataErrors::INCORRECT_RANGE;
+    bool rangesOk = false;
+
+    // Валидация граничных условий для разных типов операций
+    if (op == "^") {
+        // Ограничения для возведения в степень:
+        rangesOk = validateRange(val1, { Range(-100.0,    100.0) })
+            && validateRange(val2, { Range(-5.0,        5.0) })
+            && !(val1 == 0.0 && val2 < 0.0);
+    }
+    else if (op == "sqrt") {
+        // Ограничения для извлечения корня:
+        rangesOk = validateRange(val1, { Range(-100000.0, 100000.0) })
+            && validateRange(val2, { Range(-10.0, 10.0) }, { Range(0.0) })
+            && checkSqrtSign(val1, val2);
+    }
+    else {
+        // Ограничения для базовых арифметических операций (+, -, *, /):
+        rangesOk = validateRange(std::abs(val1), { Range(0.0, 1000.0) })
+            && validateRange(std::abs(val2), { Range(0.0, 1000.0) });
     }
 
-    // Сохраняем в operation значение первого токена
+    // Если значение не входит в заданные диапазоны
+    if (!rangesOk)
+        return DataErrors::INCORRECT_RANGE;
+
     operation = op;
-
-    // Преобразовываем второй токен в объект FractionNumber и сохраняем в first
     first = num1;
-
-    // Преобразовываем третий токен в объект FractionNumber и сохранем в second
     second = num2;
-
-    // Ошибок нет
+    // Ошибок не обнаружено
     return DataErrors::NO_DATA_ERROR;
 }
 
