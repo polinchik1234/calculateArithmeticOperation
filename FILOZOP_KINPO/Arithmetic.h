@@ -237,10 +237,9 @@ public:
 	FractionNumber degree(const FractionNumber& exponent);
 	/**
 	 * @brief Преобразует объект FractionNumber в стандартный тип double.
-	 * @param[in] fn Объект длинной арифметики.
-	 * @return Значение типа double.
+	 * @return Значение текущего объекта, приведенное к типу double.
 	 */
-	static double convertToDouble(const FractionNumber& fn);
+	double convertToDouble() const;
 };
 
 /**

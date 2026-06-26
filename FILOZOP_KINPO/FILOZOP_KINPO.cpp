@@ -371,16 +371,16 @@ unsigned long long FractionNumber::vectorToInt(const std::vector<uint8_t>& vec)
 }
 
 // Преобразует число FractionNumber в число типа double
-double FractionNumber::convertToDouble(const FractionNumber& fn)
+double FractionNumber::convertToDouble() const
 {
-    double result = static_cast<double>(vectorToInt(fn.integerPart));
+    double result = static_cast<double>(vectorToInt(this->integerPart));
     double frac = 0.0;
     double place = 0.1;
 
     // Переводим вектор цифр дробной части в число
-    for (size_t i = 0; i < fn.fractionPart.size(); ++i)
+    for (size_t i = 0; i < this->fractionPart.size(); ++i)
     {
-        frac += fn.fractionPart[i] * place;
+        frac += this->fractionPart[i] * place;
         // Сдвигаем разряд вправо
         place *= 0.1;
     }
@@ -389,7 +389,7 @@ double FractionNumber::convertToDouble(const FractionNumber& fn)
     result += frac;
 
     // Если число было отрицательным, добавляем минус
-    if (fn.isNegative) result = -result;
+    if (this->isNegative) result = -result;
     return result;
 }
 
@@ -511,8 +511,8 @@ DataErrors parseInputData(const std::string& inputData,
     }
 
     // Для проверки диапазонов приводим длинные числа к типу double
-    double val1 = num1.convertToDouble(num1);
-    double val2 = num2.convertToDouble(num2);
+    double val1 = num1.convertToDouble();
+    double val2 = num2.convertToDouble();
 
     bool rangesOk = false;
 
@@ -1105,8 +1105,8 @@ FractionNumber FractionNumber::degree(const FractionNumber& exponent)
     }
 
     // Переводим основание и степень из объектов класса в тип double
-    double base = convertToDouble(*this);
-    double exp = convertToDouble(exponent);
+    double base = this->convertToDouble();
+    double exp = exponent.convertToDouble();
 
     // Нельзя возводить отрицательное число в дробную степень
     if (base < 0 && exp != (long long)exp)
